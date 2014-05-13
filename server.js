@@ -25,7 +25,10 @@ app.use(pjax());
 app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/'));
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
 
-// Selectively apply middleware to routes
+/* 
+	Instantiate routes ware with airity 5 
+	@params p0,p1,p2,[p3],p4 -> server, global middleware, [moduleWare0,moduleWare1,..,n], utility ware, server configuration
+*/
 routes.navigation(app, globalware, [navigationware], rutil, config);
 
 // Error
