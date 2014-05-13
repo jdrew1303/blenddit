@@ -7,6 +7,7 @@
     "express": "*",
     "express3-handlebars": "*",
     "colors": "*",
-    "express-pjax": "*"
+    "express-pjax": "*",
+    "nconf": "*"
   }
 }

@@ -1,0 +1,7 @@
+{	// server configuration
+	"production" : false,
+	"available" : {
+		"home" : "/home",
+		"book" : "/book"
+	}
+}

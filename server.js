@@ -5,14 +5,16 @@ var express = require('express'),
     util = require('util'),
     colors = require('colors'),
     pjax = require('express-pjax'),
+    config = require('nconf'),
 // Middleware
-	globalware = require('./app_middleware/global.ware'),
+	globalware = new require('./app_middleware/global.ware'),
 	navigationware = require('./app_middleware/navigation.ware'),
+	rutil = new require('./app_middleware/utility.ware.js')(),
 // Routes
-	page = {
-		navigation : require('./app_routes/routes.navigation') //
+	routes = {
+		navigation : require('./app_routes/routes.navigation')
 	};
-// Configuration
+// Server Configuration
 app = express(),
 hbs = exphbs.create({ /* config */ }),
 prod = false;
@@ -24,12 +26,7 @@ app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/')
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
 
 // Selectively apply middleware to routes
-page.navigation(app, globalware, [navigationware], prod);
-
-
-
-
-
+routes.navigation(app, globalware, [navigationware], rutil, config);
 
 // Error
 app.get('*', function(req,res) {
