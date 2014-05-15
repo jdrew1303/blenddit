@@ -5,22 +5,21 @@ var express = require('express'),
     util = require('util'),
     colors = require('colors'),
     pjax = require('express-pjax'),
-    config = require('nconf'),
+    nconf = require('nconf'),
 // Middleware
-	globalware = new require('./app_middleware/global.ware'),
+	kutil = require('./app_middleware/utility.ware')(),
+	globalware = require('./app_middleware/global.ware')(kutil),
 	navigationware = require('./app_middleware/navigation.ware'),
-	rutil = new require('./app_middleware/utility.ware.js')(),
 // Routes
 	routes = {
 		navigation : require('./app_routes/routes.navigation')
 	};
 // Server Configuration
-app = express(),
-hbs = exphbs.create({ /* config */ }),
-prod = false;
+nconf.file({file: './config.json'});
+app = express()
+hbs = exphbs.create({ /* config */ })
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
-app.use(util);
 app.use(pjax());
 app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/'));
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
@@ -29,12 +28,12 @@ app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
 	Instantiate routes ware with airity 5 
 	@params p0,p1,p2,[p3],p4 -> server, global middleware, [moduleWare0,moduleWare1,..,n], utility ware, server configuration
 */
-routes.navigation(app, globalware, [navigationware], rutil, config);
+routes.navigation(app, globalware, [navigationware], kutil, nconf);
 
 // Error
 app.get('*', function(req,res) {
 	res.status(404).send('<h1 style="text-align: center;">404 Not fizound</h1>');
 });
 
-app.listen(3000);
-util.log("Server listening on 3000".bold.blue);
+app.listen(nconf.get('port'));
+kutil.serverOut(nconf);

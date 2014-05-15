@@ -1,6 +1,6 @@
 {
-  "name": "blackboxed",
-  "description": "web server for blackboxed",
+  "name": "Blackboxed",
+  "description": "Node Web Server",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
