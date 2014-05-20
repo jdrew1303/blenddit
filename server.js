@@ -7,15 +7,15 @@ var express = require('express'),
     pjax = require('express-pjax'),
     nconf = require('nconf'),
 // Middleware
-	kutil = require('./app_middleware/utility.ware')(),
+	kutil = require('./app_middleware/utility.ware'),
 	globalware = require('./app_middleware/global.ware')(kutil),
 	navigationware = require('./app_middleware/navigation.ware'),
 // Routes
-	routes = {
-		navigation : require('./app_routes/routes.navigation')
-	};
+	navigation = require('./app_routes/routes.navigation');
 // Server Configuration
-nconf.file({file: './config.json'});
+nconf.add('config',{type: 'file', file:'config.json'})
+nconf.add('package',{type: 'file', file:'package.json'})
+kutil.configure(nconf);
 app = express()
 hbs = exphbs.create({ /* config */ })
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
@@ -25,15 +25,15 @@ app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/')
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
 
 /* 
-	Instantiate routes ware with airity 5 
+	Instantiate routes ware with airity 4 
 	@params p0,p1,p2,[p3],p4 -> server, global middleware, [moduleWare0,moduleWare1,..,n], utility ware, server configuration
 */
-routes.navigation(app, globalware, [navigationware], kutil, nconf);
+navigation(app, globalware, [navigationware], kutil);
 
 // Error
 app.get('*', function(req,res) {
 	res.status(404).send('<h1 style="text-align: center;">404 Not fizound</h1>');
 });
 
-app.listen(nconf.get('port'));
-kutil.serverOut(nconf);
+app.listen(3000);
+kutil.serverOut();

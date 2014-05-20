@@ -1,5 +1,5 @@
 // routes.navigation.js
-module.exports = function(app, globalware, elseware, kutil, nconf) {
+module.exports = function(app, globalware, elseware, kutil) {
 	var gware = globalware, mware = elseware,
 	    all = gware.methods.concat(kutil.getMethods(mware));
 
