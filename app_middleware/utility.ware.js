@@ -1,5 +1,6 @@
 c = console;
-fs = require('fs');	
+fs = require('fs');
+// binary = require('./binary');	
 
 function KUtil() {};
 

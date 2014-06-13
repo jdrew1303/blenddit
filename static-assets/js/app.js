@@ -22,4 +22,3 @@ if (!window.jQuery === 'undefined') {
 		app.init();
 	});	
 }
- 
