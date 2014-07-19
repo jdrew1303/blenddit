@@ -1,4 +1,4 @@
-/*Blackboxed node express server*/
+/*kurtlocker.og  node server*/
 // Vendor
 var express = require('express'),
     exphbs  = require('express3-handlebars'),
@@ -35,5 +35,5 @@ app.get('*', function(req,res) {
 	res.status(404).send('<h1 style="text-align: center;">404 Not fizound</h1>');
 });
 
-app.listen(3000);
+app.listen(8080);
 kutil.serverOut();

@@ -1,8 +1,7 @@
 var visitors = 0, 
 	ips = [], 
-	totalVisitors = function(req,res,next) { 
+	totalVisitors = function() { 
 		console.log('- Total unique visitors today: '+visitors);
-		next();
 	};
 
 module.exports = function(module) {
@@ -22,10 +21,9 @@ module.exports = function(module) {
 				console.log('User '+req.ip + ' connected.'.green); 
 				ips.unshift(req.ip);
 				visitors++;
-				totalVisitors(req,res,next)
+				totalVisitors()
 			}
 			next();
 		},
-		totalVisitors : totalVisitors
 	};
 }
