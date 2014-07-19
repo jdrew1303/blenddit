@@ -1,8 +1,13 @@
+var visitors = 0, 
+	ips = [], 
+	totalVisitors = function(req,res,next) { 
+		console.log('- Total unique visitors today: '+visitors);
+		next();
+	};
+
 module.exports = function(module) {
 	/*private variables*/
-	var visitors = 0,
-	    ips = [],
-	    kutil = module;
+	kutil = module;
 	/*public middleware*/
 	return {
 		get methods() {
@@ -16,13 +21,11 @@ module.exports = function(module) {
 			if (kutil.unique(req.ip, ips)) {
 				console.log('User '+req.ip + ' connected.'.green); 
 				ips.unshift(req.ip);
-				visitors++; 
+				visitors++;
+				totalVisitors(req,res,next)
 			}
 			next();
 		},
-		totalVisitors : function(req,res,next) { 
-			console.log('- Total unique visitors today: '+visitors);
-			next();
-		}
+		totalVisitors : totalVisitors
 	};
 }

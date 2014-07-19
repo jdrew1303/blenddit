@@ -7,11 +7,11 @@ var express = require('express'),
     pjax = require('express-pjax'),
     nconf = require('nconf'),
 // Middleware
-	kutil = require('./app_middleware/utility.ware'),
-	globalware = require('./app_middleware/global.ware')(kutil),
-	navigationware = require('./app_middleware/navigation.ware'),
+    kutil = require('./app_middleware/utility.ware'),
+    globalware = require('./app_middleware/global.ware')(kutil),
+    navigationware = require('./app_middleware/navigation.ware'),
 // Routes
-	navigation = require('./app_routes/routes.navigation');
+    navigation = require('./app_routes/routes.navigation');
 // Server Configuration
 nconf.add('config',{type: 'file', file:'config.json'})
 nconf.add('package',{type: 'file', file:'package.json'})
@@ -26,7 +26,7 @@ app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
 
 /* 
 	Instantiate routes ware with airity 4 
-	@params p0,p1,p2,[p3],p4 -> server, global middleware, [moduleWare0,moduleWare1,..,n], utility ware, server configuration
+	@params p0,p1,[p2],p3 -> application, global middleware, [moduleWare0,moduleWare1,..,n], utility ware
 */
 navigation(app, globalware, [navigationware], kutil);
 

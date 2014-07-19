@@ -1,4 +1,4 @@
-blackboxed
+kurtlocker.org
 ==========
 
-book project with node express
+root site to host personal projects
