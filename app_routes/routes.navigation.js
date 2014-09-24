@@ -14,4 +14,13 @@ module.exports = function(app, globalware, elseware, kutil) {
 			page: "book"
 		});
 	});
+
+	app.get('/lists',gware.visitor, function(req, res) {
+		var fs = require('fs'), json = {};
+		fs.readFile(require('path').dirname(require.main.filename)+'/listsjs.json', 'utf8', function (err, data) {
+		  if (err) { return console.log(err); }
+		  json.listsJSON = JSON.parse(data);
+		  res.renderPjax('lists', json);	
+		});
+	});
 }

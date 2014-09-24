@@ -1,0 +1,36 @@
+<div class="container" style='padding-top: 65px;'>
+	{{#each listsJSON}}
+		<ul class="nav nav-tabs">
+		  <li class="disabled"><a>{{@index}}. <span class='text-warning'>{{this.n}}</span></a></li>	
+		  <li class="dropdown">
+		    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit; border: 0;">
+		      info <span class="caret"></span>
+		    </a>
+		    <ul class="dropdown-menu">
+		      <li class=""><a href="#description-{{@index}}" data-toggle="tab">Description</a></li>	
+		      <li class="divider"></li>	
+		      <li class=""><a href="#typeSig-{{@index}}" data-toggle="tab">Type Signature</a></li>
+		      <li class="divider"></li>
+		      <li class=""><a href="#sigDef-{{@index}}" data-toggle="tab">Signature Description</a></li>
+		    </ul>
+		  </li>
+		</ul>
+		<div id="myTabContent" class="tab-content">
+		  <div class="tab-pane fade active in" id="description-{{@index}}">
+		  	<br>
+		    <p>{{this.d}}</p>
+		    <br>
+		  </div>
+		  <div class="tab-pane fade" id="typeSig-{{@index}}">
+		  	<br>
+		    <p><strong>{{this.t}}</strong></p>
+		    <br>
+		  </div>
+		  <div class="tab-pane fade" id="sigDef-{{@index}}">
+		  	<br>
+		    <p>{{this.s}}</p>
+		    <br>
+		  </div>
+		</div>
+	{{/each}}	
+</div>
