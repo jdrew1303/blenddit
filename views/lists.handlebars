@@ -1,4 +1,4 @@
-<div class="container" style='padding-top: 65px;'>
+<div id='listsjs' class="container" style='padding-top: 65px;'>
 	{{#each listsJSON}}
 		<ul class="nav nav-tabs">
 		  <li class="disabled"><a>{{@index}}. <span class='text-warning'>{{this.n}}</span></a></li>	
@@ -12,6 +12,8 @@
 		      <li class=""><a href="#typeSig-{{@index}}" data-toggle="tab">Type Signature</a></li>
 		      <li class="divider"></li>
 		      <li class=""><a href="#sigDef-{{@index}}" data-toggle="tab">Signature Description</a></li>
+		      <li class="divider"></li>
+		      <li class=""><a href="#example-{{@index}}" data-toggle="tab">Example</a></li>
 		    </ul>
 		  </li>
 		</ul>
@@ -30,6 +32,13 @@
 		  	<br>
 		    <p>{{this.s}}</p>
 		    <br>
+		  </div>
+		  <div class="tab-pane fade" id="example-{{@index}}">
+		  	<div style='white-space:pre; margin-bottom:0'class="js">
+		  		<br>
+				{{this.c}}
+				<br>
+			</div>
 		  </div>
 		</div>
 	{{/each}}	
