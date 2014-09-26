@@ -1,45 +1,115 @@
-<div id='listsjs' class="container" style='padding-top: 65px;'>
-	{{#each listsJSON}}
-		<ul class="nav nav-tabs">
-		  <li class="disabled"><a>{{@index}}. <span class='text-warning'>{{this.n}}</span></a></li>	
-		  <li class="dropdown">
-		    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit; border: 0;">
-		      info <span class="caret"></span>
-		    </a>
-		    <ul class="dropdown-menu">
-		      <li class=""><a href="#description-{{@index}}" data-toggle="tab">Description</a></li>	
-		      <li class="divider"></li>	
-		      <li class=""><a href="#typeSig-{{@index}}" data-toggle="tab">Type Signature</a></li>
-		      <li class="divider"></li>
-		      <li class=""><a href="#sigDef-{{@index}}" data-toggle="tab">Signature Description</a></li>
-		      <li class="divider"></li>
-		      <li class=""><a href="#example-{{@index}}" data-toggle="tab">Example</a></li>
-		    </ul>
-		  </li>
-		</ul>
-		<div id="myTabContent" class="tab-content">
-		  <div class="tab-pane fade active in" id="description-{{@index}}">
-		  	<br>
-		    <p>{{this.d}}</p>
-		    <br>
-		  </div>
-		  <div class="tab-pane fade" id="typeSig-{{@index}}">
-		  	<br>
-		    <p><strong>{{this.t}}</strong></p>
-		    <br>
-		  </div>
-		  <div class="tab-pane fade" id="sigDef-{{@index}}">
-		  	<br>
-		    <p>{{this.s}}</p>
-		    <br>
-		  </div>
-		  <div class="tab-pane fade" id="example-{{@index}}">
-		  	<div style='white-space:pre; margin-bottom:0'class="js">
-		  		<br>
-				{{this.c}}
-				<br>
+<div id='listsjs' style='padding-top:60px;' class="page-container">
+  
+    <div class="container">
+      <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation" style='padding-top: 0;'>
+            <ol class="nav pre-scrollable affix" style=''>
+              {{#each listsJSON}}
+              	<li><a class='sidebarFunc' num='{{@index}}'>{{@index}}. {{this.n}}</a></li>              
+              {{/each}}
+            </ol>
+        </div>
+  	
+        <div class="col-xs-12 col-sm-9 main-content" style='padding-bottom:200px'>
+          {{#each listsJSON}}
+			<ul id='function-{{@index}}' class="nav nav-tabs">
+			  <li class="disabled"><a>{{@index}}. <span class='text-warning'>{{this.n}}</span></a></li>	
+			  <li class="dropdown">
+			    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="background-color: inherit; border: 0;">
+			      info <span class="caret"></span>
+			    </a>
+			    <ul class="dropdown-menu">
+			      <li class=""><a href="#description-{{@index}}" data-toggle="tab">Description</a></li>	
+			      <li class="divider"></li>	
+			      <li class=""><a href="#typeSig-{{@index}}" data-toggle="tab">Type Signature</a></li>
+			      <li class="divider"></li>
+			      <li class=""><a href="#sigDef-{{@index}}" data-toggle="tab">Signature Description</a></li>
+			      <li class="divider"></li>
+			      <li class=""><a href="#example-{{@index}}" data-toggle="tab">Example</a></li>
+			    </ul>
+			  </li>
+			</ul>
+			<div id="myTabContent" class="tab-content">
+			  <div class="tab-pane fade active in" id="description-{{@index}}">
+			  	<br>
+			    <p>{{this.d}}</p>
+			    <br>
+			  </div>
+			  <div class="tab-pane fade" id="typeSig-{{@index}}">
+			  	<br>
+			    <p><strong>{{this.t}}</strong></p>
+			    <br>
+			  </div>
+			  <div class="tab-pane fade" id="sigDef-{{@index}}">
+			  	<br>
+			    <p>{{this.s}}</p>
+			    <br>
+			  </div>
+			  <div class="tab-pane fade" id="example-{{@index}}">
+			  	<div style='white-space:pre; margin-bottom:0'class="js">
+			  		<br>
+					{{this.c}}
+					<br>
+				</div>
+			  </div>
 			</div>
-		  </div>
+		 {{/each}}	
 		</div>
-	{{/each}}	
+        </div>
+    </div>
+  </div>
 </div>
+
+	
+
+<style type="text/css">
+.text-center {
+  padding-top: 20px;
+}
+#sidebar {
+  height: 100%;
+  padding-right: 0;
+  padding-top: 20px;
+}
+#sidebar .nav {
+  width: 95%;
+}
+#sidebar li {
+  border:0 #f2f2f2 solid;
+}
+
+/* collapsed sidebar styles */
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    position: relative;
+    -webkit-transition: all 1.25s ease-out;
+    -moz-transition: all 1.25s ease-out;
+    transition: all 1.25s ease-out;
+  }
+  .row-offcanvas-right
+  .sidebar-offcanvas {
+    right: -41.6%;
+  }
+
+  .row-offcanvas-left
+  .sidebar-offcanvas {
+    left: -41.6%;
+  }
+  .row-offcanvas-right.active {
+    right: 41.6%;
+  }
+  .row-offcanvas-left.active {
+    left: 41.6%;
+  }
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 41.6%;
+  }
+  #sidebar {
+    padding-top:0;
+  }
+}
+
+
+</style>
