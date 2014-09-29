@@ -18,7 +18,7 @@ nconf.add('package',{type: 'file', file:'package.json'})
 kutil.configure(nconf);
 app = express()
 hbs = exphbs.create({ /* config */ })
-app.locals({ debug : nconf.get('debug')});
+app.locals={ debug : nconf.get('debug')};
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(pjax());
