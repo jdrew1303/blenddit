@@ -8,6 +8,7 @@
     "express3-handlebars": "*",
     "colors": "*",
     "express-pjax": "*",
-    "nconf": "*"
+    "nconf": "*",
+    "node-minify" : "*"
   }
 }

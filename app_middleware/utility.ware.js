@@ -1,5 +1,6 @@
 c = console;
 fs = require('fs');
+compress = require('node-minify');
 
 function KUtil() {};
 
@@ -48,6 +49,29 @@ KUtil.prototype = {
 			if (/^[^\.]/.test(list[i])) {
 				c.log(' - '+list[i]);
 			}
+		}
+	},
+	compressAssets : function(path){ 
+		jsFiles = assetArray('js',this)
+		cssFiles = assetArray('css',this)
+		new compress.minify({
+		    type: 'gcc',
+		    fileIn: jsFiles,
+		    fileOut: path+'/js/all.js',
+		    callback: function(err, min){ if (err) console.log(err);}
+		});
+		new compress.minify({
+		    type: 'sqwish',
+		    fileIn: cssFiles,
+		    fileOut: path+'/css/all.css',
+		    callback: function(err, min){ if (err) console.log(err); }
+		});
+		function assetArray(type,ctx){ 
+			var arr = [];
+			ctx.nconf.get(type=='js'?'jsFiles':'cssFiles').forEach(function(file) {
+				arr.push(path+'/'+type+'/'+file)
+			})
+			return arr;
 		}
 	}
 }

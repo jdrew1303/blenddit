@@ -1,8 +1,10 @@
 {	
-	"production" : false,
+	"debug" : true,
 	"port":"8080",
 	"available" : {
-		"home" : "/home",
+		"home" : "/whome",
 		"book" : "/book"
-	}
+	},
+	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js"],
+	"cssFiles" : ["app.css","bootstrap.min.css","ir_black.css"]
 }
