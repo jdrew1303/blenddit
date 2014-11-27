@@ -1,0 +1,5 @@
+[
+	{"team":"SEA","color":"sea-green","subreddit":"/r/Seahawks"},
+	{"team":"SF", "color":"sf-red","subreddit":"/r/49ers"},
+	{"team":"ARI", "color":"ari-red","subreddit":"/r/AZcardinals"}
+]

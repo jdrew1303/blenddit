@@ -1,4 +1,105 @@
+/*-begin team styles-*/
+.sea-green { color: #4EAE47 !important;}
+.sf-red { color: #AF1E2C !important;}
+.ari-red { color: #870619 !important;}
+.aSeahawks, .aAZCardinals, .a49ers { position:relative;}
+.aSeahawks:after {
+  background: url("/static-assets/imgs/sea.svg");
+  background-position: 100% -30px;
+  background-repeat: no-repeat;
+  background-color: #4EAE47; 
+  opacity: 0.1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+  content: "";
+}
+.aAZCardinals:after {
+  background: url("/static-assets/imgs/az.svg");
+  background-position: 100% -60px;
+  background-repeat: no-repeat;
+  background-color: #870619; 
+  opacity: 0.1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+  content: "";
+}
+.a49ers:after {
+  background: url("/static-assets/imgs/sf.svg");
+  background-position: 100% -60px;
+  background-repeat: no-repeat;
+  background-color: #AF1E2C; 
+  opacity: 0.1;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  z-index: -1;
+  content: "";
+}
+/*-end team styles-*/
+.stats {font-size: 10px;}
+.fa-caret-down {
+  position: absolute;
+  padding: 10px 25px;
+  height: 1.75rem;
+  right:0;
+}
+.styled-select-2 select:focus {
+  outline: 0;
+}
+.styled-select select, .styled-select-2 select {
+  background: transparent;
+  width: 100%;
+  padding: 5px 25px 5px 5px;
+  font-size: 16px;
+  line-height: 1;
+  border: 0;
+  border-radius: 0;
+  height: 34px;
+  -webkit-appearance: none;
+}
+.styled-select, .styled-select-2 {
+  width: 100%; 
+  height: 34px;
+  overflow: hidden;
+  background: url(new_arrow.png) no-repeat right inherit;
+}
+.styled-select {
+  border: 1px solid #2a9fd6;
+}
+.parent {
+  padding: 0 5px 5px 0;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.media {
+  padding: 0 5px 5px 0;
+  border-radius: 3px;
+  border: 1px solid rgba(255,255,255,.25);
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -webkit-transition: opacity .5s ease-in-out;
+}
+.tab-pane {padding-bottom:5px;}
 .blue-dotted { border: 1px dotted #2a9fd6 !important;}
+.team-list {
+    vertical-align: top;
+    display: inline-block;
+    float:none;
+}
+.faded { opacity: 1; }
+.hide { display: hide;}
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
