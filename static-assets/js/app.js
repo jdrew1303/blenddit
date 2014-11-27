@@ -60,7 +60,8 @@ if (!window.jQuery === 'undefined') {
 						getPosts(this.value, '', "team2", setThreads);
 					}
 				});
-				$('#refresh').unbind('click').click(function() { $('#threads-1').trigger('change');})
+				appendRefreshOptions();
+				$('#refresh').unbind('change').change(function() { $('#threads-1').trigger('change');})
 				$('#hide-control').unbind('click').click(function() {
 					$('#subreddit-title, #threads').toggleClass('hide');
 					if ($('#threads').hasClass('hide')) {
@@ -71,6 +72,14 @@ if (!window.jQuery === 'undefined') {
 						$('#hidecon').removeClass('fa-plus').addClass('fa-times');
 					}
 				})
+			}
+		}
+		function appendRefreshOptions() {
+			var select = document.getElementById('refresh');
+			for (var i = 1; i <= 100; i++) { 
+				var option = document.createElement("option");
+				if (i==60) option.setAttribute('selected',true);
+				option.value=i; option.text = i+' seconds'; select.add(option);
 			}
 		}
 		/* populate the thread drop downs with team posts to select from. Get the comments from the thread selected */
