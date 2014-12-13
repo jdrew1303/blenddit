@@ -1,132 +1,54 @@
 /*-begin team styles-*/
-@font-face {
-  font-family: 'icomoon';
-  src:url('../fonts/icomoon.eot?-j2qj8i');
-  src:url('../fonts/icomoon.eot?#iefix-j2qj8i') format('embedded-opentype'),
-    url('../fonts/icomoon.woff?-j2qj8i') format('woff'),
-    url('../fonts/icomoon.ttf?-j2qj8i') format('truetype'),
-    url('../fonts/icomoon.svg?-j2qj8i#icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
+.icon-49ers, .icon-AZCardinals, .icon-falcons,
+.icon-ravens, .icon-buffalobills, .icon-panthers,
+.icon-CHIBears, .icon-bengals, .icon-Browns,
+.icon-cowboys, .icon-DenverBroncos, .icon-GreenBayPackers,
+.icon-Texans, .icon-Colts, .icon-Jaguars,
+.icon-KansasCityChiefs, .icon-miamidolphins, .icon-minnesotavikings,
+.icon-Patriots, .icon-detroitlions, .icon-Saints,
+.icon-NYGiants, .icon-nyjets, .icon-oaklandraiders,
+.icon-eagles, .icon-steelers, .icon-Chargers,
+.icon-Seahawks, .icon-StLouisRams, .icon-buccaneers,
+.icon-Tennesseetitans, .icon-Redskins {
+  background-image: url("../imgs/teamlogos.jpg");
+  width: 49px;
+  height: 58px;
 }
-
-[class^="icon-"], [class*=" icon-"] {
-  font-family: 'icomoon';
-  font-size: 25px !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.icon-49ers:before {
-  content: "\e600";
-}
-.icon-azcardinals:before, .icon-AZCardinals:before {
-  content: "\e601";
-}
-.icon-falcons:before {
-  content: "\e602";
-}
-.icon-ravens:before {
-  content: "\e603";
-}
-.icon-buffalobills:before {
-  content: "\e604";
-}
-.icon-panthers:before {
-  content: "\e605";
-}
-.icon-CHIBears:before {
-  content: "\e606";
-}
-.icon-bengals:before {
-  content: "\e607";
-}
-.icon-Browns:before {
-  content: "\e608";
-}
-.icon-cowboys:before {
-  content: "\e609";
-}
-.icon-denverbroncos:before, .icon-DenverBroncos:before {
-  content: "\e60a";
-}
-.icon-GreenBayPackers:before {
-  content: "\e60b";
-}
-.icon-texans:before, .icon-Texans:before {
-  content: "\e60c";
-}
-.icon-Colts:before {
-  content: "\e60d";
-}
-.icon-Jaguars:before {
-  content: "\e60e";
-}
-.icon-KansasCityChiefs:before {
-  content: "\e60f";
-}
-.icon-miamidolphins:before {
-  content: "\e610";
-}
-.icon-minnesotavikings:before {
-  content: "\e611";
-}
-.icon-nfl:before {
-  content: "\e612";
-}
-.icon-patriots:before, .icon-Patriots:before {
-  content: "\e613";
-}
-.icon-detroitlions:before {
-  content: "\e614";
-}
-.icon-Saints:before {
-  content: "\e615";
-}
-.icon-NYGiants:before {
-  content: "\e616";
-}
-.icon-nyjets:before {
-  content: "\e617";
-}
-.icon-oaklandraiders:before {
-  content: "\e618";
-}
-.icon-eagles:before {
-  content: "\e619";
-}
-.icon-steelers:before {
-  content: "\e61a";
-}
-.icon-chargers:before, .icon-Chargers:before {
-  content: "\e61b";
-}
-.icon-seahawks:before, .icon-Seahawks:before {
-  content: "\e61c";
-}
-.icon-StLouisRams:before {
-  content: "\e61d";
-}
-.icon-buccaneers:before {
-  content: "\e61e";
-}
-.icon-Tennesseetitans:before {
-  content: "\e61f";
-}
-.icon-Redskins:before {
-  content: "\e620";
-}
+.icon-49ers {background-position: -365px -65px;}
+.icon-AZCardinals {background-position: -365px -5px;}
+.icon-falcons {background-position: -313px -5px;}
+.icon-ravens {background-position: -58px -5px;}
+.icon-buffalobills { background-position: -7px -5px;}
+.icon-panthers {background-position: -313px -65px;}
+.icon-CHIBears {background-position: -264px -5px;}
+.icon-bengals {background-position: -58px -65px;}
+.icon-Browns {background-position: -58px -124px;}
+.icon-cowboys {background-position: -212px -5px;}
+.icon-DenverBroncos {background-position: -160px -5px;}
+.icon-GreenBayPackers {background-position: -264px -124px;}
+.icon-Texans {background-position: -110px -5px;}
+.icon-Colts {background-position: -110px -65px;}
+.icon-Jaguars {background-position: -110px -124px;}
+.icon-KansasCityChiefs {background-position: -160px -65px;}
+.icon-miamidolphins { background-position: -7px -65px;}
+.icon-minnesotavikings {background-position: -264px -184px;}
+.icon-Patriots {background-position: -7px -124px;}
+.icon-detroitlions {background-position: -264px -65px;}
+.icon-Saints {background-position: -313px -124px;}
+.icon-NYGiants {background-position: -212px -65px;}
+.icon-nyjets {background-position: -7px -184px;}
+.icon-oaklandraiders {background-position: -160px -124px;}
+.icon-eagles {background-position: -212px -124px;}
+.icon-steelers {background-position: -58px -184px;}
+.icon-Chargers {background-position: -160px -184px;}
+.icon-Seahawks {background-position: -365px -124px;}
+.icon-StLouisRams {background-position: -365px -184px;}
+.icon-buccaneers {background-position: -313px -184px;}
+.icon-Tennesseetitans {background-position: -110px -184px;}
+.icon-Redskins {background-position: -212px -184px;}
 /*-end team styles-*/
+.thumb {margin: 5px 5px 0 5px !important;}
 .stats {font-size: 10px;}
-.thumb {padding: 5px 0 0 5px;}
 .fa-caret-down {
   position: absolute;
   padding: 10px 25px;

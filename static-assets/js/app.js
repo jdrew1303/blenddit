@@ -121,7 +121,7 @@ if (!window.jQuery === 'undefined') {
 		    			: "<div>load more comments</div>"+text;
 		    		body = "<div style='padding-top:5px;' class='media-body'>"+heading+"</div>",
 		    		thumbnail = comment.kind!='more'
-		    			? "<span class='thumb pull-left "+getIcon(comment.data.subreddit)+"'></span>"
+		    			? "<div class='thumb pull-left "+getIcon(comment.data.subreddit)+"'></div>"
 		    			: "<a style='padding: 5px 0 0 5px;'class='pull-left' href='#'><i class='fa fa-download'></i></a>",
 		    		media = "<div id='"+comment.data.name+"' class='"+teamNum+" media parent "+comment.data.subreddit+"'>"+thumbnail+body+"</div>"
 		        $('#merger').append(media);
@@ -144,7 +144,7 @@ if (!window.jQuery === 'undefined') {
 		    			: "<div class='loadReplies' id='"+reply.data.id+"' data-name='"+reply.data.name+"' data-team='"+teamNum+"' data-parent='"+reply.data.parent_id+"'>load "+reply.data.count+" replies</div><p></p>";
 		    		body = "<div style='padding-top:5px;' class='media-body'>"+heading+"</div>",
 		    		thumbnail = reply.kind!='more'
-		    			? "<span class='thumb pull-left "+getIcon(reply.data.subreddit)+"'></span>"
+		    			? "<div class='thumb pull-left "+getIcon(reply.data.subreddit)+"'></div>"
 		    			: "<a style='padding: 5px 0 0 5px;'class='pull-left' href='#'><i class='fa fa-download'></i></a>",
 		    		media = "<div id='"+reply.data.name+"' class='"+teamNum+" media hide'>"+thumbnail+body+"</div>";
 		    	htmlString += media;

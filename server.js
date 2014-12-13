@@ -24,7 +24,7 @@ app.set('view engine', 'handlebars');
 app.use(pjax());
 app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/'));
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
-app.use("/static-assets/fonts/", express.static(__dirname + '/static-assets/fonts/'));
+app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/'));
 kutil.compressAssets(__dirname+'/static-assets');
 /* 
 	Instantiate routes ware with airity 4 
