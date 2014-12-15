@@ -1,6 +1,5 @@
 /* TODO
-	- 'load more comments' needs to behave similarly to .loadReplies
-		* Should I automatically load more comments? <- Sorting bug because of this
+	- loadReplies not working for particular comments.
 	- Remove makeDelay, just make .media elements fade in all at once
 	- fix error on permalink for .both | use data
 	- Create error message for 404 get requests to reddit 
