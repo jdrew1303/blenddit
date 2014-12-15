@@ -1,8 +1,9 @@
-// routes.navigation.js
+// routes.js
 module.exports = function(app, globalware, elseware, kutil) {
 	var gware = globalware, mware = elseware,
 	    all = gware.methods.concat(kutil.getMethods(mware)),
-	    fs = require('fs');
+	    fs = require('fs'),
+	    services = require('../app_middleware/services.ware');
 
 	app.get('/:var(home|index)?',gware.visitor, function(req, res){
 		res.renderPjax('index', {
@@ -27,4 +28,9 @@ module.exports = function(app, globalware, elseware, kutil) {
 		  res.renderPjax('lists', json);	
 		});
 	});
+
+	app.get('/tweet', function(req, res) {
+		services.getTweets(req, function(){})
+	});
+
 }

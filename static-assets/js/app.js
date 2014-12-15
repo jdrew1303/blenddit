@@ -1,3 +1,24 @@
+/* TODO
+	- 'load more comments' needs to behave similarly to .loadReplies
+		* Should I automatically load more comments? <- Sorting bug because of this
+	- Remove makeDelay, just make .media elements fade in all at once
+	- fix error on permalink for .both | use data
+	- Create error message for 404 get requests to reddit 
+	- Link to parent reddit thread?
+	- Twitter as a form of source content. (smashing node)
+	- Migrate all client-side fetching of content (reddit/twitter) to server side: 
+		- Use techniques from smashing node (http/querystring) to build structured html objects
+		  for handlebars to template out. (Removes all logic from app.js)
+	- modal control panel instead of footer controls (implement wizard?)
+		- fields:
+			Content Source: NFL, NHL, etc.
+				subreddit-1 or custom input 
+				subreddit-2 or custom input
+			Refresh Rate: 30, 35, 40 seconds (count down timer)
+			Sort by: New, best, etc. 
+	FUTURE EXPANSION
+	- diferrent sports? NBA, CFB, NHL?
+*/
 if (!window.jQuery === 'undefined') {
 	throw new Error('app.js requires jQuery');
 } else {
@@ -192,19 +213,18 @@ if (!window.jQuery === 'undefined') {
 			if (data1.length==0 && data2.length>0) { returnData = data2;
 			} else if (data2.length==0 && data1.length>0) { returnData = data1;
 			} else {
-				// Merge all children from data2 into data1
-				for (var i = 0, len = data2[1].data.children.length; i < len; i++) {
-					data1[1].data.children = data1[1].data.children.concat(
-						data2[1].data.children[i]
-					)
-				}
-				// Sort the post children by time created
-				data1[1].data.children.sort(function(a,b) {
-					if (a.data.created_utc < b.data.created_utc) return 1
-					if (a.data.created_utc > b.data.created_utc) return -1
-					return 0
-				})
-				returnData = data1;
+				var children = data1[1].data.children
+					.concat(data2[1].data.children) // Merge all children from data2 into data1
+					.filter(function(x){ if (x.kind != 'more') return x }) // remove 'more comments' from parent
+					.sort(function(a,b){ // sort array by time created
+						if (a.kind != 'more' && b.kind == 'more') return 1
+						if (a.kind == 'more' && b.kind != 'more') return -1
+						if (a.data.created_utc < b.data.created_utc) return 1
+						if (a.data.created_utc > b.data.created_utc) return -1
+						return 0	
+					})
+				data1[1].data.children = children
+				returnData = data1
 			}
 			return returnData;
 		}
