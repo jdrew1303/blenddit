@@ -165,7 +165,7 @@ if (!window.jQuery === 'undefined') {
 		    			: "<div class='loadReplies' id='"+reply.data.id+"' data-name='"+reply.data.name+"' data-team='"+teamNum+"' data-parent='"+reply.data.parent_id+"'>load "+reply.data.count+" replies</div><p></p>";
 		    		body = "<div style='padding-top:5px;' class='media-body'>"+heading+"</div>",
 		    		thumbnail = reply.kind!='more'
-		    			? "<div class='thumb pull-left "+getIcon(reply.data.subreddit)+"'></div>"
+		    			? "<div class='thumb pull-left'></div>"
 		    			: "<a style='padding: 5px 0 0 5px;'class='pull-left' href='#'><i class='fa fa-download'></i></a>",
 		    		media = "<div id='"+reply.data.name+"' class='"+teamNum+" media hide'>"+thumbnail+body+"</div>";
 		    	htmlString += media;
