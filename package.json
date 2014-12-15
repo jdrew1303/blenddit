@@ -9,6 +9,7 @@
     "colors": "*",
     "express-pjax": "*",
     "nconf": "*",
-    "node-minify" : "*"
+    "node-minify" : "*",
+    "oauth" : "*"
   }
 }
