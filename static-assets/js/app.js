@@ -82,15 +82,8 @@ if (!window.jQuery === 'undefined') {
 				});
 				appendRefreshOptions();
 				$('#refresh').unbind('change').change(function() { $('#threads-1').trigger('change');})
-				$('#hide-control').unbind('click').click(function() {
-					$('#subreddit-title, #threads').toggleClass('hide');
-					if ($('#threads').hasClass('hide')) {
-						$('#hide-control-text').text('show');
-						$('#hidecon').removeClass('fa-times').addClass('fa-plus')
-					} else { 
-						$('#hide-control-text').text('hide');
-						$('#hidecon').removeClass('fa-plus').addClass('fa-times');
-					}
+				$('.open-controls').unbind('click').click(function() {
+					$('#controlModal').modal();
 				})
 				$(window).unbind('resize.arrivalMsg').bind('resize.arrivalMsg', function() {
 					$('.block').height(window.innerHeight/2+100)
