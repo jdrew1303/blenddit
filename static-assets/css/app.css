@@ -48,9 +48,10 @@
 .icon-Redskins {background-position: -212px -184px;}
 /*-end team styles-*/
 .thumb {margin: 5px 5px 0 5px !important;}
-.block {
-  text-align: center;
-  z-index: -1;
+#refreshNumber {
+  display: inline;
+  position: absolute;
+  bottom: -3px;
 }
 .Center-Container {
   position: relative;
