@@ -92,6 +92,10 @@ if (!window.jQuery === 'undefined') {
 						$('#hidecon').removeClass('fa-plus').addClass('fa-times');
 					}
 				})
+				$(window).unbind('resize.arrivalMsg').bind('resize.arrivalMsg', function() {
+					$('.block').height(window.innerHeight/2+100)
+				})
+				$(window).trigger('resize.arrivalMsg');
 			}
 		}
 		function appendRefreshOptions() {
