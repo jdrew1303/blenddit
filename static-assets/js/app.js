@@ -82,13 +82,7 @@ if (!window.jQuery === 'undefined') {
 				});
 				appendRefreshOptions();
 				$('#refresh').unbind('change').change(function() { $('#threads-1').trigger('change');})
-				$('.open-controls').unbind('click').click(function() {
-					$('#controlModal').modal();
-				})
-				$(window).unbind('resize.arrivalMsg').bind('resize.arrivalMsg', function() {
-					$('.block').height(window.innerHeight/2+100)
-				})
-				$(window).trigger('resize.arrivalMsg');
+				$('.open-controls').unbind('click').click(function() {$('#controlModal').modal();})
 			}
 		}
 		function appendRefreshOptions() {
