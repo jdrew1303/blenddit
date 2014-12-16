@@ -53,6 +53,12 @@
   position: absolute;
   bottom: -3px;
 }
+#controlPanel { 
+  position: absolute;
+  right: 0;
+  padding-right: 15px;
+  top: -8px;
+}
 .Center-Container {
   position: relative;
 }
