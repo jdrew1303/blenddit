@@ -22,7 +22,7 @@ if (!window.jQuery === 'undefined') {
 	throw new Error('app.js requires jQuery');
 } else {
 	var app = (function($) {
-		var refresh,
+		var refresh, countdown, refreshSwitch = true,
 			dataResponse;
 		function pjx() {
 			$(document).pjax('a[data-pjax]', '#pjax-container')
@@ -81,8 +81,20 @@ if (!window.jQuery === 'undefined') {
 					}
 				});
 				appendRefreshOptions();
-				$('#refresh').unbind('change').change(function() { $('#threads-1').trigger('change');})
+				$('#refresh').unbind('change').change(function() { $('#threads-1').trigger('change'); $('#refreshNumber').text($('#refresh').val())})
 				$('.open-controls').unbind('click').click(function() {$('#controlModal').modal();})
+				$('.refreshSwitch').unbind('click').click(function() { 
+					if ($(this).hasClass('fa-toggle-on')) { 
+						$('.refreshSwitch').removeClass('fa-toggle-on'); $('.refreshSwitch').addClass('fa-toggle-off');
+						clearTimeout(refresh);
+						refreshSwitch = false;
+						$('#refreshNumber').text($('#refresh').val())
+					} else {
+						$('.refreshSwitch').removeClass('fa-toggle-off'); $('.refreshSwitch').addClass('fa-toggle-on');
+						clearTimeout(refresh); refreshSwitch = true;
+						$('#threads-1').trigger('change');
+					}
+				})
 			}
 		}
 		function appendRefreshOptions() {
@@ -105,10 +117,10 @@ if (!window.jQuery === 'undefined') {
 					var team = this.id==="threads-1"?"team1":"team2", path = this.value;
 					getPosts(path, 'sort=new&', team, displayComments)
 					clearTimeout(refresh);
-					refresh = refreshThreads($select);
+					if (refreshSwitch) refresh = refreshThreads($select);
 				} else {
 					clearTimeout(refresh);
-					refresh = refreshThreads($select);
+					if (refreshSwitch) refresh = refreshThreads($select);
 					getPostsFromActiveThreads()
 				}
 			})
@@ -140,7 +152,7 @@ if (!window.jQuery === 'undefined') {
 			$('.md a').attr('target','_blank');
 			bindPostProcessComments();
 			bindShowReply();
-			makeDelay('.media',10);
+			setTimeout(function() { $('.media').addClass('faded');}, 1000);
 		}
 		function getReplies(repliesArray, teamNum) {
 			repliesArray = repliesArray || []; var htmlString = '';
@@ -176,7 +188,7 @@ if (!window.jQuery === 'undefined') {
 					$('#'+parent).replaceWith(htmlString);
 					if ($('#'+parent).parent().attr('id')=='merger' && !$('#'+parent).hasClass('parent')) {$('#'+parent).addClass('parent')}
 					$('.media:not(.faded)').find('.md a').attr('target','_blank');
-					makeDelay('.media:not(.faded)',10)
+					setTimeout(function() { $('.media:not(.faded)').addClass('faded');}, 1000);
 				})
 			});
 		}
@@ -218,21 +230,16 @@ if (!window.jQuery === 'undefined') {
 			}
 			return returnData;
 		}
-		function getPosts(path, sort, teamNum, callback){  
+		function getPosts(path, sort, teamNum, callback){
+			if (!($('#refreshSpinner').length>0)) {$('#refreshNumber').text('').append("<span class='fa fa-refresh fa-spin'></span>");}
 			$.getJSON("http://www.reddit.com"+path+"/.json?"+sort+"jsonp=?", function(data) {
 			    callback(data, teamNum)
 			})
-			.fail(function() {
-				console.log('error retrieving - '+path+' json'); callback([], teamNum)
+			.fail(function() {console.log('error retrieving - '+path+' json'); callback([], teamNum)})
+			.done(function() {
+				$('#refreshNumber .fa-spin').remove()
+				$('#refreshNumber').text($('#refresh').val());
 			})
-		}
-		function makeDelay(selector, time) {
-			var delay = time || 0; // milliseconds
-		    $(selector).each(function(index, domItem) {
-		    	setTimeout(function(){
-		    		$(domItem).addClass('faded')
-		    	}, delay); delay+=time;
-		    });
 		}
 		return {
 			init : function() {
