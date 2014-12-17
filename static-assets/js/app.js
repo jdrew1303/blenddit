@@ -92,7 +92,8 @@ if (!window.jQuery === 'undefined') {
 					} else {
 						$('.refreshSwitch').removeClass('fa-toggle-off'); $('.refreshSwitch').addClass('fa-toggle-on');
 						clearTimeout(refresh); refreshSwitch = true;
-						$('#threads-1').trigger('change');
+						$('#threads-1').val()!=null 
+							? $('#threads-1').trigger('change') : $('#threads-2').trigger('change');
 					}
 				})
 			}
@@ -114,7 +115,7 @@ if (!window.jQuery === 'undefined') {
 			})
 			$select.unbind('change').change(function() {
 				if ($('#threads-1').val()==null || $('#threads-2').val()==null) {
-					var team = this.id==="threads-1"?"team1":"team2", path = this.value;
+					var team = this.id==="threads-1" ? "team1":"team2", path = this.value;
 					getPosts(path, 'sort=new&', team, displayComments)
 					clearTimeout(refresh);
 					if (refreshSwitch) refresh = refreshThreads($select);
