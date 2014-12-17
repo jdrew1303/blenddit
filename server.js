@@ -18,14 +18,16 @@ nconf.add('package',{type: 'file', file:'package.json'})
 kutil.configure(nconf);
 app = express()
 hbs = exphbs.create({ /* config */ })
+kutil.compressAssets(__dirname+'/static-assets');
+app.use(express.compress());
 app.locals={ debug : nconf.get('debug')};
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(pjax());
-app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/'));
-app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/'));
-app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/'));
-kutil.compressAssets(__dirname+'/static-assets');
+app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/',{maxAge:31536000000}));
+app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/',{maxAge:31536000000}));
+app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/',{maxAge:31536000000}));
+
 /* 
 	Instantiate routes ware with airity 4 
 	@params p0,p1,[p2],p3 -> application, global middleware, [moduleWare0,moduleWare1,..,n], utility ware
