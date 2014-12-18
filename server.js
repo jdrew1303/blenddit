@@ -20,7 +20,7 @@ app = express()
 hbs = exphbs.create({ /* config */ })
 kutil.compressAssets(__dirname+'/static-assets');
 app.use(express.compress());
-app.locals={ debug : nconf.get('debug')};
+app.locals={ debug : nconf.get('debug'), version : new Date().getTime()};
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(pjax());
