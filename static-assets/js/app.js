@@ -138,8 +138,8 @@ if (!window.jQuery === 'undefined') {
 			data[1].data.children.forEach(function(comment,i) {
 				var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') ? comment.data.replies.data.children:[], replyLength = replies.length,
 					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var stats = comment.kind!='more' ? "<p class='stats'>"+getTimeElapsed(comment.data.created_utc)+"  |  <a href='"+getPermalink(teamNum, comment.data.id)+"' target='_blank'>permalink</a></p>" : "",
-					text = $("<div/>").html(comment.data.body_html).text()+stats+getReplies(replies, teamNum),
+				var footer = comment.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(comment.data.created_utc)+"</div><div class='links-container'><i class='fa fa-reply fa-lg'></i><i class='fa fa-link fa-lg'></i><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
+					text = $("<div/>").html(comment.data.body_html).text()+footer+getReplies(replies, teamNum),
 		    		heading = comment.kind!='more' 
 		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>  |  "+comment.data.score+"  |  <a data-name='"+comment.data.name+"' class='"+teamNum+" reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
 		    			: "<div>load more comments</div>"+text;
@@ -161,8 +161,8 @@ if (!window.jQuery === 'undefined') {
 				var replies = reply.kind!='more'&&reply.data.replies.hasOwnProperty('data')
 						? reply.data.replies.data.children:[], replyLength = replies.length,
 					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var stats = reply.kind!='more' ? "<p class='stats'>"+getTimeElapsed(reply.data.created_utc)+"  |  <a href='"+getPermalink(teamNum, reply.data.id)+"' target='_blank'>permalink</a></p>" : "",
-					text = $("<div/>").html(reply.data.body_html).text()+stats+getReplies(replies, teamNum),
+				var footer = reply.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(reply.data.created_utc)+"</div>	<div class='links-container'><i class='fa fa-reply fa-lg'></i><i class='fa fa-link fa-lg'></i><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
+					text = $("<div/>").html(reply.data.body_html).text()+footer+getReplies(replies, teamNum),
 		    		heading = reply.kind!='more'
 		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+reply.data.author+"' target='_blank'>"+reply.data.author+"</a>  |  "+reply.data.score+"  |  <a data-name='"+reply.data.name+"' class='reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
 		    			: "<div class='loadReplies' id='"+reply.data.id+"' data-name='"+reply.data.name+"' data-team='"+teamNum+"' data-parent='"+reply.data.parent_id+"'>load "+reply.data.count+" replies</div><p></p>";
@@ -199,7 +199,27 @@ if (!window.jQuery === 'undefined') {
 		}
 		function getTimeElapsed(then) {
 			var date = new Date(then*1000);
-			return date.toLocaleDateString()+" at "+date.toLocaleTimeString();
+			// Set the unit values in milliseconds.
+			var msecPerMinute = 1000 * 60, msecPerHour = msecPerMinute * 60, msecPerDay = msecPerHour * 24;
+			var now = new Date();
+			var nowMsec = now.getTime();			
+			var interval = nowMsec - date.getTime();
+			var days = Math.floor(interval / msecPerDay );
+			interval = interval - (days * msecPerDay );
+			var hours = Math.floor(interval / msecPerHour );
+			interval = interval - (hours * msecPerHour );
+			var minutes = Math.floor(interval / msecPerMinute );
+			interval = interval - (minutes * msecPerMinute );
+			var seconds = Math.floor(interval / 1000 );
+			if (!days==0) {
+				return days+'d'
+			} else if (days==0&&!hours==0) {
+				return hours+'h'
+			} else if (days==0&&hours==0&&!minutes==0) {
+				return minutes+'m'
+			} else if (days==0&&hours==0&&minutes==0&&!seconds==0){
+				return seconds+'s'
+			} else { return date.toLocalTimeString(); }
 		}
 		function getPostsFromActiveThreads() {
 			getPosts($('#threads-1').val(), 'sort=new&', "team1", function(data1, team1) {
