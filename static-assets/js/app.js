@@ -138,7 +138,7 @@ if (!window.jQuery === 'undefined') {
 			data[1].data.children.forEach(function(comment,i) {
 				var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') ? comment.data.replies.data.children:[], replyLength = replies.length,
 					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var footer = comment.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(comment.data.created_utc)+"</div><div class='links-container'><i class='fa fa-reply fa-lg'></i><i class='fa fa-link fa-lg'></i><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
+				var footer = comment.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(comment.data.created_utc)+"</div><div class='links-container'><i class='fa fa-reply fa-lg'></i><a href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
 					text = $("<div/>").html(comment.data.body_html).text()+footer+getReplies(replies, teamNum),
 		    		heading = comment.kind!='more' 
 		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>  |  "+comment.data.score+"  |  <a data-name='"+comment.data.name+"' class='"+teamNum+" reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
@@ -161,7 +161,7 @@ if (!window.jQuery === 'undefined') {
 				var replies = reply.kind!='more'&&reply.data.replies.hasOwnProperty('data')
 						? reply.data.replies.data.children:[], replyLength = replies.length,
 					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var footer = reply.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(reply.data.created_utc)+"</div>	<div class='links-container'><i class='fa fa-reply fa-lg'></i><i class='fa fa-link fa-lg'></i><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
+				var footer = reply.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(reply.data.created_utc)+"</div>	<div class='links-container'><i class='fa fa-reply fa-lg'></i><a href='"+getPermalink(reply.data.link_id,reply.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
 					text = $("<div/>").html(reply.data.body_html).text()+footer+getReplies(replies, teamNum),
 		    		heading = reply.kind!='more'
 		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+reply.data.author+"' target='_blank'>"+reply.data.author+"</a>  |  "+reply.data.score+"  |  <a data-name='"+reply.data.name+"' class='reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
@@ -193,9 +193,9 @@ if (!window.jQuery === 'undefined') {
 				})
 			});
 		}
-		function getPermalink(teamNum, id) { // bug here replated to teamNum coming in as 'both' instead of team1 or team2
-			var $select = teamNum==="team1" ? $('#threads-1') : $('#threads-2')
-			return "http://www.reddit.com/"+$select.val()+id
+		function getPermalink(link_id, id) {
+			// permalink = http://www.reddit.com/comments/<link_id>1p3qau/_/<id>ccz05xk
+			return "http://www.reddit.com/comments/"+link_id.substr(3)+"/_/"+id
 		}
 		function getTimeElapsed(then) {
 			var date = new Date(then*1000);
