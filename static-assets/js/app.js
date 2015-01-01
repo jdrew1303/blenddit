@@ -81,16 +81,7 @@ if (!window.jQuery === 'undefined') {
 					launchControls();
 				}
 				contentResizeEvent();
-				preventBounce();
 			}
-		}
-		function preventBounce(){ 
-			$('.item').unbind('touchmove').bind('touchmove', function(e){
-				e.stopPropagation();
-			})
-			$(document).unbind('touchmove').bind('touchmove', function(e){
-				e.preventDefault();
-			})
 		}
 		function contentResizeEvent() {
 			app.height = window.innerHeight;
