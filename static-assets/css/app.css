@@ -360,6 +360,12 @@
 .frame-overlay {
   background: #000;
 }
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  select:focus, textarea:focus, input:focus {
+    font-size: 16px;
+    background: #eee;
+  }  
+}
 @media (min-width: 0px) and (max-width: 640px) {
   .frame-position {
     display:block;
