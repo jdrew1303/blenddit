@@ -73,8 +73,6 @@ if (!window.jQuery === 'undefined') {
 					buildConfigurationPanel();
 					buildConfigToUI(); 
 				})
-				app.height = window.innerHeight;
-				contentResizeEvent();
 				if (config.length > 0) {
 					$('#greeting').hide();
 					buildConfigurationPanel();
@@ -82,12 +80,16 @@ if (!window.jQuery === 'undefined') {
 				} else {
 					launchControls();
 				}
+				contentResizeEvent();
 			}
 		}
 		function contentResizeEvent() {
+			app.height = window.innerHeight;
+			$('.frame-content, .edit-form').css('height', window.innerHeight-107);
 			$(window).unbind('resize').bind('resize', function(){
 				if (app.height != window.innerHeight) {
 					$('.frame-content, .edit-form').css('height', window.innerHeight-107);
+					app.height = window.innerHeight;
 					// $('.edit-form').css('height', window.innerHeight-132)
 				}
 			});
@@ -195,7 +197,7 @@ if (!window.jQuery === 'undefined') {
 				getCommentsForColumn(configObj, num)
 				toggleRefresh(num)
 			}
-			$(window).trigger('resize');
+			contentResizeEvent();
 			fadeIn(".frame-position[data-column="+num+"]", 100);
 		}
 		function deleteRefresh(columnNum) {
