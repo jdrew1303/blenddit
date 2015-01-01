@@ -73,6 +73,7 @@ if (!window.jQuery === 'undefined') {
 					buildConfigurationPanel();
 					buildConfigToUI(); 
 				})
+				app.height = window.innerHeight;
 				contentResizeEvent();
 				if (config.length > 0) {
 					$('#greeting').hide();
@@ -85,8 +86,10 @@ if (!window.jQuery === 'undefined') {
 		}
 		function contentResizeEvent() {
 			$(window).unbind('resize').bind('resize', function(){
-				$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-				// $('.edit-form').css('height', window.innerHeight-132)
+				if (app.height != window.innerHeight) {
+					$('.frame-content, .edit-form').css('height', window.innerHeight-107);
+					// $('.edit-form').css('height', window.innerHeight-132)
+				}
 			});
 		}
 		function launchControls() {
