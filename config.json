@@ -1,10 +1,10 @@
 {	
-	"debug" : true,
+	"debug" : false,
 	"port":"8080",
 	"available" : {
 		"home" : "/whome",
 		"book" : "/book"
 	},
 	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js","ga.js"],
-	"cssFiles" : ["app.css","bootstrap.min.css","ir_black.css"]
+	"cssFiles" : ["bootstrap.min.css","ir_black.css"]
 }

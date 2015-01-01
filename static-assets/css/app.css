@@ -219,8 +219,8 @@
 #add-column, #column-settings, #add-thread-button, #add-button { margin-left:5px;}
 .fifty {width:50%; text-align: center;}
 .faded { opacity: 1; }
-.half-fade { opacity: .5}
-.hide { display: hide;}
+.half-fade { opacity: .5;}
+.hide { display: none;}
 #wrapper {
     padding-left: 0;
     -webkit-transition: all 0.5s ease;
@@ -278,7 +278,7 @@
     line-height: 40px;
 }
 
-.sidebar-nav li a {
+.sidebar-nav li a { 
     display: block;
     text-decoration: none;
     color: #999999;

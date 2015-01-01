@@ -66,6 +66,12 @@ KUtil.prototype = {
 		    fileOut: path+'/css/all.css',
 		    callback: function(err, min){ if (err) console.log(err); }
 		});
+		new compress.minify({
+		    type: 'sqwish',
+		    fileIn: [path+'/css/app.css'],
+		    fileOut: path+'/css/theapp.css',
+		    callback: function(err, min){ if (err) console.log(err); }
+		});
 		function assetArray(type,ctx){ 
 			var arr = [];
 			ctx.nconf.get(type=='js'?'jsFiles':'cssFiles').forEach(function(file) {
