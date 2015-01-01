@@ -81,6 +81,9 @@ if (!window.jQuery === 'undefined') {
 					launchControls();
 				}
 				contentResizeEvent();
+				$(document).unbind('touchmove').bind('touchmove', function(e) {
+				    e.preventDefault();
+				 });
 			}
 		}
 		function contentResizeEvent() {
