@@ -6,10 +6,17 @@
   "dependencies": {
     "express": "*",
     "express3-handlebars": "*",
-    "colors": "*",
     "express-pjax": "*",
     "nconf": "*",
     "node-minify" : "*",
-    "oauth" : "*"
+    "oauth" : "*",
+    "passport": "*",
+    "passport-reddit": "*",
+    "body-parser":"*",
+    "express-session":"*",
+    "method-override":"*",
+    "cookie-parser":"*",
+    "morgan":"*",
+    "request":"*"
   }
 }

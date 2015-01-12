@@ -5,6 +5,10 @@
 		"home" : "/whome",
 		"book" : "/book"
 	},
+	"authKeys" : {
+		"REDDIT_CONSUMER_KEY" : "",
+		"REDDIT_CONSUMER_SECRET" : ""
+	},
 	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js","ga.js"],
-	"cssFiles" : ["bootstrap.min.css","ir_black.css"]
+	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]
 }

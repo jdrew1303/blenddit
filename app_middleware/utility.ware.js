@@ -16,15 +16,6 @@ KUtil.prototype = {
 		}
 		return funcs 
 	},
-	unique : function(ip,ips) {
-		var i = 0, n = ips.length;
-		for (;i < n; i++) {
-			if (ip == ips[i]) {
-				return false;
-			}
-		}
-		return true;
-	},
 	serverOut : function() { // pretty server stats
 		date = new Date();
 		c.log('----------------------------');
@@ -64,12 +55,6 @@ KUtil.prototype = {
 		    type: 'sqwish',
 		    fileIn: cssFiles,
 		    fileOut: path+'/css/all.css',
-		    callback: function(err, min){ if (err) console.log(err); }
-		});
-		new compress.minify({
-		    type: 'sqwish',
-		    fileIn: [path+'/css/app.css'],
-		    fileOut: path+'/css/theapp.css',
 		    callback: function(err, min){ if (err) console.log(err); }
 		});
 		function assetArray(type,ctx){ 

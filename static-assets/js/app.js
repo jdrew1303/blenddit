@@ -455,17 +455,17 @@ if (!window.jQuery === 'undefined') {
 			});
 		}
 		function bindPostProcessComments() {
-			$('.loadReplies').unbind('click').click(function() { 
-				var team = $(this).data('team'), parent = $(this).data('parent'),
-					path = team=='team1' ? $('#threads-1').val() : $('#threads-2').val();
-				getPosts(path+parent.substr(3),'',team, function(data, team) {
-					var htmlString = getReplies(data[1].data.children, team)
-					$('#'+parent).replaceWith(htmlString);
-					if ($('#'+parent).parent().attr('id')=='merger' && !$('#'+parent).hasClass('parent')) {$('#'+parent).addClass('parent')}
-					$('.media:not(.faded)').find('.md a').attr('target','_blank');
-					fadeIn('.media:not(.faded)', 1000);
-				})
-			});
+			// $('.loadReplies').unbind('click').click(function() { 
+			// 	var team = $(this).data('team'), parent = $(this).data('parent'),
+			// 		path = team=='team1' ? $('#threads-1').val() : $('#threads-2').val();
+			// 	getPosts(path+parent.substr(3),'',team, function(data, team) {
+			// 		var htmlString = getReplies(data[1].data.children, team)
+			// 		$('#'+parent).replaceWith(htmlString);
+			// 		if ($('#'+parent).parent().attr('id')=='merger' && !$('#'+parent).hasClass('parent')) {$('#'+parent).addClass('parent')}
+			// 		$('.media:not(.faded)').find('.md a').attr('target','_blank');
+			// 		fadeIn('.media:not(.faded)', 1000);
+			// 	})
+			// });
 		}
 		function getPermalink(link_id, id) {
 			// permalink = http://www.reddit.com/comments/<link_id>1p3qau/_/<id>ccz05xk
@@ -497,7 +497,9 @@ if (!window.jQuery === 'undefined') {
 		}
 		function getMergedData(dataArray) {
 			var children = [];
-			dataArray.forEach(function(data, i){ children = children.concat(data[1].data.children)})
+			dataArray.forEach(function(data, i){
+				if (data.length>0) { children = children.concat(data[1].data.children)} 
+			})
 			children = 
 			children.filter(function(x){ if (x.kind != 'more') return x }) // remove 'more comments' from parent
 					.sort(function(a,b){ // sort array by time created
@@ -511,16 +513,23 @@ if (!window.jQuery === 'undefined') {
 			return dataArray[0];
 		}
 		function getPosts(path, sort, limit, obj){
-			$.getJSON("http://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?", function(data) {
-			    obj.callback(data, obj.target)
+			$.ajax({
+				url: "http://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?",
+				dataType: 'json',
+				timeout: 5000
 			})
-			.fail(function() {
-				console.log('error retrieving - '+path+' json'); 
-				obj.callback([], obj.target)
+			.done(function(data, textStatus, jqXHR) {
+				obj.callback(data, obj.target)
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				if (errorThrown=='timeout') { // 504 Gateway Timeout - connection to reddit server error - display to user
+					console.log(textStatus);
+				} else { console.log(errorThrown+': error retrieving - '+path);}
+				hideLoader(obj.target);
 			})
 			.always(function() {
-				if (obj.always) obj.always(obj.target)
-			})
+				if (obj.always) obj.always(obj.target);
+			});
 		}
 		return {
 			init : function() {
