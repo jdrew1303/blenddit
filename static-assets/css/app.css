@@ -51,6 +51,7 @@ html, body {
 .icon-Tennesseetitans {background-position: -110px -184px;}
 .icon-Redskins {background-position: -212px -184px;}
 /*-end team styles-*/
+.md {word-break: break-word;}
 .thumb {margin: 5px 5px 0 5px !important;}
 .comment-footer {
   padding-top: 5px;
