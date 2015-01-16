@@ -8,7 +8,11 @@ module.exports = function(module) {
 		}, 
 		ensureAuthenticated : function(req,res,next) {
 			if (req.isAuthenticated()) { return next(); }
-  			res.redirect('/login');
+  			else if (req.url=='/save-reddit-reply') { 
+  				res.redirect('/reddit-login')
+  			} else {
+  				res.redirect('/'); //res.redirect('/login');
+  			}
 		}
 	};
 }

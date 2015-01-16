@@ -64,7 +64,6 @@ if (!window.jQuery === 'undefined') {
 			if ($('#merger').length>0) {
 				$('.teams').show(); $('.social').hide(); $('.navbar-fixed-top').hide();
 				$('.navbar-brand > .text-warning').text('thread merger')
-				// $('#refresh').unbind('change').change(function() { $('#threads-1').trigger('change'); $('#refreshNumber').text($('#refresh').val())})
 				$('.open-controls').unbind('click').click(function() {launchControls();})
 				$('#delete-column').unbind('click').click(function() {
 					deleteRefresh($(this).data('column'))
@@ -74,13 +73,13 @@ if (!window.jQuery === 'undefined') {
 					buildConfigToUI(); 
 				})
 				if (config.length > 0) {
-					$('#greeting').hide();
 					buildConfigurationPanel();
 					buildConfigToUI(); 
 				} else {
 					launchControls();
 				}
 				contentResizeEvent();
+				redditLoginModal();
 			}
 		}
 		function contentResizeEvent() {
@@ -98,7 +97,6 @@ if (!window.jQuery === 'undefined') {
 			vendorGroupDisplay();
 			buildConfigurationPanel();
 			$('#save-changes').unbind('click').bind('click',function() {
-				$('#greeting').hide();
 				setInCache('config', config)
 				buildConfigToUI();
 			});
@@ -129,6 +127,7 @@ if (!window.jQuery === 'undefined') {
 		}
 		function buildConfigToUI() {
 			$('.carousel-inner').children().remove();
+			config.length==0 ? $('#greeting').show() : $('#greeting').hide();
 			for (var i = 0, len = config.length; i < len; i++) {
 				buildColumn(config[i], i)	
 			}
@@ -405,6 +404,42 @@ if (!window.jQuery === 'undefined') {
 		function getIcon(subreddit) {
 			return 'icon-'+subreddit;
 		}
+		function buildReplyForm(thing_id, author) {
+			var buttons = "<div class='reply-buttons'><button class='cancel-reply btn btn-default'>Cancel</button><button type='submit' class='save-reply btn btn-primary'>Save</button></div>",
+				parentInput = "<input type='hidden' name='thing_id' value='"+thing_id+"''>",
+				textarea = "<textarea name='text' class='form-control' placeholder='Reply to "+author+"..'></textarea>",
+				form = "<div class='nopacity hide reply-form'><form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form></div>";
+			return form;
+		}
+		function bindReplySwitch() {
+			$('.reply-switch').unbind('click').click(function() {
+				var $replyForm = $(this).parent().parent().find('.reply-form');
+				if ($replyForm.hasClass('hide')) {
+					$replyForm.removeClass('hide');
+					fadeIn($replyForm, 100);
+				} else {
+					$replyForm.removeClass('faded').addClass('hide');
+				}
+			});
+			$('.save-reply').unbind('click').click(function() { 
+				function done(data, textStatus, jqXHR) {
+					data && data.needsLogin 
+						? $('#login-reddit-modal').modal()
+						: ''; // loadAndInsertComment
+				}
+				var formData = {thing_id: this.form.thing_id.value, text: this.form.text.value};
+				genericPost('/save-reddit-reply', formData, done);
+
+			})
+			$('.cancel-reply').unbind('click').click(function() { 
+				console.log('shut it down!')
+			})
+		}
+		function redditLoginModal() {
+			$('#login-reddit').unbind('click').click(function(){ 
+				window.open('http://127.0.0.1:8080/auth/reddit', '_blank');
+			});
+		}
 		function displayComments(data, columnNum) {
 			$frameContent = $(".frame-content[data-column="+columnNum+"]");
 			$frameContent.children().remove();
@@ -412,7 +447,7 @@ if (!window.jQuery === 'undefined') {
 			data[1].data.children.forEach(function(comment,i) {
 				var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') ? comment.data.replies.data.children:[], replyLength = replies.length,
 					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var footer = comment.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(comment.data.created_utc)+"</div><div class='links-container'><i class='fa fa-reply fa-lg'></i><a href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
+				var footer = comment.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(comment.data.created_utc)+"</div><div class='links-container'><a class='reply-switch'><i class='fa fa-reply fa-lg'></i></a><a href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>"+buildReplyForm(comment.data.name, comment.data.author)+"</footer>" : "",
 					text = $("<div/>").html(comment.data.body_html).text()+footer+getReplies(replies),
 		    		heading = comment.kind!='more' 
 		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>  |  "+comment.data.score+"  |  <a data-name='"+comment.data.name+"' class='reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
@@ -427,7 +462,8 @@ if (!window.jQuery === 'undefined') {
 			fadeIn($frameContent, 1000);
 			$('.md a').attr('target','_blank');
 			bindPostProcessComments();
-			bindShowReply();
+			bindReplySwitch()
+			// bindShowReply();
 		}
 		function getReplies(repliesArray) {
 			repliesArray = repliesArray || []; var htmlString = '';
@@ -435,7 +471,7 @@ if (!window.jQuery === 'undefined') {
 				var replies = reply.kind!='more'&&reply.data.replies.hasOwnProperty('data')
 						? reply.data.replies.data.children:[], replyLength = replies.length,
 					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var footer = reply.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(reply.data.created_utc)+"</div>	<div class='links-container'><i class='fa fa-reply fa-lg'></i><a href='"+getPermalink(reply.data.link_id,reply.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>" : "",
+				var footer = reply.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(reply.data.created_utc)+"</div><div class='links-container'><a class='reply-switch'><i class='fa fa-reply fa-lg'></i></a><a href='"+getPermalink(reply.data.link_id,reply.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>"+buildReplyForm(reply.data.name, reply.data.author)+"</footer>" : "",
 					text = $("<div/>").html(reply.data.body_html).text()+footer+getReplies(replies),
 		    		heading = reply.kind!='more'
 		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+reply.data.author+"' target='_blank'>"+reply.data.author+"</a>  |  "+reply.data.score+"  |  <a data-name='"+reply.data.name+"' class='reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
@@ -444,7 +480,7 @@ if (!window.jQuery === 'undefined') {
 		    		thumbnail = reply.kind!='more'
 		    			? "<div class='thumb pull-left'></div>"
 		    			: "<a style='padding: 5px 0 0 5px;'class='pull-left' href='#'><i class='fa fa-download'></i></a>",
-		    		media = "<div id='"+reply.data.name+"' class='media hide'>"+thumbnail+body+"</div>";
+		    		media = "<div id='"+reply.data.name+"' class='media'>"+thumbnail+body+"</div>";
 		    	htmlString += media;
 			});
 			return htmlString;
@@ -512,11 +548,23 @@ if (!window.jQuery === 'undefined') {
 			dataArray[0][1].data.children = children
 			return dataArray[0];
 		}
+		function genericPost(url, data, done, fail, always) {
+			$.ajax({ url: url, type: 'POST', data: data })
+			.done(function(data, textStatus, jqXHR) {
+				if (done) done(data, textStatus, jqXHR);
+			})
+			.fail(function(jqXHR, textStatus, errorThrown) {
+				if (fail) fail(jqXHR, textStatus, errorThrown);
+			})
+			.always(function() {
+				if (always) always();
+			});
+		}
 		function getPosts(path, sort, limit, obj){
 			$.ajax({
 				url: "http://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?",
 				dataType: 'json',
-				timeout: 5000
+				timeout: 7000
 			})
 			.done(function(data, textStatus, jqXHR) {
 				obj.callback(data, obj.target)

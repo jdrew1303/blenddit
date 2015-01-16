@@ -48,8 +48,13 @@ module.exports = function(app, globalware, elseware, kutil) {
 	    duration: 'permanent'
 	  })(req, res, next);
 	});
+
+	app.get('/reddit-login', function(req, res, next) {
+		res.setHeader('Content-Type', 'application/json');
+		res.send({needsLogin:true});
+	});
 	
-	app.post('/save/reply', gware.ensureAuthenticated, function(req, res){
+	app.post('/save-reddit-reply', gware.ensureAuthenticated, function(req, res){
 	  var options = {
 	    url: 'https://oauth.reddit.com/api/comment',
 	    headers: {

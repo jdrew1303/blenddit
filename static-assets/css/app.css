@@ -52,6 +52,10 @@ html, body {
 .icon-Redskins {background-position: -212px -184px;}
 /*-end team styles-*/
 .md {word-break: break-word;}
+.reply-form {margin-top: 5px;}
+.reply-form textarea { margin-bottom: 5px;}
+.reply-buttons button { margin-left: 5px;}
+.reply-buttons { text-align: right;}
 .thumb {margin: 5px 5px 0 5px !important;}
 .comment-footer {
   padding-top: 5px;
@@ -61,8 +65,9 @@ html, body {
   display: inline;
 }
 .links-container i {
+  color: white;
   opacity: .5;
-  padding-left: 5px;
+  padding-left: 10px;
 }
 .time-container {
   display: inline;
@@ -147,7 +152,7 @@ html, body {
   cursor: pointer;
   margin-right: 5px;
 }
-.fa-close, .reply, .open-controls {
+.fa-close, .reply, .open-controls, .reply-switch {
   cursor: pointer;
 }
 .icon-right {
@@ -365,12 +370,10 @@ html, body {
 .frame-overlay {
   background: #000;
 }
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-  select:focus, textarea:focus, input:focus {
-    font-size: 16px;
-    background: #eee;
-  }  
-}
+select:focus, textarea:focus, input:focus {
+  font-size: 14px;
+  background: #eee;
+}  
 @media (min-width: 0px) and (max-width: 640px) {
   .frame-position {
     display:block;

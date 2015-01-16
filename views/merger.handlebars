@@ -37,7 +37,7 @@
               </div>
               <span id="helpBlock-1" class="help-block">Tap the "Add Thread" button to add a subreddit and associated thread from that subreddit to your column. Tap the right arrow when finished.</span>
               <span id="helpBlock-2" class="help-block hide">Name your column and adjust individual settings including refresh rate, sorting option, and comment limit. Tap "Add" to add your new column to your configuration.</span>
-              <form role='form'>
+              <form role='form' action='javascript:void(0)'>
                 <div class="column-settings form-group hide">
                   <div class="form-group">
                     <label for='column-name'>Column Name</label>
@@ -80,6 +80,7 @@
                     </select>
                   </div>
                 </div>
+                <input id='config' type='submit' class='hide'>
               </form>
             </div>
             <div id='current-config'>
@@ -114,6 +115,22 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button id='delete-column' data-column='' type="button" class="btn btn-primary" data-dismiss="modal">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="login-reddit-modal" tabindex="-1" role="dialog" aria-labelledby="login-reddit-modal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h6 class="modal-title" id="delete-modal">Login Required</h6>
+          </div>
+          <div class="modal-body">
+            <blockquote>
+              <p>You may need to disable any adblock software to continue.</p>
+            </blockquote>
+            <button id='login-reddit' type="button" class="btn btn-primary btn-lg btn-block">Login to Reddit</button>
           </div>
         </div>
       </div>
