@@ -57,20 +57,42 @@ html, body {
 .reply-buttons button { margin-left: 5px;}
 .reply-buttons { text-align: right;}
 .thumb {margin: 5px 5px 0 5px !important;}
-.comment-footer {
-  padding-top: 5px;
-}
-.links-container {
-  padding-left: 5px;
-  display: inline;
-}
-.links-container i {
+.links-container .reply-switch, .links-container .perma, .links-container .refresh-comment, .vote {
   color: white;
   opacity: .5;
-  padding-left: 10px;
 }
-.time-container {
-  display: inline;
+.links-container a:hover, .vote:hover {
+  opacity: 1;
+}
+blockquote {
+  font-size: 12px;
+  margin: 2px;
+}
+.flair {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  top:6px;
+  position: absolute !important;
+  background-color: #545454;
+  text-align: center;
+  font-size: x-small;
+  padding: 0 !important;
+}
+.vote-last { margin-right: 5px; }
+.vote .btn { 
+  padding: 0 2px 0 2px !important;
+  font-size: small;
+}
+.author {font-size: medium;}
+.time-elapsed {
+  padding-left: 0;
+}
+.media-heading {
+  margin: 0;
+}
+.media-heading .btn {
+  padding: 2px 2px 2px 0;
+  color: white;
 }
 #refreshNumber {
   display: inline;
@@ -95,6 +117,10 @@ html, body {
   padding: 10px 25px;
   height: 1.75rem;
   right:0;
+}
+.config-account {
+  color: white;
+  margin: 0;
 }
 .media {
   padding: 5px 5px 5px 0;
@@ -123,9 +149,10 @@ html, body {
   -moz-transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;
 }
-.nopacity {
-  opacity: 0;
-}
+.media-body {padding-top: 5px;}
+.parent .media-body {padding-top: 0;}
+.nopacity { opacity: 0; }
+.white { color: white;}
 #helpBlock {text-align: center;}
 .fa-arrow-circle-left {padding-left: 15px; left:0;}
 .fa-arrow-circle-right {padding-right: 15px; right:0;}
@@ -152,8 +179,11 @@ html, body {
   cursor: pointer;
   margin-right: 5px;
 }
-.fa-close, .reply, .open-controls, .reply-switch {
+.fa-close, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments {
   cursor: pointer;
+}
+.load-comments {
+  padding:5px;
 }
 .icon-right {
   position: absolute;
@@ -215,10 +245,14 @@ html, body {
   color: white;
   border: 1px solid rgba(255,136,0,.2);
 }
+.account {
+  background-color: initial;
+  border: 0;
+}
 #current-config { 
   margin-top:25px;
 }
-#config-row-container {
+.config-row-container {
   margin-left: 0;
   margin-right: 0;
 }
@@ -369,6 +403,10 @@ html, body {
 }
 .frame-overlay {
   background: #000;
+}
+.submitting {
+  padding: 10px;
+  text-align: center;
 }
 select:focus, textarea:focus, input:focus {
   font-size: 14px;

@@ -6,13 +6,11 @@ module.exports = function(app, globalware, elseware, kutil) {
 	    all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/:var(home|index)?', function(req, res){
-		res.renderPjax('index', {
-			page : "index"
-		});
+		res.renderPjax('index');
 	});
 	
 	app.get('/merger', function(req, res) {
-		var json = {};
+		var json = {}; json.reddit = {redditUserExists : req.user ? true : false, redditUser : req.user ? req.user.name : ''};
 		fs.readFile(require('path').dirname(require.main.filename)+'/teams.json', 'utf8', function (err, data) {
 		  if (err) { return console.log(err); }
 		  json.teams = JSON.parse(data);
@@ -32,8 +30,8 @@ module.exports = function(app, globalware, elseware, kutil) {
 	app.get('/auth/reddit/callback', function(req, res, next){
 	  if (req.query.state == req.session.state){
 	    passport.authenticate('reddit', {
-	      successRedirect: '/',
-	      failureRedirect: '/login'
+	      successRedirect: '/merger',
+	      failureRedirect: '/merger'
 	    })(req, res, next);
 	  }
 	  else {
@@ -54,7 +52,12 @@ module.exports = function(app, globalware, elseware, kutil) {
 		res.send({needsLogin:true});
 	});
 	
-	app.post('/save-reddit-reply', gware.ensureAuthenticated, function(req, res){
+	app.get('/reddit-logout', function(req, res, next) {
+		req.logout();
+		res.send("<a class='white nopacity' href='/auth/reddit'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign in to Reddit</a>");
+	});
+
+	app.post('/save-reddit-reply', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
 	  var options = {
 	    url: 'https://oauth.reddit.com/api/comment',
 	    headers: {
@@ -68,9 +71,8 @@ module.exports = function(app, globalware, elseware, kutil) {
 	    !error && response.statusCode == 200 
 	      ? res.send(body)
 	      : error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-	        : res.end({statusCode: response.statusCode, body: body})
-	  })
-	  .form({'api_type':'json', 'thing_id':'t1_cn9e839', 'text': 'another programmatic response'});
+	        : res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
+	  }).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
 	});
 
 	app.get('*', function(req,res) {

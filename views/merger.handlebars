@@ -85,7 +85,20 @@
             </div>
             <div id='current-config'>
               <h6>Current Configuration</h6>
-              <div id='config-row-container' class='row'>
+              <div id='config-rows' class='row config-row-container'>
+              </div>
+            </div>
+            <div id='accounts'>
+              <h6>Accounts</h6>
+              <div class='row config-row-container'>
+                <div data-reddituser='{{reddit.redditUser}}' class="col-xs-12 col-md-8 config-panel-column account">
+                  <h6 class='config-account'>
+                  {{#if reddit.redditUserExists}}
+                    <div id='reddit-logout'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign out of <span class='text-warning'>{{reddit.redditUser}}</span></div>
+                  {{else}}
+                    <a class='white nopacity' href='/auth/reddit'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign in to Reddit</a>
+                  {{/if}}</h6>
+                </div>
               </div>
             </div>
           </div>
@@ -124,13 +137,10 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-            <h6 class="modal-title" id="delete-modal">Login Required</h6>
+            <h6 class="modal-title" id="delete-modal">Sign In Required</h6>
           </div>
           <div class="modal-body">
-            <blockquote>
-              <p>You may need to disable any adblock software to continue.</p>
-            </blockquote>
-            <button id='login-reddit' type="button" class="btn btn-primary btn-lg btn-block">Login to Reddit</button>
+            <a href='/auth/reddit'><button id='login-reddit' type="button" class="btn btn-primary btn-lg btn-block">Sign in to Reddit</button></a>
           </div>
         </div>
       </div>

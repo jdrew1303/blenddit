@@ -7,6 +7,7 @@ var express = require('express'),
     colors = require('colors'),
     pjax = require('express-pjax'),
     nconf = require('nconf'),
+    compression = require('compression'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
     methodOverride = require('method-override'),
@@ -24,7 +25,7 @@ kutil.configure(nconf);
 app = express();
 hbs = exphbs.create({ /* config */ });
 kutil.compressAssets(__dirname+'/static-assets');
-app.use(express.compress());
+app.use(compression());
 app.locals={ debug : nconf.get('debug'), version : new Date().getTime()};
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');

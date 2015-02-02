@@ -19,6 +19,11 @@ passport.use(new RedditStrategy({
   function(accessToken, refreshToken, profile, done) {
     profile.redditAccessToken = accessToken;
     profile.redditRefreshToken = refreshToken;
+    profile.redditAccessTokenExpireTime = (function() { 
+      var now = new Date(), oneHourFromNow = new Date(now);
+      oneHourFromNow.setMinutes(now.getMinutes()+55);
+      return oneHourFromNow;
+    })();
     process.nextTick(function () {
       return done(null, profile);
     });

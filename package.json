@@ -16,7 +16,7 @@
     "express-session":"*",
     "method-override":"*",
     "cookie-parser":"*",
-    "morgan":"*",
+    "compression":"*",
     "request":"*"
   }
 }

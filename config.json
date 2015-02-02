@@ -6,8 +6,8 @@
 		"book" : "/book"
 	},
 	"authKeys" : {
-		"REDDIT_CONSUMER_KEY" : "",
-		"REDDIT_CONSUMER_SECRET" : ""
+		"REDDIT_CONSUMER_KEY" : "ZoJOkswok8mrhw",
+		"REDDIT_CONSUMER_SECRET" : "Hcy_0RzSaTuRmqPIkKG1ptCX8jc"
 	},
 	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js","ga.js"],
 	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]

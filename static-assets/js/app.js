@@ -79,7 +79,6 @@ if (!window.jQuery === 'undefined') {
 					launchControls();
 				}
 				contentResizeEvent();
-				redditLoginModal();
 			}
 		}
 		function contentResizeEvent() {
@@ -89,21 +88,31 @@ if (!window.jQuery === 'undefined') {
 				if (app.height != window.innerHeight) {
 					$('.frame-content, .edit-form').css('height', window.innerHeight-107);
 					app.height = window.innerHeight;
-					// $('.edit-form').css('height', window.innerHeight-132)
 				}
 			});
 		}
 		function launchControls() {
 			vendorGroupDisplay();
 			buildConfigurationPanel();
+			bindAccounts();
 			$('#save-changes').unbind('click').bind('click',function() {
 				setInCache('config', config)
 				buildConfigToUI();
 			});
 			$('#controlModal').unbind('hide.bs.modal').on('hide.bs.modal', function (e) {
-				$('#config-row-container').children().remove();
+				$('#config-rows').children().remove();
 			})
 			$('#controlModal').modal();
+		}
+		function bindAccounts() {
+			fadeIn($('a.white'),100);
+			$('#reddit-logout').unbind('click').bind('click', function() { 
+				genericGet('/reddit-logout', function(data, textStatus, jqXHR) {
+					$('.config-account').children().remove()
+					$('.config-account').append(data);
+					fadeIn($('a.white'),100);
+				})
+			})
 		}
 		function vendorGroup() {
 			$('#reddit-block, #twitter-block').unbind('click').bind('click',function(){
@@ -269,17 +278,23 @@ if (!window.jQuery === 'undefined') {
 				getPosts(path, sort, limit, {target: columnNum, callback: function(data, target) {
 					dataArray = dataArray.concat([data.concat(target)]);
 					if (config[target].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
-						var mergedData = getMergedData(dataArray)
+						var mergedData = getMergedData(dataArray);
+						if ($(".frame-content[data-column="+columnNum+"]").children().length==0) markFirstComment(mergedData[1].data.children[0].data.name, target);
 						displayComments(mergedData, target);
 						hideLoader(target);
 					}
 				}})
 			}
 		}
+		function markFirstComment(firstCommentName, column) {
+			if (typeof firstCommentName !== "undefined") {
+				app['firstComment'+column] = firstCommentName
+			} 
+		}
 		function buildConfigurationPanel() {
 			if (config.length > 0) {  // columns exist
 				$('#current-config').removeClass('hide');
-				var $configRows = $('#config-row-container');
+				var $configRows = $('#config-rows');
 				$configRows.children().remove();
 				var  configPanelHtml='', classes = 'col-xs-12 col-md-8 config-panel-column nopacity', icons = "<span class='icon-right icon-config'><i class='fa fa-edit fa-lg'></i><i class='fa fa-close fa-lg'></i></span>"
 				for (var i = 0, len = config.length; i < len; i++) {
@@ -385,7 +400,7 @@ if (!window.jQuery === 'undefined') {
 			if (config.length > 0 && typeof selectTarget[2] !== 'undefined') {
 				var threadObj = config[selectTarget[2]].threads[selectTarget[1]];
 				if ($select.find("option[data-threadid="+threadObj.threadid+"]").length==0 && threadObj.subid==$select.find('option:selected').data('subid')) {
-					$select.append("<option data-threadid='"+threadObj.threadid+"' value='"+threadObj.thread+"'>"+threadObj.threadtitle+"</option>")
+					$select.append("<option data-subid='"+threadObj.subid+"' data-threadtitle='"+threadObj.threadtitle+"' data-threadid='"+threadObj.threadid+"' value='"+threadObj.thread+"'>"+threadObj.threadtitle+"</option>")
 				}
 				$select.find("option[data-threadid="+threadObj.threadid+"]").prop('selected',true);
 			}
@@ -404,11 +419,11 @@ if (!window.jQuery === 'undefined') {
 		function getIcon(subreddit) {
 			return 'icon-'+subreddit;
 		}
-		function buildReplyForm(thing_id, author) {
+		function buildReplyForm(thing_id, author, replyLength) {
 			var buttons = "<div class='reply-buttons'><button class='cancel-reply btn btn-default'>Cancel</button><button type='submit' class='save-reply btn btn-primary'>Save</button></div>",
 				parentInput = "<input type='hidden' name='thing_id' value='"+thing_id+"''>",
 				textarea = "<textarea name='text' class='form-control' placeholder='Reply to "+author+"..'></textarea>",
-				form = "<div class='nopacity hide reply-form'><form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form></div>";
+				form = "<div class='nopacity hide reply-form'><div class='submitting nopacity hide'>Submitting...</div><form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form></div>";
 			return form;
 		}
 		function bindReplySwitch() {
@@ -416,98 +431,152 @@ if (!window.jQuery === 'undefined') {
 				var $replyForm = $(this).parent().parent().find('.reply-form');
 				if ($replyForm.hasClass('hide')) {
 					$replyForm.removeClass('hide');
+					$replyForm.find('form').removeClass('hide');
+					$replyForm.find('.submitting').removeClass('faded').addClass('hide');
 					fadeIn($replyForm, 100);
 				} else {
 					$replyForm.removeClass('faded').addClass('hide');
 				}
 			});
 			$('.save-reply').unbind('click').click(function() { 
+				var thing_id = this.form.thing_id.value,
+					text = this.form.text.value,
+					$submitting = $(this.form.previousSibling);
+				if (text.length==0) return;
+				$(this.form).addClass('hide');
+				fadeIn($submitting.removeClass('hide'), 100);
 				function done(data, textStatus, jqXHR) {
-					data && data.needsLogin 
-						? $('#login-reddit-modal').modal()
-						: ''; // loadAndInsertComment
+					data && data.needsLogin ? $('#login-reddit-modal').modal()
+						: data.statusCode ? console.log(data.statusCode)
+							: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
+								: insertReplyIntoDOM(data.json.data.things);
 				}
-				var formData = {thing_id: this.form.thing_id.value, text: this.form.text.value};
-				genericPost('/save-reddit-reply', formData, done);
+				function fail(jqXHR, textStatus, errorThrown){
+					console.log(textStatus)
+				}
+				var formData = {thing_id: thing_id, text: text };
+				genericPost('/save-reddit-reply', formData, done, fail);
 
 			})
 			$('.cancel-reply').unbind('click').click(function() { 
 				console.log('shut it down!')
 			})
 		}
-		function redditLoginModal() {
-			$('#login-reddit').unbind('click').click(function(){ 
-				window.open('http://127.0.0.1:8080/auth/reddit', '_blank');
+		function insertReplyIntoDOM(objArray) {
+			$(buildCommentHtmlString(objArray,true)).insertAfter('#'+objArray[0].data.parent_id+' .comment-footer:first');
+			$('#'+objArray[0].data.parent_id+' .fa-reply:first').trigger('click');
+			commentBindings();
+			fadeIn($('#'+objArray[0].data.name), 100);
+		}
+		function commentBindings() {
+			$('.md a').each(function(index, el) {
+				$(el).attr('target','_blank');
+				$(el).attr('href').substring(0,3)=='/u/' || $(el).attr('href').substring(0,3)=='/r/'
+					? $(el).attr('href', 'http://www.reddit.com'+$(el).attr('href')) : '';
 			});
+			bindReplySwitch();
+			bindRefreshComment();
+			bindShowReply();
 		}
 		function displayComments(data, columnNum) {
-			$frameContent = $(".frame-content[data-column="+columnNum+"]");
-			$frameContent.children().remove();
-			$frameContent.removeClass('faded');
-			data[1].data.children.forEach(function(comment,i) {
-				var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') ? comment.data.replies.data.children:[], replyLength = replies.length,
-					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var footer = comment.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(comment.data.created_utc)+"</div><div class='links-container'><a class='reply-switch'><i class='fa fa-reply fa-lg'></i></a><a href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>"+buildReplyForm(comment.data.name, comment.data.author)+"</footer>" : "",
-					text = $("<div/>").html(comment.data.body_html).text()+footer+getReplies(replies),
-		    		heading = comment.kind!='more' 
-		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>  |  "+comment.data.score+"  |  <a data-name='"+comment.data.name+"' class='reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
-		    			: "<div>load more comments</div>"+text;
-		    		body = "<div class='media-body'>"+heading+"</div>",
-		    		thumbnail = comment.kind!='more'
-		    			? "<div class='thumb pull-left "+getIcon(comment.data.subreddit)+"'></div>"
-		    			: "<a style='padding: 5px 0 0 5px;'class='pull-left' href='#'><i class='fa fa-download'></i></a>",
-		    		media = "<div id='"+comment.data.name+"' class='media parent'>"+thumbnail+body+"</div>"
-		        $frameContent.append(media);
-			});
-			fadeIn($frameContent, 1000);
-			$('.md a').attr('target','_blank');
-			bindPostProcessComments();
-			bindReplySwitch()
-			// bindShowReply();
+			var $frameContent = $(".frame-content[data-column="+columnNum+"]");
+			if (!$frameContent.children().length) { // first time load
+				$frameContent.append(buildCommentHtmlString(data[1].data.children, false, true)); 
+				fadeIn($frameContent, 1000);
+			} else { // subsequent loads
+				var cachedfirstComment = app['firstComment'+columnNum];
+				if (!(cachedfirstComment == data[1].data.children[0].data.name)) {
+					var newComments = takeWhile(data[1].data.children, cachedfirstComment, function(x, commentName){ 
+						return x.data.name != commentName;
+					})
+					$(buildCommentHtmlString(newComments, true, true)).insertBefore(".frame-content[data-column="+columnNum+"] #"+cachedfirstComment);
+					newComments.forEach(function(comment){ fadeIn($('#'+comment.data.name),500) })
+					markFirstComment(data[1].data.children[0].data.name, columnNum);
+				}
+				updateCommentStats(data[1].data.children)
+			}	
+			commentBindings();
 		}
-		function getReplies(repliesArray) {
-			repliesArray = repliesArray || []; var htmlString = '';
-			repliesArray.forEach(function(reply) {
-				var replies = reply.kind!='more'&&reply.data.replies.hasOwnProperty('data')
-						? reply.data.replies.data.children:[], replyLength = replies.length,
-					replyText = replyLength==0 ? "" : replyLength==1 ? replyLength+" reply" : replyLength+" replies";
-				var footer = reply.kind!='more' ? "<footer class='comment-footer'><div class='time-container'>"+getTimeElapsed(reply.data.created_utc)+"</div><div class='links-container'><a class='reply-switch'><i class='fa fa-reply fa-lg'></i></a><a href='"+getPermalink(reply.data.link_id,reply.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><i class='fa fa-newspaper-o fa-lg'></i><i class='fa fa-reddit fa-lg'></i></div>"+buildReplyForm(reply.data.name, reply.data.author)+"</footer>" : "",
-					text = $("<div/>").html(reply.data.body_html).text()+footer+getReplies(replies),
-		    		heading = reply.kind!='more'
-		    			? "<p class='media-heading'><a style='color:white;' href='http://www.reddit.com/u/"+reply.data.author+"' target='_blank'>"+reply.data.author+"</a>  |  "+reply.data.score+"  |  <a data-name='"+reply.data.name+"' class='reply'><span class='text-warning'>"+replyText+"</span></a></p>"+text
-		    			: "<div class='loadReplies' id='"+reply.data.id+"' data-name='"+reply.data.name+"' data-parent='"+reply.data.parent_id+"'>load "+reply.data.count+" replies</div><p></p>";
-		    		body = "<div style='padding-top:5px;' class='media-body'>"+heading+"</div>",
-		    		thumbnail = reply.kind!='more'
-		    			? "<div class='thumb pull-left'></div>"
-		    			: "<a style='padding: 5px 0 0 5px;'class='pull-left' href='#'><i class='fa fa-download'></i></a>",
-		    		media = "<div id='"+reply.data.name+"' class='media'>"+thumbnail+body+"</div>";
-		    	htmlString += media;
+		function updateCommentStats(comments) { 
+			comments.forEach(function(comment){
+				var replies = comment.kind!='more' && comment.data.replies.hasOwnProperty('data') 
+					? comment.data.replies.data.children : [], replyLength = replies.length,
+					commentId = '#'+comment.data.name,
+					commentFooter = commentId+' .comment-footer[data-id='+comment.data.name+']',
+					previousReplyLength = $(commentFooter+' .reply').data('replylength');
+				typeof comment.data.created_utc !== 'undefined' ? $(commentFooter+' .time-elapsed').text(getTimeElapsed(comment.data.created_utc)) : '';
+				typeof comment.data.score !== 'undefind' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : '';
+				if (replyLength != 0 && previousReplyLength && previousReplyLength != 0) {
+					var diff = replyLength-previousReplyLength;
+					diff != 0 ? $(commentFooter+' .diff').text(diff+' new') : '';
+					$(commentFooter+' .reply').data('replylength', replyLength);
+					$(commentFooter+' .reply-num').text(replyLength);
+				} else if (replyLength != 0) {
+					$("<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span><span class='text-primary diff'></span></a>").insertAfter(commentFooter+' .refresh-comment');
+					$(commentFooter+' .diff').text(replyLength+' new');
+				}
+				updateCommentStats(replies);
+			})
+		}
+		function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide) {
+			commentsArray = commentsArray || []; var htmlString = '';
+			commentsArray.forEach(function(comment,i) {
+				var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') 
+						? comment.data.replies.data.children:[], replyLength = replies.length;
+				var footer = comment.kind!='more' ? "<footer data-id='"+comment.data.name+"' class='comment-footer'><div class='links-container btn-group'><a class='btn time-elapsed white'>"+getTimeElapsed(comment.data.created_utc)+"</a><a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a><a class='btn perma' href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.id+"'><i class='fa fa-refresh fa-lg'></i></a>"+(replyLength!=0 ? "<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span><span class='text-primary diff'></span></a>" : '')+"</div>"+buildReplyForm(comment.data.name, comment.data.author)+"</footer>" : "",
+					text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
+		    		heading = comment.kind!='more' 
+		    			? "<div class='media-heading btn-group'><a class='btn vote'><i class='fa fa-arrow-up'></i></a><a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a><a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a><a class='btn author' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>"+(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;")+"</div>"+text
+		    			: "<div class='load-comments' data-parent='"+comment.data.parent_id+"' class='load-comments'><i class='fa fa-download'></i>&nbsp; load more comments</div>"+text;
+		    		body = "<div class='media-body'>"+heading+"</div>",
+		    		thumbnail = comment.kind!='more' ? "<div class='thumb pull-left "+(isParent ? getIcon(comment.data.subreddit) : '')+"'></div>" : "",
+		    		media = "<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' data-icon='"+getIcon(comment.data.subreddit)+"' id='"+comment.data.name+"' class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>"+thumbnail+body+"</div>"
+		        htmlString += media;
 			});
 			return htmlString;
 		}
 		function bindShowReply(){ 
 			$('.reply').unbind('click').click(function(){ 
-				$('#'+$(this).data('name')).find('.hide').removeClass('hide');
+				var name = $(this).data('name'),
+					$replies = $('#'+name+' .media[data-parentid='+name+']'),
+					$icon = $(this).find('.expand');
+				if ($icon.hasClass('fa-plus-square')) {
+					$icon.removeClass('fa-plus-square').addClass('fa-minus-square')
+					fadeIn($replies.removeClass('hide'), 100);
+				} else {
+					$icon.removeClass('fa-minus-square').addClass('fa-plus-square')
+					$replies.removeClass('faded').addClass('hide')
+				}
 			});
 		}
-		function bindPostProcessComments() {
-			// $('.loadReplies').unbind('click').click(function() { 
-			// 	var team = $(this).data('team'), parent = $(this).data('parent'),
-			// 		path = team=='team1' ? $('#threads-1').val() : $('#threads-2').val();
-			// 	getPosts(path+parent.substr(3),'',team, function(data, team) {
-			// 		var htmlString = getReplies(data[1].data.children, team)
-			// 		$('#'+parent).replaceWith(htmlString);
-			// 		if ($('#'+parent).parent().attr('id')=='merger' && !$('#'+parent).hasClass('parent')) {$('#'+parent).addClass('parent')}
-			// 		$('.media:not(.faded)').find('.md a').attr('target','_blank');
-			// 		fadeIn('.media:not(.faded)', 1000);
-			// 	})
-			// });
+		function bindRefreshComment() {
+			$('.refresh-comment, .load-comments').unbind('click').bind('click', function() {
+				var linkid = $(this).data('linkid'), 
+					id = $(this).data('id') ? $(this).data('id') : $('#'+$(this).data('parent')).attr('id').substr(3),
+					isTopLevel = $('#t1_'+id).hasClass('parent');
+				getComments(linkid ? linkid : $('#'+$(this).data('parent')).data('linkid'), id, function(data){
+					var htmlString = buildCommentHtmlString(data[1].data.children);
+					$('#t1_'+id).replaceWith(htmlString);
+					if (isTopLevel) { 
+						$('#t1_'+id).addClass('parent');
+						$('#t1_'+id).children(':first').addClass($('#t1_'+id).data('icon'));
+					}
+					$('#t1_'+id+' .media[data-parentid='+$('#t1_'+id).attr('id')+']').removeClass('hide').addClass('faded');
+					$('#t1_'+id).addClass('nopacity')	
+					fadeIn($('#t1_'+id), 100);
+					commentBindings();
+				})
+			})
+		}
+		function getComments(linkid, id, done, fail) {
+			genericGet("http://www.reddit.com/comments/"+linkid.substr(3)+"/_/"+id+'.json?sort=new', done, fail);
 		}
 		function getPermalink(link_id, id) {
 			// permalink = http://www.reddit.com/comments/<link_id>1p3qau/_/<id>ccz05xk
 			return "http://www.reddit.com/comments/"+link_id.substr(3)+"/_/"+id
 		}
 		function getTimeElapsed(then) {
+			if (!then) return;
 			var date = new Date(then*1000);
 			// Set the unit values in milliseconds.
 			var msecPerMinute = 1000 * 60, msecPerHour = msecPerMinute * 60, msecPerDay = msecPerHour * 24;
@@ -521,7 +590,7 @@ if (!window.jQuery === 'undefined') {
 			var minutes = Math.floor(interval / msecPerMinute );
 			interval = interval - (minutes * msecPerMinute );
 			var seconds = Math.floor(interval / 1000 );
-			if (!days==0) {
+			if (!days==0 && !(days<=0)) {
 				return days+'d'
 			} else if (days==0&&!hours==0) {
 				return hours+'h'
@@ -529,42 +598,44 @@ if (!window.jQuery === 'undefined') {
 				return minutes+'m'
 			} else if (days==0&&hours==0&&minutes==0&&!seconds==0){
 				return seconds+'s'
-			} else { return date.toLocalTimeString(); }
+			} else if ((nowMsec-(then*1000))<1000){
+				return '1s'
+			}else{ return date.toLocaleTimeString(); }
 		}
 		function getMergedData(dataArray) {
 			var children = [];
 			dataArray.forEach(function(data, i){
 				if (data.length>0) { children = children.concat(data[1].data.children)} 
 			})
-			children = 
-			children.filter(function(x){ if (x.kind != 'more') return x }) // remove 'more comments' from parent
-					.sort(function(a,b){ // sort array by time created
-						if (a.kind != 'more' && b.kind == 'more') return 1
-						if (a.kind == 'more' && b.kind != 'more') return -1
-						if (a.data.created_utc < b.data.created_utc) return 1
-						if (a.data.created_utc > b.data.created_utc) return -1
-						return 0	
-					})
+			children = children.filter(function(x){ if (x.kind != 'more') return x }).sort(byTimeCreated)
 			dataArray[0][1].data.children = children
 			return dataArray[0];
 		}
+		function byTimeCreated(a,b) {
+			if (a.kind != 'more' && b.kind == 'more') return 1
+			if (a.kind == 'more' && b.kind != 'more') return -1
+			if (a.data.created_utc < b.data.created_utc) return 1
+			if (a.data.created_utc > b.data.created_utc) return -1
+			return 0
+		}
+		function genericGet(url, done, fail, always) {
+			$.ajax({ url: url, type: "GET", timeout:7000, cache: false })
+			.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR); })
+			.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown); })
+			.always(function() { if (always) always(); });
+		}
 		function genericPost(url, data, done, fail, always) {
-			$.ajax({ url: url, type: 'POST', data: data })
-			.done(function(data, textStatus, jqXHR) {
-				if (done) done(data, textStatus, jqXHR);
-			})
-			.fail(function(jqXHR, textStatus, errorThrown) {
-				if (fail) fail(jqXHR, textStatus, errorThrown);
-			})
-			.always(function() {
-				if (always) always();
-			});
+			$.ajax({ url: url, type: 'POST', timeout:7000, data: data, cache: false })
+			.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR);})
+			.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
+			.always(function() { if (always) always(); });
 		}
 		function getPosts(path, sort, limit, obj){
 			$.ajax({
 				url: "http://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?",
 				dataType: 'json',
-				timeout: 7000
+				timeout: 7000,
+				cache: false
 			})
 			.done(function(data, textStatus, jqXHR) {
 				obj.callback(data, obj.target)
@@ -587,13 +658,20 @@ if (!window.jQuery === 'undefined') {
 			}
 		};
 	})(jQuery);
-
 	$(document).ready(function() {
 		app.init();
-	});
-	Array.prototype.remove = function(from, to) {
-	  var rest = this.slice((to || from) + 1 || this.length);
-	  this.length = from < 0 ? this.length + from : from;
-	  return this.push.apply(this, rest);
-	};	
+	});	
+}
+Array.prototype.remove = function(from, to) {
+  var rest = this.slice((to || from) + 1 || this.length);
+  this.length = from < 0 ? this.length + from : from;
+  return this.push.apply(this, rest);
+};
+function takeWhile(arr, param, f) {
+	var returnArr = [];
+	for (var i = 0, len = arr.length; i < len; i++) {
+		if (f(arr[i], param)) { returnArr.push(arr[i]) }
+		else { break; }
+	}
+	return returnArr;
 }
