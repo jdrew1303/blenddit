@@ -427,7 +427,7 @@ if (!window.jQuery === 'undefined') {
 			return form;
 		}
 		function bindReplySwitch() {
-			$('.reply-switch').unbind('click').click(function() {
+			$('.reply-switch').unbind('click').bind('click',function() {
 				var $replyForm = $(this).parent().parent().find('.reply-form');
 				if ($replyForm.hasClass('hide')) {
 					$replyForm.removeClass('hide');
@@ -513,15 +513,23 @@ if (!window.jQuery === 'undefined') {
 		function newCommentsOnRefresh(replyLength, previousReplyLength, name, commentFooter) {
 			if (replyLength != 0 && previousReplyLength && previousReplyLength != 0) {
 				var preloaded=$('#'+name+' .media[data-parentid='+name+']').length,
-					diff = replyLength-preloaded;
-				diff != 0 ? $(commentFooter+' .diff').text(diff+' new') : '';
+					diff = Math.max(replyLength,previousReplyLength)-preloaded;
+				if (diff < 0) {
+					console.log('hi')
+				}
+				if (diff != 0) { $(commentFooter+' .diff').text(diff+' new'); newCommentBind(commentFooter+' .diff'); }
 				$(commentFooter+' .reply').data('replylength', replyLength);
 				$(commentFooter+' .reply-num').text(replyLength);
 			} else if (replyLength != 0) {
 				var $replies = $('#'+name+' .media[data-parentid='+name+']'), realDiff = replyLength-$replies.length;
-				$("<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand "+($replies.first().hasClass('faded') ? 'fa-minus-square' : 'fa-plus-square')+"'></i>&nbsp;</span><span class='text-primary diff'></span></a>").insertAfter(commentFooter+' .refresh-comment');
-				realDiff != 0 ? $(commentFooter+' .diff').text(replyLength+' new') : '';
+				$("<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='text-primary diff'></span></a>").insertAfter(commentFooter+' .refresh-comment');
+				if (realDiff != 0) {$(commentFooter+' .diff').text(replyLength+' new'); newCommentBind(commentFooter+' .diff')}
 			}
+		}
+		function newCommentBind(reply) {
+			$(reply).unbind('click').bind('click', function() {
+				$(this).parent().parent().find('.refresh-comment').trigger('click');
+			});
 		}
 		function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide) {
 			commentsArray = commentsArray || []; var htmlString = '';
@@ -541,7 +549,7 @@ if (!window.jQuery === 'undefined') {
 			return htmlString;
 		}
 		function bindShowReply(){ 
-			$('.reply').unbind('click').click(function(){ 
+			$('.reply').unbind('click').click('click',function(){ 
 				var name = $(this).data('name'),
 					$replies = $('#'+name+' .media[data-parentid='+name+']'),
 					$icon = $(this).find('.expand');
