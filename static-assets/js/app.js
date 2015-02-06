@@ -502,32 +502,43 @@ if (!window.jQuery === 'undefined') {
 				var replies = comment.kind!='more' && comment.data.replies.hasOwnProperty('data') 
 					? comment.data.replies.data.children : [], replyLength = replies.length,
 					commentId = '#'+comment.data.name,
-					commentFooter = commentId+' .comment-footer[data-id='+comment.data.name+']',
-					previousReplyLength = $(commentFooter+' .reply').data('replylength');
+					commentFooter = commentId+' .comment-footer[data-id='+comment.data.name+']'
 				typeof comment.data.created_utc !== 'undefined' ? $(commentFooter+' .time-elapsed').text(getTimeElapsed(comment.data.created_utc)) : '';
 				typeof comment.data.score !== 'undefind' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : '';
-				newCommentsOnRefresh(replyLength, previousReplyLength, comment.data.name, commentFooter);
+				newCommentsOnRefresh(replyLength, comment.data.name, commentFooter);
 				updateCommentStats(replies);
 			})
 		}
-		function newCommentsOnRefresh(replyLength, previousReplyLength, name, commentFooter) {
-			if (replyLength != 0 && previousReplyLength && previousReplyLength != 0) {
-				var preloaded=$('#'+name+' .media[data-parentid='+name+']').length,
-					diff = Math.max(replyLength,previousReplyLength)-preloaded;
-				if (diff < 0) {
-					console.log('hi')
+		function newCommentsOnRefresh(replyLength, name, commentFooter) {
+			var $preloadedReplies = $('#'+name+' .media[data-parentid='+name+']'),
+				$replySwitch = $(commentFooter+' .reply'),
+				$replyNum = $(commentFooter+' .reply .reply-num'),
+				newRepliesNum = replyLength - $preloadedReplies.length,
+				newButton = "<a class='btn new-comment'><span class='text-primary diff'>"+newRepliesNum+" new</span></a>";
+			if (replyLength > 0 && $replySwitch.length>0) { // replies exist already 
+				$replySwitch.data('replylength', replyLength);
+				$replyNum.text(replyLength);
+				if (newRepliesNum > 0 && $(commentFooter+' .new-comment').length==0) { 
+					$(newButton).insertAfter(commentFooter+' .reply');
+					newCommentBind(commentFooter+' .new-comment');
+				} else {
+					$(commentFooter+' .new-comment .diff').text(newRepliesNum+' new');
+					newCommentBind(commentFooter+' .new-comment');
 				}
-				if (diff != 0) { $(commentFooter+' .diff').text(diff+' new'); newCommentBind(commentFooter+' .diff'); }
-				$(commentFooter+' .reply').data('replylength', replyLength);
-				$(commentFooter+' .reply-num').text(replyLength);
-			} else if (replyLength != 0) {
-				var $replies = $('#'+name+' .media[data-parentid='+name+']'), realDiff = replyLength-$replies.length;
-				$("<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='text-primary diff'></span></a>").insertAfter(commentFooter+' .refresh-comment');
-				if (realDiff != 0) {$(commentFooter+' .diff').text(replyLength+' new'); newCommentBind(commentFooter+' .diff')}
+			} else if (replyLength > 0) { // replies don't exist until now
+				var existingRepls = "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span></a>";
+				$(existingRepls).insertAfter(commentFooter+' .refresh-comment')
+				if (newRepliesNum > 0) {
+					$(newButton).insertAfter(commentFooter+' .reply');
+					newCommentBind(commentFooter+' .new-comment');
+				}
+				if ($preloadedReplies.hasClass('faded')) {
+					$('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square')	
+				}
 			}
 		}
-		function newCommentBind(reply) {
-			$(reply).unbind('click').bind('click', function() {
+		function newCommentBind(newCommentSpan) {
+			$(newCommentSpan).unbind('click').bind('click', function() {
 				$(this).parent().parent().find('.refresh-comment').trigger('click');
 			});
 		}
@@ -536,7 +547,7 @@ if (!window.jQuery === 'undefined') {
 			commentsArray.forEach(function(comment,i) {
 				var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') 
 						? comment.data.replies.data.children:[], replyLength = replies.length;
-				var footer = comment.kind!='more' ? "<footer data-id='"+comment.data.name+"' class='comment-footer'><div class='links-container btn-group'><a class='btn time-elapsed white'>"+getTimeElapsed(comment.data.created_utc)+"</a><a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a><a class='btn perma' href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.id+"'><i class='fa fa-refresh fa-lg'></i></a>"+(replyLength!=0 ? "<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span><span class='text-primary diff'></span></a>" : '')+"</div>"+buildReplyForm(comment.data.name, comment.data.author)+"</footer>" : "",
+				var footer = comment.kind!='more' ? "<footer data-id='"+comment.data.name+"' class='comment-footer'><div class='links-container btn-group'><a class='btn time-elapsed white'>"+getTimeElapsed(comment.data.created_utc)+"</a><a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a><a class='btn perma' href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.id+"'><i class='fa fa-refresh fa-lg'></i></a>"+(replyLength!=0 ? "<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span></a>" : '')+"</div>"+buildReplyForm(comment.data.name, comment.data.author)+"</footer>" : "",
 					text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
 		    		heading = comment.kind!='more' 
 		    			? "<div class='media-heading btn-group'><a class='btn vote'><i class='fa fa-arrow-up'></i></a><a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a><a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a><a class='btn author' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>"+(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;")+"</div>"+text

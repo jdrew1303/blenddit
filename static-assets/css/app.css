@@ -68,6 +68,12 @@ blockquote {
   font-size: 12px;
   margin: 2px;
 }
+.new-comment {
+  padding-left: 0;
+}
+.reply {
+  padding-right:0;
+}
 .flair {
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
