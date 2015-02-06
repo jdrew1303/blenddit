@@ -506,17 +506,22 @@ if (!window.jQuery === 'undefined') {
 					previousReplyLength = $(commentFooter+' .reply').data('replylength');
 				typeof comment.data.created_utc !== 'undefined' ? $(commentFooter+' .time-elapsed').text(getTimeElapsed(comment.data.created_utc)) : '';
 				typeof comment.data.score !== 'undefind' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : '';
-				if (replyLength != 0 && previousReplyLength && previousReplyLength != 0) {
-					var diff = replyLength-previousReplyLength;
-					diff != 0 ? $(commentFooter+' .diff').text(diff+' new') : '';
-					$(commentFooter+' .reply').data('replylength', replyLength);
-					$(commentFooter+' .reply-num').text(replyLength);
-				} else if (replyLength != 0) {
-					$("<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span><span class='text-primary diff'></span></a>").insertAfter(commentFooter+' .refresh-comment');
-					$(commentFooter+' .diff').text(replyLength+' new');
-				}
+				newCommentsOnRefresh(replyLength, previousReplyLength, comment.data.name, commentFooter);
 				updateCommentStats(replies);
 			})
+		}
+		function newCommentsOnRefresh(replyLength, previousReplyLength, name, commentFooter) {
+			if (replyLength != 0 && previousReplyLength && previousReplyLength != 0) {
+				var preloaded=$('#'+name+' .media[data-parentid='+name+']').length,
+					diff = replyLength-preloaded;
+				diff != 0 ? $(commentFooter+' .diff').text(diff+' new') : '';
+				$(commentFooter+' .reply').data('replylength', replyLength);
+				$(commentFooter+' .reply-num').text(replyLength);
+			} else if (replyLength != 0) {
+				var $replies = $('#'+name+' .media[data-parentid='+name+']'), realDiff = replyLength-$replies.length;
+				$("<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand "+($replies.first().hasClass('faded') ? 'fa-minus-square' : 'fa-plus-square')+"'></i>&nbsp;</span><span class='text-primary diff'></span></a>").insertAfter(commentFooter+' .refresh-comment');
+				realDiff != 0 ? $(commentFooter+' .diff').text(replyLength+' new') : '';
+			}
 		}
 		function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide) {
 			commentsArray = commentsArray || []; var htmlString = '';
@@ -561,6 +566,7 @@ if (!window.jQuery === 'undefined') {
 						$('#t1_'+id).addClass('parent');
 						$('#t1_'+id).children(':first').addClass($('#t1_'+id).data('icon'));
 					}
+					$('footer[data-id=t1_'+id+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square')
 					$('#t1_'+id+' .media[data-parentid='+$('#t1_'+id).attr('id')+']').removeClass('hide').addClass('faded');
 					$('#t1_'+id).addClass('nopacity')	
 					fadeIn($('#t1_'+id), 100);
