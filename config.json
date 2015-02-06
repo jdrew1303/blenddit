@@ -10,6 +10,5 @@
 		"REDDIT_CONSUMER_SECRET" : "Hcy_0RzSaTuRmqPIkKG1ptCX8jc"
 	},
 	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js","ga.js"],
-	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"],
-	"test":"test"
+	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]
 }
