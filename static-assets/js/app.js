@@ -316,24 +316,28 @@ if (!window.jQuery === 'undefined') {
 			var column = {}, setting = {}, threads = [], $group = $(parentClass), settings = $(settingsClass).find('.form-control'),
 				type = typeof num !== 'undefined' && $(".frame-position[data-column="+num+"]").data('type')=='reddit' || !$('#reddit').hasClass('hide') ? 'reddit' : 'twitter';
 			$group.each(function(index, el) {
-				var thread = {}, $option = $(el).find(threadClass+' option:selected');
-				thread['subreddit'] = $(el).find(subClass).val();
-				thread['thread'] = $(el).find(threadClass).val();
-				thread['threadid'] = $option.data('threadid');
-				thread['threadtitle'] = $option.data('threadtitle');
-				thread['subid'] = $option.data('subid');
-				threads.push(thread);
-			});	
-			column['threads'] = threads;
-			setting['name'] = settings[0].value;
-			setting['refreshRate'] = settings[1].value;
-			setting['limitPosts'] = settings[2].value;
-			setting['sortBy'] = settings[3].value;
-			column['settings'] = setting;
-			column['type'] = type;
-			typeof num !== 'undefined' 
-				? config[num] = column 
-				: config = config.concat(column);
+				if ($(el).find(threadClass).val()) {
+					var thread = {}, $option = $(el).find(threadClass+' option:selected');
+					thread['subreddit'] = $(el).find(subClass).val();
+					thread['thread'] = $(el).find(threadClass).val();
+					thread['threadid'] = $option.data('threadid');
+					thread['threadtitle'] = $option.data('threadtitle');
+					thread['subid'] = $option.data('subid');
+					threads.push(thread);
+				}
+			});
+			if ($group.length>0) {
+				column['threads'] = threads;
+				setting['name'] = settings[0].value;
+				setting['refreshRate'] = settings[1].value;
+				setting['limitPosts'] = settings[2].value;
+				setting['sortBy'] = settings[3].value;
+				column['settings'] = setting;
+				column['type'] = type;
+				typeof num !== 'undefined' 
+					? config[num] = column 
+					: config = config.concat(column);
+			}	
 		}
 		function bindForwardBackArrows() {
 			$('.fa-arrow-circle-left').unbind('click').click(function() {
