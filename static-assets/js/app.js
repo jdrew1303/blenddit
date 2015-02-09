@@ -96,7 +96,8 @@ if (!window.jQuery === 'undefined') {
 			buildConfigurationPanel();
 			bindAccounts();
 			$('#save-changes').unbind('click').bind('click',function() {
-				setInCache('config', config)
+				addColumnToConfig();
+				setInCache('config', config);
 				buildConfigToUI();
 			});
 			$('#controlModal').unbind('hide.bs.modal').on('hide.bs.modal', function (e) {
@@ -120,19 +121,18 @@ if (!window.jQuery === 'undefined') {
 					bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls');
 					bindCancelButton();
 					bindForwardBackArrows();
-					bindAddButton();
 					$('#vendor-group, #reddit').toggleClass('hide');
 				} // else if (twitter block)
 			})
 		}
-		function bindAddButton() {
-			$('#add-button').unbind('click').bind('click',function() {
+		function addColumnToConfig() {
+			if (!$('#reddit').hasClass('hide') && any('.thread-controls', function(x){ return !($(x).val()==null)})) {
 				// Validate - Does the user have at least one thread?
 				// Reset add column functionality, take back to "Add Column"
 				updateConfigObj('.sub-group-controls', '.subreddit-controls', '.thread-controls', '#reddit .column-settings');
 				buildConfigurationPanel();
 				$('#cancel-column').trigger('click')
-			})
+			}
 		}
 		function buildConfigToUI() {
 			$('.carousel-inner').children().remove();
@@ -336,18 +336,10 @@ if (!window.jQuery === 'undefined') {
 				: config = config.concat(column);
 		}
 		function bindForwardBackArrows() {
-			$('.fa-arrow-circle-left, .fa-arrow-circle-right').unbind('click').click(function() {
+			$('.fa-arrow-circle-left').unbind('click').click(function() {
 				if ($(this).hasClass('fa-arrow-circle-left')) { // left arrow
-					if (!$('.add-thread-button').hasClass('hide')) { // 
+					if (!$('.add-thread-button').hasClass('hide')) {  
 						$('#vendor-group, #reddit').toggleClass('hide');
-					} else {
-						$('#add-button, .add-thread-button, [id^=helpBlock-], .fa-arrow-circle-right, .sub-group-controls, .column-settings').toggleClass('hide');
-					}
-				} else { // right arrow
-					if (!$('.add-thread-button').hasClass('hide')) { //
-						$('.add-thread-button').addClass('hide');
-						$('#add-button').removeClass('hide')
-						$('[id^=helpBlock-], .fa-arrow-circle-right, .sub-group-controls, .column-settings').toggleClass('hide');
 					}
 				}
 			})
@@ -514,7 +506,8 @@ if (!window.jQuery === 'undefined') {
 				$replySwitch = $(commentFooter+' .reply'),
 				$replyNum = $(commentFooter+' .reply .reply-num'),
 				newRepliesNum = replyLength - $preloadedReplies.length,
-				newButton = "<a class='btn new-comment'><span class='text-primary diff'>"+newRepliesNum+" new</span></a>";
+				newButton = "<a class='btn new-comment'><span class='text-primary diff'>"+newRepliesNum+" new</span></a>",
+				optionalExpander = "<span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>";
 			if (replyLength > 0 && $replySwitch.length>0) { // replies exist already 
 				$replySwitch.data('replylength', replyLength);
 				$replyNum.text(replyLength);
@@ -522,17 +515,22 @@ if (!window.jQuery === 'undefined') {
 					$(newButton).insertAfter(commentFooter+' .reply');
 					newCommentBind(commentFooter+' .new-comment');
 				} else {
+					if (!$('footer[data-id='+name+'] .reply').children().length && $preloadedReplies.length>0) {
+						$('footer[data-id='+name+'] .reply').append(optionalExpander)
+						$('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square') 
+					}
 					$(commentFooter+' .new-comment .diff').text(newRepliesNum+' new');
 					newCommentBind(commentFooter+' .new-comment');
 				}
 			} else if (replyLength > 0) { // replies don't exist until now
-				var existingRepls = "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span></a>";
+				var existingRepls = "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'></a>";
 				$(existingRepls).insertAfter(commentFooter+' .refresh-comment')
 				if (newRepliesNum > 0) {
 					$(newButton).insertAfter(commentFooter+' .reply');
 					newCommentBind(commentFooter+' .new-comment');
 				}
 				if ($preloadedReplies.hasClass('faded')) {
+					$('footer[data-id='+name+'] .reply').append(optionalExpander);
 					$('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square')	
 				}
 			}
@@ -699,4 +697,12 @@ function takeWhile(arr, param, f) {
 		else { break; }
 	}
 	return returnArr;
+}
+function any(cls, f) { 
+	var bool = false
+	$(cls).each(function(i,elem) {
+		if (f(elem)) {
+			bool = true; return;
+		}
+	}); return bool;
 }
