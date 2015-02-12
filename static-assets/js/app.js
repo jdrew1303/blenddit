@@ -13,7 +13,8 @@ if (!window.jQuery === 'undefined') {
 } else {
 	var app = (function($) {
 		var refresh, refreshSwitch = true, dataResponse,
-			config = Storage && localStorage.getItem('config') ? getFromCache('config') : []  
+			config = localStorage.getItem('config') ? getFromCache('config') : [],
+			watch = localStorage.getItem('watch') ? getFromCache('watch') : {};
 		function getFromCache(item) { if (Storage) return JSON.parse(localStorage.getItem(item)) }
 		function setInCache(name, item) { if (Storage) localStorage.setItem(name, JSON.stringify(item))}
 		function pjx() {
@@ -75,12 +76,25 @@ if (!window.jQuery === 'undefined') {
 				if (config.length > 0) {
 					buildConfigurationPanel();
 					buildConfigToUI(); 
-				} else {
-					launchControls();
 				}
+				watchList();
 				contentResizeEvent();
 			}
 		}
+		function watchList() {
+			Object.keys(watch).length
+				? buildWatch(watch)
+				: buildWatch({subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey'], match:['Game Thread','Match Thread','Live Thread']})
+		}
+		function buildWatch(watchObj) {
+			var subs = watchObj.subs, matchs = watchObj.match;
+			subs.forEach(function(sub, index) {
+				console.log(sub);
+			});
+			matchs.forEach(function(match, index){ 
+				console.log(match);
+			});
+		} 
 		function contentResizeEvent() {
 			app.height = window.innerHeight;
 			$('.frame-content, .edit-form').css('height', window.innerHeight-107);
