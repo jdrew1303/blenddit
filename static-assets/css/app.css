@@ -64,6 +64,7 @@ html, body {
 .links-container a:hover, .vote:hover {
   opacity: 1;
 }
+.tab-pane 
 blockquote {
   font-size: 12px;
   margin: 2px;
@@ -165,6 +166,11 @@ blockquote {
 .fa-arrow-circle-left, .fa-arrow-circle-right {position:absolute;}
 .tab-control {padding-top: 10px;}
 .tab-pane {padding-bottom:5px;}
+#greeting .tab-pane {padding-top: 10px;}
+#greeting .btn {
+  color: #888888;
+  padding: 0 0 0 2px;
+}
 .blue-dotted { border: 1px dotted #2a9fd6 !important;}
 .team-list {
     vertical-align: top;
@@ -278,11 +284,13 @@ blockquote {
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-
 #wrapper.toggled {
-    padding-left: 250px;
+  padding-left: 250px;
 }
-
+#watch-results .col-lg-12 {
+  padding-top:10px;
+  padding-bottom: 10px;
+}
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
