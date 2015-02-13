@@ -85,16 +85,28 @@ if (!window.jQuery === 'undefined') {
 			Object.keys(watch).length
 				? buildWatch(watch)
 				: buildWatch({subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey'], match:['Game Thread','Match Thread','Live Thread']})
+			fetchWatchThreads();
 		}
 		function buildWatch(watchObj) {
-			var subs = watchObj.subs, matchs = watchObj.match;
-			subs.forEach(function(sub, index) {
-				console.log(sub);
-			});
-			matchs.forEach(function(match, index){ 
-				console.log(match);
-			});
-		} 
+			var subs = watchObj.subs, matchs = watchObj.match,
+				subHtml = '', matchHtml = '';
+			subs.forEach(function(sub, index) { subHtml += buildWatchInputHtmlString(sub); });
+			matchs.forEach(function(match, index){ matchHtml += buildWatchInputHtmlString(match);});
+			$('#watch-subreddits .list-group, #watch-matching .list-group').children().remove();
+			$('#watch-subreddits .list-group').append(subHtml);
+			$('#watch-matching .list-group').append(matchHtml)
+		}
+		function fetchWatchThreads() {
+			$('#watch-threads .list-group').children().remove();
+			$('#watch-subreddits input').each(function(i, sub){ 
+				getPosts('/r/'+sub.value, '', '', {target:'#watch-subreddits', callback: function(data, target){ 
+					console.log('hi');
+				}})
+			})
+		}
+		function buildWatchInputHtmlString(str) {
+			return "<li class='list-group-item'><div class='input-group'><input class='form-control' type='text' value='"+str+"'></input><span class='input-group-addon'><i class='fa fa-close'></i></span></div></li>"
+		}
 		function contentResizeEvent() {
 			app.height = window.innerHeight;
 			$('.frame-content, .edit-form').css('height', window.innerHeight-107);
