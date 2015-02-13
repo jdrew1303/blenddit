@@ -169,7 +169,6 @@ blockquote {
 #greeting .tab-pane {padding-top: 10px;}
 #greeting .btn {
   color: #888888;
-  padding: 0 0 0 2px;
 }
 .blue-dotted { border: 1px dotted #2a9fd6 !important;}
 .team-list {
@@ -187,11 +186,17 @@ blockquote {
   cursor: pointer;
   margin-right: 6px;
 }
+.list-group-item.controls { 
+  background-color: transparent;
+  border-color: transparent;
+  text-align: center;
+  padding: 0;
+}
 .fa-edit {
   cursor: pointer;
   margin-right: 5px;
 }
-.fa-close, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments {
+.fa-close, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item {
   cursor: pointer;
 }
 .load-comments {

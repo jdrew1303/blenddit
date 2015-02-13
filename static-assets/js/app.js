@@ -67,8 +67,8 @@ if (!window.jQuery === 'undefined') {
 				$('.navbar-brand > .text-warning').text('thread merger')
 				$('.open-controls').unbind('click').click(function() {launchControls();})
 				$('#delete-column').unbind('click').click(function() {
-					deleteRefresh($(this).data('column'))
 					config.remove($(this).data('column'));
+					deleteRefresh($(this).data('column'))
 					setInCache('config', config);
 					buildConfigurationPanel();
 					buildConfigToUI(); 
@@ -82,30 +82,43 @@ if (!window.jQuery === 'undefined') {
 			}
 		}
 		function watchList() {
+			var localWatch;
 			Object.keys(watch).length
-				? buildWatch(watch)
-				: buildWatch({subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey'], match:['Game Thread','Match Thread','Live Thread']})
-			fetchWatchThreads();
+				? localWatch = watch 
+				: localWatch = {subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey'], match:['Game Thread','Match Thread','Live Thread']}
+			buildWatchList(localWatch);
+			fetchWatchThreads(localWatch.match);
 		}
-		function buildWatch(watchObj) {
+		function buildWatchList(watchObj) {
 			var subs = watchObj.subs, matchs = watchObj.match,
 				subHtml = '', matchHtml = '';
-			subs.forEach(function(sub, index) { subHtml += buildWatchInputHtmlString(sub); });
-			matchs.forEach(function(match, index){ matchHtml += buildWatchInputHtmlString(match);});
-			$('#watch-subreddits .list-group, #watch-matching .list-group').children().remove();
-			$('#watch-subreddits .list-group').append(subHtml);
-			$('#watch-matching .list-group').append(matchHtml)
+			subs.forEach(function(sub, index) { subHtml += buildWatchInputOrThreadHtmlString(sub, 'input'); });
+			matchs.forEach(function(match, index){ matchHtml += buildWatchInputOrThreadHtmlString(match, 'input');});
+			$('#watch-subreddits .list-group.contain, #watch-matching .list-group.contain').children().remove();
+			$('#watch-subreddits .list-group.contain').append(subHtml);
+			$('#watch-matching .list-group.contain').append(matchHtml)
 		}
-		function fetchWatchThreads() {
-			$('#watch-threads .list-group').children().remove();
+		function fetchWatchThreads(matchingArray) {
+			$('#watch-threads .list-group.contain').children().remove();
 			$('#watch-subreddits input').each(function(i, sub){ 
-				getPosts('/r/'+sub.value, '', '', {target:'#watch-subreddits', callback: function(data, target){ 
-					console.log('hi');
+				getPosts('/r/'+sub.value, '', '', {target:matchingArray, callback: function(data, target){ 
+					data.data.children.forEach(function(thread, index) { 
+						if (matchingArray.some(function(str){
+							var pattern = new RegExp(str.toLowerCase());
+							return pattern.test(thread.data.title.toLowerCase())
+						})) {
+							$('#watch-threads .list-group.contain').append(buildWatchInputOrThreadHtmlString(thread.data.title))
+						}
+						fadeIn($('#watch-threads .list-group-item'),100);
+					})
+					
 				}})
 			})
 		}
-		function buildWatchInputHtmlString(str) {
-			return "<li class='list-group-item'><div class='input-group'><input class='form-control' type='text' value='"+str+"'></input><span class='input-group-addon'><i class='fa fa-close'></i></span></div></li>"
+		function buildWatchInputOrThreadHtmlString(thing, type) {
+			return  type == 'input'
+				? "<li class='list-group-item'><div class='input-group'><input class='form-control' type='text' value='"+thing+"'></input><span class='input-group-addon'><i class='fa fa-close'></i></span></div></li>"
+				: "<li class='list-group-item nopacity'>"+thing+"</li>"
 		}
 		function contentResizeEvent() {
 			app.height = window.innerHeight;
