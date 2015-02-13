@@ -107,7 +107,7 @@ if (!window.jQuery === 'undefined') {
 							var pattern = new RegExp(str.toLowerCase());
 							return pattern.test(thread.data.title.toLowerCase())
 						})) {
-							$('#watch-threads .list-group.contain').append(buildWatchInputOrThreadHtmlString(thread.data.title))
+							$('#watch-threads .list-group.contain').append(buildWatchInputOrThreadHtmlString(thread.data))
 						}
 						fadeIn($('#watch-threads .list-group-item'),100);
 					})
@@ -118,7 +118,7 @@ if (!window.jQuery === 'undefined') {
 		function buildWatchInputOrThreadHtmlString(thing, type) {
 			return  type == 'input'
 				? "<li class='list-group-item'><div class='input-group'><input class='form-control' type='text' value='"+thing+"'></input><span class='input-group-addon'><i class='fa fa-close'></i></span></div></li>"
-				: "<li class='list-group-item nopacity'>"+thing+"</li>"
+				: "<li class='list-group-item nopacity'>"+thing.title+" <span class='text-primary'>in /r/"+thing.subreddit+"</span></li>"
 		}
 		function contentResizeEvent() {
 			app.height = window.innerHeight;
@@ -318,7 +318,9 @@ if (!window.jQuery === 'undefined') {
 					dataArray = dataArray.concat([data.concat(target)]);
 					if (config[target].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
 						var mergedData = getMergedData(dataArray);
-						if ($(".frame-content[data-column="+columnNum+"]").children().length==0) markFirstComment(mergedData[1].data.children[0].data.name, target);
+						if ($(".frame-content[data-column="+columnNum+"]").children().length==0 && mergedData[1].data.children.length>0) {
+							markFirstComment(mergedData[1].data.children[0].data.name, target);	
+						}
 						displayComments(mergedData, target);
 						hideLoader(target);
 					}
