@@ -196,7 +196,7 @@ blockquote {
   cursor: pointer;
   margin-right: 5px;
 }
-.fa-close, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item {
+.fa-close, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, #watch-subreddits .input-group-addon, #watch-matching .input-group-addon {
   cursor: pointer;
 }
 .load-comments {
