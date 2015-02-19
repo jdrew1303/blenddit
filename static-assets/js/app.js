@@ -409,22 +409,15 @@ if (!window.jQuery === 'undefined') {
 		function buildConfigurationPanel() {
 			if (config.length > 0) {  // columns exist
 				$('#current-config').removeClass('hide');
-				var $configRows = $('#config-rows');
-				$configRows.children().remove();
-				var  configPanelHtml='', classes = 'col-xs-12 col-md-8 config-panel-column nopacity', icons = "<span class='icon-right icon-config'><i class='fa fa-edit fa-lg'></i><i class='fa fa-close fa-lg'></i></span>"
+				var $configAccordions = $('#accordion'), configPanelHtml = '';
+				$configAccordions.children().remove();
 				for (var i = 0, len = config.length; i < len; i++) {
-					var configColumn = "<div data-columnNum='"+i+"' class='"+classes+"'>"+config[i].settings.name+icons+"</div>"
-					configPanelHtml += configColumn;
+					var header = '<div class="panel-heading" role="tab" id="heading'+i+'"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse'+i+'" aria-expanded="true" aria-controls="collapse'+i+'">'+(i+1)+'. '+config[i].settings.name+'</a></h4></div>',
+						body = '<div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'"><div class="panel-body">Test</div></div>',
+						panel = '<div class="panel panel-default">'+header+body+'</div>';
+					configPanelHtml += panel;
 				}
-				$configRows.append(configPanelHtml)
-				fadeIn($configRows.children(), 100);
-				$configRows.find('.fa-close').unbind('click').bind('click', function(){ 
-					var rowNum = $(this).parent().parent().data('columnnum');
-					deleteRefresh(rowNum);
-					config.remove(rowNum);
-					setInCache('config', config);
-					buildConfigurationPanel();
-				})
+				$configAccordions.append(configPanelHtml)
 			} else { $('#current-config').removeClass('hide').addClass('hide'); }
 		}
 		function updateConfigObj(parentClass, subClass, threadClass, settingsClass, num) {
