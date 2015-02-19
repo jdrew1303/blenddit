@@ -593,6 +593,7 @@ if (!window.jQuery === 'undefined') {
 					})
 					$(buildCommentHtmlString(newComments, true, true)).insertBefore(".frame-content[data-column="+columnNum+"] #"+cachedfirstComment);
 					newComments.forEach(function(comment){ fadeIn($('#'+comment.data.name),500) })
+					$('.frame-overlay[data-column='+columnNum+']').launchPopOver(3000, popOverOptions('bottom','',newComments.length+' new comments!'))
 					markFirstComment(data[1].data.children[0].data.name, columnNum);
 				}
 				updateCommentStats(data[1].data.children)
