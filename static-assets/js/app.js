@@ -76,10 +76,14 @@ if (!window.jQuery === 'undefined') {
 				if (config.length > 0) {
 					buildConfigurationPanel();
 					buildConfigToUI(); 
+				} else {
+					watchList();
 				}
-				watchList();
 				contentResizeEvent();
 			}
+		}
+		function popOverOptions(paramPlacement, paramTitle, paramContent) {
+			return {placement:paramPlacement, title:paramTitle,content:paramContent, trigger:'manual'};
 		}
 		function watchList() {
 			var localWatch;
@@ -88,7 +92,10 @@ if (!window.jQuery === 'undefined') {
 				: localWatch = {subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey', 'soccer'], match:['Game Thread','Match Thread','Live Thread']}
 			buildWatchList(localWatch);
 			fetchWatchThreads(localWatch.match);
-			bindDeleteWatchButtons()
+			bindDeleteWatchButtons();
+			bindWatchSave();
+			bindWatchAdd();
+			bindWatchRefresh();
 		}
 		function buildWatchList(watchObj) {
 			var subs = watchObj.subs, matchs = watchObj.match,
@@ -120,6 +127,58 @@ if (!window.jQuery === 'undefined') {
 			$('#watch-subreddits .input-group-addon, #watch-matching .input-group-addon').unbind('click').click(function() {
 				$(this).parent().parent().remove();
 			});
+		}
+		function bindWatchAdd() {
+			$('#watch-subreddits .btn.add').unbind('click').bind('click', function() {
+				$('#watch-subreddits .list-group.contain').addListItem();
+				bindDeleteWatchButtons();
+			})
+			$('#watch-matching .btn.add').unbind('click').bind('click', function() {
+				$('#watch-matching .list-group.contain').addListItem();
+				bindDeleteWatchButtons();
+			})
+		}
+		function bindWatchRefresh() {
+			$('#watch-threads .btn.refresh').unbind('click').bind('click', function() {
+				saveWatchList();
+				watchList();
+			})
+		}
+		function bindWatchSave() {
+			$('#watch-subreddits .btn.save, #watch-matching .btn.save, #watch-threads .btn.save').unbind('click').bind('click', function() {
+				function notEmpty(x) { return !($(x).val()=="") };
+				var $watchSubs = $('#watch-subreddits .list-group.contain'), $watchMatching = $('#watch-matching .list-group.contain');
+				if ($watchSubs.children().length==0 || !any($watchSubs.find('input'),notEmpty) || $watchMatching.children().length==0 || !any($watchMatching.find('input'),notEmpty)) { // validation
+					$('#watch-subreddits .list-group-item.controls, #watch-matching .list-group-item.controls, #watch-threads .list-group-item.controls').launchPopOver(3000, popOverOptions('top','Verification','Verify you have one subreddit and one matching pattern added with values.'));
+				} else {
+					saveWatchList();
+					if ($(this).hasClass('wthreads')) {
+						function hasWhite(x) { return $(x).hasClass('white')} 
+						if (any('#watch-threads .list-group.contain li', hasWhite)) {
+							// build column
+						} else {
+							$('#watch-threads .list-group-item.controls').launchPopOver(3000, popOverOptions('top','Verification', 'Please select at least one thread from the list.'));
+						}
+					}
+				}
+			})
+		}
+		function saveWatchList() {
+			var watchList = {}
+			watchList.subs = function(){ 
+				var subsArray = [];
+				$('#watch-subreddits .list-group.contain input').each(function(i, input) { 
+					input.value != "" && input.value != null ? subsArray.push(input.value) : ''
+				}); return subsArray;
+			}();
+			watchList.match = function(){ 
+				var matchArray = [];
+				$('#watch-matching .list-group.contain input').each(function(i, input) { 
+					input.value != "" && input.value != null ? matchArray.push(input.value) : ''
+				}); return matchArray;
+			}();
+			watch = watchList;
+			setInCache('watch', watch);
 		}
 		function bindWatchThreads() {
 			$('#watch-threads .list-group-item').unbind('click').click(function() {
@@ -185,9 +244,14 @@ if (!window.jQuery === 'undefined') {
 		}
 		function buildConfigToUI() {
 			$('.carousel-inner').children().remove();
-			config.length==0 ? $('#greeting').show() : $('#greeting').hide();
+			if (config.length==0) {
+				$('#greeting').show();
+				$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
+			} else {
+				$('#greeting').hide();
+			}
 			for (var i = 0, len = config.length; i < len; i++) {
-				buildColumn(config[i], i)	
+				buildColumn(config[i], i)
 			}
 		}
 		function buildFrameEdit(configObj, columnNum) {
@@ -265,7 +329,7 @@ if (!window.jQuery === 'undefined') {
 			deleteRefresh(columnNum);
 			if ($(".refreshSwitch[data-column="+columnNum+"]").hasClass('fa-toggle-on')) {
 				app['r'+columnNum] = setInterval(function() { 
-					getCommentsForColumn(config[columnNum], columnNum)
+					config[columnNum] ? getCommentsForColumn(config[columnNum], columnNum) : clearInterval(app['r'+columnNum]);
 				}, parseInt(config[columnNum].settings.refreshRate)*1000)
 			} else {
 				clearInterval(app['r'+columnNum]);	
@@ -747,8 +811,20 @@ function takeWhile(arr, param, f) {
 function any(cls, f) { 
 	var bool = false
 	$(cls).each(function(i,elem) {
-		if (f(elem)) {
-			bool = true; return;
-		}
+		if (f(elem)) { bool = true; return;}
 	}); return bool;
+}
+$.fn.launchPopOver = function(closeTime, options) {
+	var that = this;
+	$(this).popover('destroy');
+	$(this).popover(options);
+	$(this).popover('show');
+	setTimeout(function(){ 
+		$(that).popover('destroy') 
+	}, closeTime);
+	return this;
+}
+$.fn.addListItem = function() { // call on ul element
+	$(this).append('<li class="list-group-item"><div class="input-group"><input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span></div></li>');
+	return this;
 }
