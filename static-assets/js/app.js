@@ -193,9 +193,11 @@ if (!window.jQuery === 'undefined') {
 		function contentResizeEvent() {
 			app.height = window.innerHeight;
 			$('.frame-content, .edit-form').css('height', window.innerHeight-107);
+			$('#greeting').hasClass('hide') ? $('#content-container').css('height', window.innerHeight-50) : $('#content-container').removeAttr('style');
 			$(window).unbind('resize').bind('resize', function(){
 				if (app.height != window.innerHeight) {
 					$('.frame-content, .edit-form').css('height', window.innerHeight-107);
+					$('#greeting').hasClass('hide') ? $('#content-container').css('height', window.innerHeight-50) : $('#content-container').removeAttr('style');
 					app.height = window.innerHeight;
 				}
 			});
@@ -245,22 +247,23 @@ if (!window.jQuery === 'undefined') {
 		function buildConfigToUI() {
 			$('.carousel-inner').children().remove();
 			if (config.length==0) {
-				$('#greeting').show();
+				$('#greeting').removeClass('hide');
+				$('#content-container').removeAttr('style');
 				$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
 			} else {
-				$('#greeting').hide();
+				$('#greeting').addClass('hide');
 			}
 			for (var i = 0, len = config.length; i < len; i++) {
 				buildColumn(config[i], i)
 			}
 		}
-		function buildFrameEdit(configObj, columnNum) {
+		function buildFrameEdit(configObj, columnNum, type) {
 			var htmlString = "<div class='edit-button-group'><button type='button' class='add-thread-button btn btn-primary btn-default'>Add Thread</button><button style='float:right;' type='button' class='save-edit-button btn btn-primary btn-default'>Save</button><button style='float:right; margin-right: 5px;' type='button' class='cancel-edit-button btn btn-default'>Cancel</button></div>",
 				options = $('<div>').append($('#template > option').clone()).html(),
 				settings = $('<div>').append($('.column-settings').children().clone().each(function() {
 					var $label = $(this).find('label'); var $input = $(this).find('*[id]');
-					$label.attr('for', $label.attr('for')+'-'+columnNum);
-					$input.attr('id', $input.attr('id')+'-'+columnNum);
+					$label.each(function(i, lab){ $(lab).attr('for', type == 'column' ? $(lab).attr('for')+'-column-'+columnNum : $(lab).attr('for')+'-config-'+columnNum )})
+					$input.each(function(i, inp){ $(inp).attr('id', type == 'column' ? $(inp).attr('id')+'-column-'+columnNum : $(inp).attr('id')+'-config-'+columnNum)})
 				})).html();
 			for (var i = 0, len = configObj.threads.length; i < len; i++) {
 				var threads = "<div class='form-group'><label class='control-label'>Threads</label><select data-column='"+columnNum+"' class='form-control thread-edit'></select></div>",
@@ -269,20 +272,29 @@ if (!window.jQuery === 'undefined') {
 				htmlString += subreddit_group;
 			}
 			htmlString += "<div class='edit-column-settings'>"+settings+"</div>";
-			$(".edit-form[data-column="+columnNum+"]").append(htmlString); // edit form attached to column
-			$('#column-name-'+columnNum).val(configObj.settings.name);
-			$('#refresh-'+columnNum).val(configObj.settings.refreshRate);
-			$('#limit-'+columnNum).val(configObj.settings.limitPosts);
-			$('#sortBy-'+columnNum).val(configObj.settings.sortBy);
-			$(".edit-form[data-column="+columnNum+"] .subreddit-edit").each(function(index, el) {
+			type == 'column' 
+				? $(".edit-form[data-column="+columnNum+"]").append(htmlString) // edit form attached to column
+				: $('#collapse'+columnNum+' .panel-body').append(htmlString); // edit form attached to config in control panel
+			type == 'column' ? $('#column-name-column-'+columnNum).val(configObj.settings.name) : $('#column-name-config-'+columnNum).val(configObj.settings.name);
+			type == 'column' ? $('#refresh-column-'+columnNum).val(configObj.settings.refreshRate) : $('#refresh-config-'+columnNum).val(configObj.settings.refreshRate);
+			type == 'column' ? $('#limit-column-'+columnNum).val(configObj.settings.limitPosts) : $('#limit-config-'+columnNum).val(configObj.settings.limitPosts);
+			type == 'column' ? $('#sortBy-column-'+columnNum).val(configObj.settings.sortBy) : $('#sortBy-config-'+columnNum).val(configObj.settings.sortBy);
+			var $subreddit_edit = type == 'column' 
+				? $(".edit-form[data-column="+columnNum+"] .subreddit-edit") 
+				: $('#collapse'+columnNum+' .panel-body .subreddit-edit');
+			$subreddit_edit.each(function(index, el) {
 				this.value = config[columnNum].threads[index].subreddit
 				$(this).unbind('change').bind('change',function(){
-					var index = $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").index($(this).parent().parent());
-					getPosts(this.value, '', '', {target:['edit-form .thread-edit',index,columnNum],callback: setThreads});
+					var index = type == 'column' 
+						? $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").index($(this).parent().parent())
+						: $("#collapse"+columnNum+" .panel-body .subreddit-group-edit").index($(this).parent().parent()),
+						getPostsParamArray = type == 'column' ? ['.edit-form .thread-edit',index,columnNum] : ['#collapse'+columnNum+' .panel-body .thread-edit',index]
+					getPosts(this.value, '', '', {target:getPostsParamArray, callback: setThreads});
 				})
 			});
+			var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body'
+			// MAKE CHANGE HERE - add type param to each of these bind functions
 			bindDeleteThread('delete-edit');
-			var context = ".edit-form[data-column="+columnNum+"]"
 			bindAddThreadButton(context, "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit");
 			bindCancelEdit(configObj, columnNum);
 			bindSaveEdit(configObj, columnNum);
@@ -313,7 +325,7 @@ if (!window.jQuery === 'undefined') {
 				item = "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>";
 			buildColumnToUI(item, num);
 			bindColumnControls(num);
-			buildFrameEdit(configObj, num)
+			buildFrameEdit(configObj, num, 'column')
 			if (configObj.type=='reddit') {
 				getCommentsForColumn(configObj, num)
 				toggleRefresh(num)
@@ -413,11 +425,14 @@ if (!window.jQuery === 'undefined') {
 				$configAccordions.children().remove();
 				for (var i = 0, len = config.length; i < len; i++) {
 					var header = '<div class="panel-heading" role="tab" id="heading'+i+'"><h4 class="panel-title"><a data-toggle="collapse" data-parent="#accordion" href="#collapse'+i+'" aria-expanded="true" aria-controls="collapse'+i+'">'+(i+1)+'. '+config[i].settings.name+'</a></h4></div>',
-						body = '<div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'"><div class="panel-body">Test</div></div>',
+						body = '<div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'"><div class="panel-body"></div></div>',
 						panel = '<div class="panel panel-default">'+header+body+'</div>';
-					configPanelHtml += panel;
+					configPanelHtml += panel;	
 				}
 				$configAccordions.append(configPanelHtml)
+				config.forEach(function(columnObj, i) {
+					buildFrameEdit(columnObj, i, 'config')
+				});
 			} else { $('#current-config').removeClass('hide').addClass('hide'); }
 		}
 		function updateConfigObj(parentClass, subClass, threadClass, settingsClass, num) {
@@ -466,7 +481,7 @@ if (!window.jQuery === 'undefined') {
 				$(context+' .'+subClass+':first').append($options);	
 				$(context+' .'+subClass+':first').unbind('change').bind('change',function(){
 					var index = $('.'+groupClass).index($(this).parent().parent());
-					getPosts(this.value, '', '', {target: [threadClass,index], callback: setThreads});
+					getPosts(this.value, '', '', {target: ['.'+threadClass,index], callback: setThreads});
 				})	
 				fadeIn('.'+groupClass, 100);
 				bindDeleteThread(deleteClass);
@@ -485,9 +500,9 @@ if (!window.jQuery === 'undefined') {
 			})
 		}
 		function setThreads(data, selectTarget) {
-			var $select = selectTarget[2] // columnNum was passed
-				? $($("."+selectTarget[0]+"[data-column="+selectTarget[2]+"]")[selectTarget[1]])
-				: $($('.'+selectTarget[0])[selectTarget[1]]);
+			var $select = typeof selectTarget[2] !== 'undefined' // columnNum was passed
+				? $($(selectTarget[0]+"[data-column="+selectTarget[2]+"]")[selectTarget[1]])
+				: $($(selectTarget[0])[selectTarget[1]]);
 			$select.children().remove();
 			data.data.children.forEach(function(post,i) {
 				$select.append("<option data-subid='"+post.data.subreddit_id+"' data-threadtitle='"+post.data.title+"' data-threadid='"+post.data.id+"' value='"+post.data.permalink+"'>"+post.data.title+"</option>")
