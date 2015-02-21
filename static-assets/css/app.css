@@ -61,6 +61,14 @@ html, body {
   color: white;
   opacity: .5;
 }
+
+.popover {
+  border: 1px solid white !important;
+}
+.popover .arrow {
+  border-top-color: white !important;
+  border-bottom-color: white !important;
+}
 .links-container a:hover, .vote:hover {
   opacity: 1;
 }

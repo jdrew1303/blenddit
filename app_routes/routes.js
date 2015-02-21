@@ -76,6 +76,6 @@ module.exports = function(app, globalware, elseware, kutil) {
 	});
 
 	app.get('*', function(req,res) {
-		res.status(404).send('<h1 style="text-align: center;">404 Not fizound</h1>');
+		res.status(404).redirect('/')
 	});
 }

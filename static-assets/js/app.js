@@ -235,7 +235,7 @@ if (!window.jQuery === 'undefined') {
 				} // else if (twitter block)
 			})
 		}
-		function addColumnToConfig() {
+		function addColumnToConfig() { 
 			if (!$('#reddit').hasClass('hide') && any('.thread-controls', function(x){ return !($(x).val()==null)})) {
 				// Validate - Does the user have at least one thread?
 				// Reset add column functionality, take back to "Add Column"
@@ -788,7 +788,7 @@ if (!window.jQuery === 'undefined') {
 				} else { console.log(errorThrown+': error retrieving - '+path);}
 				hideLoader(obj.target);
 			})
-			.always(function() {
+			.always(function() {	
 				if (obj.always) obj.always(obj.target);
 			});
 		}
