@@ -258,7 +258,7 @@ if (!window.jQuery === 'undefined') {
 			}
 		}
 		function buildFrameEdit(configObj, columnNum, type) {
-			var htmlString = "<div class='edit-button-group'><button type='button' class='add-thread-button btn btn-primary btn-default'>Add Thread</button><button style='float:right;' type='button' class='save-edit-button btn btn-primary btn-default'>Save</button><button style='float:right; margin-right: 5px;' type='button' class='cancel-edit-button btn btn-default'>Cancel</button></div>",
+			var	htmlString = "<div class='edit-button-group'><button type='button' class='add-thread-button btn btn-primary btn-default'>Add Thread</button><button style='float:right;' type='button' class='save-edit-button btn btn-primary btn-default'>Save</button><button style='float:right; margin-right: 5px;' type='button' class='cancel-edit-button btn btn-default'>Cancel</button></div>",
 				options = $('<div>').append($('#template > option').clone()).html(),
 				settings = $('<div>').append($('.column-settings').children().clone().each(function() {
 					var $label = $(this).find('label'); var $input = $(this).find('*[id]');
@@ -272,9 +272,11 @@ if (!window.jQuery === 'undefined') {
 				htmlString += subreddit_group;
 			}
 			htmlString += "<div class='edit-column-settings'>"+settings+"</div>";
+			var navTabType = type=='column' ? 'column-'+columnNum : 'config-'+columnNum
+				navTabs = '<ul class="nav nav-tabs"><li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li><li><a data-toggle="tab" href="#'+navTabType+'-settings">Settings</a></li><li><a data-toggle="tab" href="#'+navTabType+'-post">Post</a></li><li><a data-toggle="tab" href="#'+navTabType+'-info">Info</a></li></ul><div class="tab-content"><div class="tab-pane fade active in" id="'+navTabType+'-add">'+htmlString+'</div><div class="tab-pane fade" id="'+navTabType+'-settings">Settings</div><div class="tab-pane fade active in" id="'+navTabType+'-post">Post</div><div class="tab-pane fade active in" id="'+navTabType+'-info">Info</div></div>'
 			type == 'column' 
-				? $(".edit-form[data-column="+columnNum+"]").append(htmlString) // edit form attached to column
-				: $('#collapse'+columnNum+' .panel-body').append(htmlString); // edit form attached to config in control panel
+				? $(".edit-form[data-column="+columnNum+"]").append(navTabs) // edit form attached to column
+				: $('#collapse'+columnNum+' .panel-body').append(navTabs); // edit form attached to config in control panel
 			type == 'column' ? $('#column-name-column-'+columnNum).val(configObj.settings.name) : $('#column-name-config-'+columnNum).val(configObj.settings.name);
 			type == 'column' ? $('#refresh-column-'+columnNum).val(configObj.settings.refreshRate) : $('#refresh-config-'+columnNum).val(configObj.settings.refreshRate);
 			type == 'column' ? $('#limit-column-'+columnNum).val(configObj.settings.limitPosts) : $('#limit-config-'+columnNum).val(configObj.settings.limitPosts);
