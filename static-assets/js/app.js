@@ -370,13 +370,11 @@ var app = (function($) {
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
 		$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-		$('#greeting').hasClass('hide') 
-			? $('#content-container').css('height', $('#carousel').height()) : $('#content-container').removeAttr('style');
+		$('.carousel-inner').css('height', $('#carousel').height());
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
 				$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-				$('#greeting').hasClass('hide') 
-					? $('#content-container').css('height', $('#carousel').height()) : $('#content-container').removeAttr('style');
+				$('.carousel-inner').css('height', $('#carousel').height());		
 				app.height = window.innerHeight;
 			}
 		});
@@ -427,7 +425,6 @@ var app = (function($) {
 		$('.carousel-inner').children().remove();
 		if (config.length==0) {
 			$('#greeting').removeClass('hide');
-			$('#content-container').removeAttr('style');
 			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
 		} else {
 			$('#greeting').addClass('hide');
@@ -975,10 +972,9 @@ var app = (function($) {
 		})
 		.fail(function(jqXHR, textStatus, errorThrown) {
 			if (errorThrown=='timeout') { // 504 Gateway Timeout - connection to reddit server error - display to user
-				console.log(textStatus);
+				if (typeof obj.timeout !== 'undefined') handleTimeOut(obj.timeout);
 			} else { console.log(errorThrown+': error retrieving - '+path);}
 			hideLoader(obj.target);
-			if (typeof obj.timeout !== 'undefined') handleTimeOut(obj.timeout);
 		})
 		.always(function() {	
 			if (obj.always) obj.always(obj.target);

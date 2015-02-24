@@ -416,7 +416,8 @@ blockquote, blockquote p {
   display: inline-block;
 }
 .carousel-inner {
-  overflow: auto;
+  overflow-y: hidden;
+  overflow-x: auto;
 }
 .loading {
   color: white;
