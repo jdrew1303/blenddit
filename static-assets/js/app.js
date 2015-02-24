@@ -370,11 +370,11 @@ var app = (function($) {
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
 		$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-		$('.carousel-inner').css('height', $('#carousel').height());
+		$('.carousel-inner').css('height', window.innerHeight-50);
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
 				$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-				$('.carousel-inner').css('height', $('#carousel').height());		
+				$('.carousel-inner').css('height', window.innerHeight-50);		
 				app.height = window.innerHeight;
 			}
 		});
