@@ -135,8 +135,54 @@ var util = {
 			return ["<span class='reply-num text-warning'>"+replyLength+"</span>",
 					"<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>"].join('')
 		},
-		ad : function(name, replyLength) { return "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'></a>"}
-
+		ad : function(name, replyLength) { return "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'></a>"},
+		ae : function(comment, replyLength, timeElapsed, permaLink, replyForm) {
+			return ["<footer data-id='"+comment.data.name+"' class='comment-footer'>",
+						"<div class='links-container btn-group'>",
+							"<a class='btn time-elapsed white'>"+timeElapsed+"</a>",
+							"<a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a>",
+							"<a class='btn perma' href='"+permaLink+"' target='_blank'><i class='fa fa-link fa-lg'></i></a>",
+							"<a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.id+"'><i class='fa fa-refresh fa-lg'></i></a>",
+							(replyLength!=0 ? util.html.af(comment, replyLength) : ''),
+						"</div>",
+						replyForm,
+					"</footer>"].join('')
+		},
+		af : function(comment, replyLength) {
+			return ["<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'>",
+						"<span class='reply-num text-warning'>"+replyLength+"</span>",
+						"<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>",
+					"</a>"].join('')
+		},
+		ag : function(comment, text) {
+			return ["<div class='media-heading btn-group'>",
+						"<a class='btn vote'><i class='fa fa-arrow-up'></i></a>",
+						"<a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a>",
+						"<a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a>",
+						"<a class='btn author' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
+						(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;"),
+					"</div>"+text].join('')
+		},
+		ah : function(comment, text) {
+			return ["<div class='load-comments' data-parent='"+comment.data.parent_id+"' class='load-comments'>",
+						"<i class='fa fa-download'></i>&nbsp; load more comments",
+					"</div>"+text].join('')
+		},
+		ai : function(heading) { return "<div class='media-body'>"+heading+"</div>" },
+		aj : function(isParent, icon) { return "<div class='thumb pull-left "+(isParent ? icon : '')+"'></div>"},
+		ak : function(comment, icon, isParent, optionalNopacity, thumbnail, body, hide) {
+			return ["<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' ",
+						"data-icon='"+icon+"' id='"+comment.data.name+"' ",
+						"class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>"+thumbnail+body,
+					"</div>"].join('')
+		},
+		al : function() {
+			return ['<li class="list-group-item">',
+						'<div class="input-group">',
+							'<input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span>',
+						'</div>',
+					'</li>'].join('')
+		}
 	}
 };
 var app = (function($) {
@@ -257,11 +303,11 @@ var app = (function($) {
 	}
 	function bindWatchAdd() {
 		$('#watch-subreddits .btn.add').unbind('click').bind('click', function() {
-			$('#watch-subreddits .list-group.contain').addListItem();
+			$('#watch-subreddits .list-group.contain').append(util.html.al);
 			bindDeleteWatchButtons();
 		})
 		$('#watch-matching .btn.add').unbind('click').bind('click', function() {
-			$('#watch-matching .list-group.contain').addListItem();
+			$('#watch-matching .list-group.contain').append(util.html.al);
 			bindDeleteWatchButtons();
 		})
 	}
@@ -324,11 +370,13 @@ var app = (function($) {
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
 		$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-		$('#greeting').hasClass('hide') ? $('#content-container').css('height', window.innerHeight-50) : $('#content-container').removeAttr('style');
+		$('#greeting').hasClass('hide') 
+			? $('#content-container').css('height', $('#carousel').height()) : $('#content-container').removeAttr('style');
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
 				$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-				$('#greeting').hasClass('hide') ? $('#content-container').css('height', window.innerHeight-50) : $('#content-container').removeAttr('style');
+				$('#greeting').hasClass('hide') 
+					? $('#content-container').css('height', $('#carousel').height()) : $('#content-container').removeAttr('style');
 				app.height = window.innerHeight;
 			}
 		});
@@ -393,8 +441,10 @@ var app = (function($) {
 			options = $('<div>').append($('#template > option').clone()).html(),
 			settings = $('<div>').append($('.column-settings').children().clone().each(function() {
 				var $label = $(this).find('label'); var $input = $(this).find('*[id]');
-				$label.each(function(i, lab){ $(lab).attr('for', type == 'column' ? $(lab).attr('for')+'-column-'+columnNum : $(lab).attr('for')+'-config-'+columnNum )})
-				$input.each(function(i, inp){ $(inp).attr('id', type == 'column' ? $(inp).attr('id')+'-column-'+columnNum : $(inp).attr('id')+'-config-'+columnNum)})
+				$label.each(function(i, lab){ $(lab).attr('for', type == 'column' 
+					? $(lab).attr('for')+'-column-'+columnNum : $(lab).attr('for')+'-config-'+columnNum )})
+				$input.each(function(i, inp){ $(inp).attr('id', type == 'column' 
+					? $(inp).attr('id')+'-column-'+columnNum : $(inp).attr('id')+'-config-'+columnNum)})
 			})).html();
 		for (var i = 0, len = configObj.threads.length; i < len; i++) {
 			var threads = util.html.d(columnNum),
@@ -421,7 +471,8 @@ var app = (function($) {
 				var index = type == 'column' 
 					? $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").index($(this).parent().parent())
 					: $("#collapse"+columnNum+" .panel-body .subreddit-group-edit").index($(this).parent().parent()),
-					getPostsParamArray = type == 'column' ? ['.edit-form .thread-edit',index,columnNum] : ['#collapse'+columnNum+' .panel-body .thread-edit',index]
+					getPostsParamArray = type == 'column' 
+						? ['.edit-form .thread-edit',index,columnNum] : ['#collapse'+columnNum+' .panel-body .thread-edit',index]
 				getPosts(this.value, '', '', {target:getPostsParamArray, callback: setThreads});
 			})
 		});
@@ -533,7 +584,7 @@ var app = (function($) {
 			var path = configObj.threads[i].thread,
 				sort = configObj.settings.sortBy,
 				limit = configObj.settings.limitPosts;
-			getPosts(path, sort, limit, {target: columnNum, callback: function(data, target) {
+			getPosts(path, sort, limit, {target: columnNum, timeout: '.frame[data-column='+columnNum+']', callback: function(data, target) {
 				dataArray = dataArray.concat([data.concat(target)]);
 				if (config[target].threads && config[target].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
 					var mergedData = getMergedData(dataArray);
@@ -570,7 +621,8 @@ var app = (function($) {
 	}
 	function updateConfigObj(parentClass, subClass, threadClass, settingsClass, num) {
 		var column = {}, setting = {}, threads = [], $group = $(parentClass), settings = $(settingsClass).find('.form-control'),
-			type = typeof num !== 'undefined' && $(".frame-position[data-column="+num+"]").data('type')=='reddit' || !$('#reddit').hasClass('hide') ? 'reddit' : 'twitter';
+			type = typeof num !== 'undefined' && $(".frame-position[data-column="+num+"]").data('type')=='reddit' || !$('#reddit').hasClass('hide') 
+				? 'reddit' : 'twitter';
 		$group.each(function(index, el) {
 			if ($(el).find(threadClass).val()) {
 				var thread = {}, $option = $(el).find(threadClass+' option:selected');
@@ -797,14 +849,17 @@ var app = (function($) {
 		commentsArray.forEach(function(comment,i) {
 			var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data') 
 					? comment.data.replies.data.children:[], replyLength = replies.length;
-			var footer = comment.kind!='more' ? "<footer data-id='"+comment.data.name+"' class='comment-footer'><div class='links-container btn-group'><a class='btn time-elapsed white'>"+getTimeElapsed(comment.data.created_utc)+"</a><a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a><a class='btn perma' href='"+getPermalink(comment.data.link_id,comment.data.id)+"' target='_blank'><i class='fa fa-link fa-lg'></i></a><a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.id+"'><i class='fa fa-refresh fa-lg'></i></a>"+(replyLength!=0 ? "<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'><span class='reply-num text-warning'>"+replyLength+"</span><span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span></a>" : '')+"</div>"+buildReplyForm(comment.data.name, comment.data.author)+"</footer>" : "",
+			var footer = comment.kind!='more' 
+					? util.html.ae(comment, replyLength, getTimeElapsed(comment.data.created_utc), 
+						getPermalink(comment.data.link_id,comment.data.id), 
+						buildReplyForm(comment.data.name, comment.data.author)) : "",
 				text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
 	    		heading = comment.kind!='more' 
-	    			? "<div class='media-heading btn-group'><a class='btn vote'><i class='fa fa-arrow-up'></i></a><a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a><a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a><a class='btn author' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>"+(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;")+"</div>"+text
-	    			: "<div class='load-comments' data-parent='"+comment.data.parent_id+"' class='load-comments'><i class='fa fa-download'></i>&nbsp; load more comments</div>"+text;
-	    		body = "<div class='media-body'>"+heading+"</div>",
-	    		thumbnail = comment.kind!='more' ? "<div class='thumb pull-left "+(isParent ? getIcon(comment.data.subreddit) : '')+"'></div>" : "",
-	    		media = "<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' data-icon='"+getIcon(comment.data.subreddit)+"' id='"+comment.data.name+"' class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>"+thumbnail+body+"</div>"
+	    			? util.html.ag(comment, text)
+	    			: util.html.ah(comment, text), 
+	    		body = util.html.ai(heading),
+	    		thumbnail = comment.kind!='more' ? util.html.aj(isParent, getIcon(comment.data.subreddit)) : "",
+	    		media = util.html.ak(comment, getIcon(comment.data.subreddit), isParent, optionalNopacity, thumbnail, body, hide);
 	        htmlString += media;
 		});
 		return htmlString;
@@ -905,6 +960,9 @@ var app = (function($) {
 		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
 		.always(function() { if (always) always(); });
 	}
+	function handleTimeOut(selector) {
+		$(selector).launchPopOver(5000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));
+	}
 	function getPosts(path, sort, limit, obj){
 		$.ajax({
 			url: "http://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?",
@@ -920,6 +978,7 @@ var app = (function($) {
 				console.log(textStatus);
 			} else { console.log(errorThrown+': error retrieving - '+path);}
 			hideLoader(obj.target);
+			if (typeof obj.timeout !== 'undefined') handleTimeOut(obj.timeout);
 		})
 		.always(function() {	
 			if (obj.always) obj.always(obj.target);
@@ -963,9 +1022,5 @@ $.fn.launchPopOver = function(closeTime, options) {
 	setTimeout(function(){ 
 		$(that).popover('destroy') 
 	}, closeTime);
-	return this;
-}
-$.fn.addListItem = function() { // call on ul element
-	$(this).append('<li class="list-group-item"><div class="input-group"><input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span></div></li>');
 	return this;
 }

@@ -73,7 +73,7 @@ html, body {
   opacity: 1;
 }
 .tab-pane 
-blockquote {
+blockquote, blockquote p {
   font-size: 12px !important;
   margin: 2px;
 }
@@ -142,9 +142,6 @@ blockquote {
   border-top: 1px solid rgba(255,255,255,.25) !important;
   margin-top: 5px !important;
   background-color: rgb(32,32,32);
-}
-#content-container::-webkit-scrollbar {
-  /*display: none;*/
 }
 #content-container {
   width:100%;
@@ -419,7 +416,7 @@ blockquote {
   display: inline-block;
 }
 .carousel-inner {
-  overflow: visible;
+  /*overflow: auto;*/
 }
 .loading {
   color: white;
