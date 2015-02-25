@@ -50,12 +50,16 @@ var util = {
 						"<span class='badge pull-right'>"+timeElapsed+"</span>",
 					"</li>"].join('')
 		},
-		c : function() { 
-			return ["<div class='edit-button-group'>",
-						"<button type='button' class='add-thread-button btn btn-primary btn-default'>Add Thread</button>",
-						"<button style='float:right;' type='button' class='save-edit-button btn btn-primary btn-default'>Save</button>",
-						"<button style='float:right; margin-right: 5px;' type='button' class='cancel-edit-button btn btn-default'>Cancel</button>",
-					"</div>"].join('')
+		c : function() {
+			return ["<ul class='list-group controls edit-button-group'>",
+						"<li class='list-group-item controls'>",
+							"<div class='btn-group'>",				
+                  				"<a class='btn add-thread-button'><i class='fa fa-plus-circle fa-2x'></i></a>",
+                  				"<a class='btn cancel-edit-button'><i class='fa fa-close fa-2x'></i></a>",
+                  				"<a class='btn save-edit-button'><i class='fa fa-save fa-2x'></i></a>",
+                  			"</div>",
+                		"</li>", 
+              		"</ul>"].join('')
 		},
 		d : function(columnNum) {
 			return ["<div class='form-group'>",
@@ -414,7 +418,7 @@ var app = (function($) {
 			}
 		});
 		function columnSizing() {
-			$('.frame-content, .edit-form').css('height', window.innerHeight-107);
+			$('.frame-content').css('height', window.innerHeight-107);
 			$('.frame-edit').css('height', window.innerHeight-115);
 			$('#greeting').hasClass('hide') 
 				? $('.carousel-inner').css('height', window.innerHeight-50) 

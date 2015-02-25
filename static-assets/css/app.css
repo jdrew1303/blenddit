@@ -57,11 +57,10 @@ html, body {
 .reply-buttons button { margin-left: 5px;}
 .reply-buttons { text-align: right;}
 .thumb {margin: 5px 5px 0 5px !important;}
-.links-container .reply-switch, .links-container .perma, .links-container .refresh-comment, .vote {
+.links-container .reply-switch, .links-container .perma, .links-container .refresh-comment, .vote, .list-group.edit-button-group .btn {
   color: white;
   opacity: .5;
 }
-
 .popover {
   border: 1px solid white !important;
 }
@@ -69,7 +68,7 @@ html, body {
   border-top-color: white !important;
   border-bottom-color: white !important;
 }
-.links-container a:hover, .vote:hover {
+.links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover {
   opacity: 1;
 }
 .tab-pane 
@@ -191,6 +190,12 @@ blockquote, blockquote p {
   cursor: pointer;
   margin-right: 6px;
 }
+.list-group.edit-button-group {
+  margin: 0;
+}
+.edit-form .tab-content, #accordion .tab-content {
+  padding-top: 10px;
+}
 .list-group-item.controls { 
   background-color: transparent;
   border-color: transparent;
@@ -250,9 +255,6 @@ blockquote, blockquote p {
 .frame-edit {
   overflow-y: scroll;
   margin-top: 15px;
-}
-.edit-button-group {
-  margin-bottom: 15px;
 }
 .frame-header {
   margin-top : 5px;
