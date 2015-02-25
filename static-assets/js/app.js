@@ -370,11 +370,11 @@ var app = (function($) {
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
 		$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-		$('.carousel-inner').css('height', window.innerHeight-50);
+		$('#greeting').hasClass('hide') ? $('.carousel-inner').css('height', window.innerHeight-50) : $('.carousel-inner').removeAttr('style');
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
 				$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-				$('.carousel-inner').css('height', window.innerHeight-50);		
+				$('#greeting').hasClass('hide') ? $('.carousel-inner').css('height', window.innerHeight-50) : $('.carousel-inner').removeAttr('style');		
 				app.height = window.innerHeight;
 			}
 		});
@@ -429,6 +429,7 @@ var app = (function($) {
 		} else {
 			$('#greeting').addClass('hide');
 		}
+		contentResizeEvent();
 		for (var i = 0, len = config.length; i < len; i++) {
 			buildColumn(config[i], i)
 		}
