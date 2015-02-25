@@ -1,4 +1,41 @@
 var util = {
+	fn : {
+		remove : function(arr, from, to) {
+			var rest = arr.slice((to || from) + 1 || arr.length);
+			arr.length = from < 0 ? arr.length + from : from;
+			return arr.push.apply(arr, rest);
+		},
+		takeWhile : function(arr, param, f) {
+			var returnArr = [];
+			for (var i = 0, len = arr.length; i < len; i++) {
+				if (f(arr[i], param)) { returnArr.push(arr[i]) }
+				else { break; }
+			}
+			return returnArr;
+		},
+		any : function(cls, f) { 
+			var bool = false
+			$(cls).each(function(i,elem) {
+				if (f(elem)) { bool = true; return;}
+			}); return bool;
+		},
+		jQueryExtensions : function() {
+			$.fn.launchPopOver = function(closeTime, options) {
+				var that = this;
+				$(this).popover('destroy');
+				$(this).popover(options);
+				$(this).popover('show');
+				setTimeout(function(){ 
+					$(that).popover('destroy') 
+				}, closeTime);
+				return this;
+			}
+			$.fn.hasOverflowed = function(){
+				return this.length > 0 
+					? this[0].scrollHeight > this[0].clientHeight || this[0].scrollWidth > this[0].clientWidth : false
+			}
+		}()
+	},
 	html : {
 		a : function(thing) {
 			return ["<li class='list-group-item'>",
@@ -240,7 +277,7 @@ var app = (function($) {
 			$('.navbar-brand > .text-warning').text('thread merger')
 			$('.open-controls').unbind('click').click(function() {launchControls();})
 			$('#delete-column').unbind('click').click(function() {
-				config.remove($(this).data('column'));
+				util.fn.remove(config, $(this).data('column'));
 				deleteRefresh($(this).data('column'))
 				setInCache('config', config);
 				buildConfigurationPanel();
@@ -321,8 +358,8 @@ var app = (function($) {
 		$('#watch-subreddits .btn.save, #watch-matching .btn.save, #watch-threads .btn.save').unbind('click').bind('click', function() {
 			function notEmpty(x) { return !($(x).val()=="") };
 			var $watchSubs = $('#watch-subreddits .list-group.contain'), $watchMatching = $('#watch-matching .list-group.contain');
-			if ($watchSubs.children().length==0 || !any($watchSubs.find('input'),notEmpty) 
-				|| $watchMatching.children().length==0 || !any($watchMatching.find('input'),notEmpty)) { // validation
+			if ($watchSubs.children().length==0 || !util.fn.any($watchSubs.find('input'),notEmpty) 
+				|| $watchMatching.children().length==0 || !util.fn.any($watchMatching.find('input'),notEmpty)) { // validation
 				var watch_controls = '#watch-subreddits .list-group-item.controls, #watch-matching .list-group-item.controls, #watch-threads .list-group-item.controls';
 				$(watch_controls).launchPopOver(3000, 
 					popOverOptions('top','Verification','Verify you have one subreddit and one matching pattern added with values.'));
@@ -330,7 +367,7 @@ var app = (function($) {
 				saveWatchList();
 				if ($(this).hasClass('wthreads')) {
 					function hasWhite(x) { return $(x).hasClass('white')} 
-					if (any('#watch-threads .list-group.contain li', hasWhite)) {
+					if (util.fn.any('#watch-threads .list-group.contain li', hasWhite)) {
 						// build column
 					} else {
 						$('#watch-threads .list-group-item.controls').launchPopOver(3000, 
@@ -369,15 +406,20 @@ var app = (function($) {
 	}
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
-		$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-		$('#greeting').hasClass('hide') ? $('.carousel-inner').css('height', window.innerHeight-50) : $('.carousel-inner').removeAttr('style');
+		columnSizing();
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
-				$('.frame-content, .edit-form').css('height', window.innerHeight-107);
-				$('#greeting').hasClass('hide') ? $('.carousel-inner').css('height', window.innerHeight-50) : $('.carousel-inner').removeAttr('style');		
+				columnSizing();
 				app.height = window.innerHeight;
 			}
 		});
+		function columnSizing() {
+			$('.frame-content, .edit-form').css('height', window.innerHeight-107);
+			$('.frame-edit').css('height', window.innerHeight-115);
+			$('#greeting').hasClass('hide') 
+				? $('.carousel-inner').css('height', window.innerHeight-50) 
+				: $('.carousel-inner').removeAttr('style');
+		}
 	}
 	function launchControls() {
 		vendorGroupDisplay();
@@ -413,7 +455,7 @@ var app = (function($) {
 		})
 	}
 	function addColumnToConfig() { 
-		if (!$('#reddit').hasClass('hide') && any('.thread-controls', function(x){ return !($(x).val()==null)})) {
+		if (!$('#reddit').hasClass('hide') && util.fn.any('.thread-controls', function(x){ return !($(x).val()==null)})) {
 			// Validate - Does the user have at least one thread?
 			// Reset add column functionality, take back to "Add Column"
 			updateConfigObj('.sub-group-controls', '.subreddit-controls', '.thread-controls', '#reddit .column-settings');
@@ -779,7 +821,7 @@ var app = (function($) {
 		} else { // subsequent loads
 			var cachedfirstComment = app['firstComment'+columnNum];
 			if (!(cachedfirstComment == data[1].data.children[0].data.name)) {
-				var newComments = takeWhile(data[1].data.children, cachedfirstComment, function(x, commentName){ 
+				var newComments = util.fn.takeWhile(data[1].data.children, cachedfirstComment, function(x, commentName){ 
 					return x.data.name != commentName;
 				})
 				$(buildCommentHtmlString(newComments, true, true)).insertBefore(".frame-content[data-column="+columnNum+"] #"+cachedfirstComment);
@@ -992,32 +1034,3 @@ var app = (function($) {
 (function() {
 	app.init();
 })();
-Array.prototype.remove = function(from, to) {
-  var rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
-function takeWhile(arr, param, f) {
-	var returnArr = [];
-	for (var i = 0, len = arr.length; i < len; i++) {
-		if (f(arr[i], param)) { returnArr.push(arr[i]) }
-		else { break; }
-	}
-	return returnArr;
-}
-function any(cls, f) { 
-	var bool = false
-	$(cls).each(function(i,elem) {
-		if (f(elem)) { bool = true; return;}
-	}); return bool;
-}
-$.fn.launchPopOver = function(closeTime, options) {
-	var that = this;
-	$(this).popover('destroy');
-	$(this).popover(options);
-	$(this).popover('show');
-	setTimeout(function(){ 
-		$(that).popover('destroy') 
-	}, closeTime);
-	return this;
-}
