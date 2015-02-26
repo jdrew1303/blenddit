@@ -50,13 +50,16 @@ var util = {
 						"<span class='badge pull-right'>"+timeElapsed+"</span>",
 					"</li>"].join('')
 		},
-		c : function() {
-			return ["<ul class='list-group controls edit-button-group'>",
+		c : function(ulClass, btnArr) {
+			var buttons = function() { 
+				var htmlString = ""; 
+				btnArr.forEach(function(arr){  
+					htmlString += "<a class='btn "+arr[0]+"'><i class='fa fa-"+arr[1]+" fa-2x'></i></a>"
+				}); return htmlString; }();
+			return ["<ul class='list-group controls "+ulClass+"'>",
 						"<li class='list-group-item controls'>",
-							"<div class='btn-group'>",				
-                  				"<a class='btn add-thread-button'><i class='fa fa-plus-circle fa-2x'></i></a>",
-                  				"<a class='btn cancel-edit-button'><i class='fa fa-close fa-2x'></i></a>",
-                  				"<a class='btn save-edit-button'><i class='fa fa-save fa-2x'></i></a>",
+							"<div class='btn-group'>",
+								buttons,
                   			"</div>",
                 		"</li>", 
               		"</ul>"].join('')
@@ -481,7 +484,7 @@ var app = (function($) {
 		}
 	}
 	function buildFrameEdit(configObj, columnNum, type) {
-		var	htmlString = util.html.c(),
+		var	htmlString = util.html.c('edit-button-group', [['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']]),
 			options = $('<div>').append($('#template > option').clone()).html(),
 			settings = $('<div>').append($('.column-settings').children().clone().each(function() {
 				var $label = $(this).find('label'); var $input = $(this).find('*[id]');
