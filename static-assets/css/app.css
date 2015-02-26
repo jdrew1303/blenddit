@@ -196,6 +196,13 @@ blockquote, blockquote p {
 .edit-form .tab-content, #accordion .tab-content {
   padding-top: 10px;
 }
+.edit-form .nav-tabs {
+  text-align: center;
+}
+.edit-form .nav-tabs > li {
+  float: none;
+  display: inline-block;
+}
 .list-group-item.controls { 
   background-color: transparent;
   border-color: transparent;
