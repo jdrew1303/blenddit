@@ -196,10 +196,10 @@ blockquote, blockquote p {
 .edit-form .tab-content, #accordion .tab-content {
   padding-top: 10px;
 }
-.edit-form .nav-tabs {
+.edit-form .nav-tabs, #accordion .nav-tabs {
   text-align: center;
 }
-.edit-form .nav-tabs > li {
+.edit-form .nav-tabs > li, #accordion .nav-tabs > li {
   float: none;
   display: inline-block;
 }

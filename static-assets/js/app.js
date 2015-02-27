@@ -509,10 +509,23 @@ var app = (function($) {
 		type == 'column' 
 			? $(".edit-form[data-column="+columnNum+"]").append(navTabs) // edit form attached to column
 			: $('#collapse'+columnNum+' .panel-body').append(navTabs); // edit form attached to config in control panel
+		
+		var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body'
+		// MAKE CHANGE HERE - add type param to each of these bind functions
+		bindSelectLoad(type, columnNum);
+		bindDeleteThread('delete-edit');
+		bindAddThreadButton(context+' #'+type+'-'+columnNum+'-add', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit");
+		bindCancelEdit(configObj, columnNum);
+		bindSaveEdit(configObj, columnNum, type);
+		setSettingsFromConfig(type, columnNum, configObj);
+	}
+	function setSettingsFromConfig(type, columnNum, configObj) {
 		type == 'column' ? $('#column-name-column-'+columnNum).val(configObj.settings.name) : $('#column-name-config-'+columnNum).val(configObj.settings.name);
 		type == 'column' ? $('#refresh-column-'+columnNum).val(configObj.settings.refreshRate) : $('#refresh-config-'+columnNum).val(configObj.settings.refreshRate);
 		type == 'column' ? $('#limit-column-'+columnNum).val(configObj.settings.limitPosts) : $('#limit-config-'+columnNum).val(configObj.settings.limitPosts);
 		type == 'column' ? $('#sortBy-column-'+columnNum).val(configObj.settings.sortBy) : $('#sortBy-config-'+columnNum).val(configObj.settings.sortBy);
+	}
+	function bindSelectLoad(type, columnNum) {
 		var $subreddit_edit = type == 'column' 
 			? $(".edit-form[data-column="+columnNum+"] .subreddit-edit") 
 			: $('#collapse'+columnNum+' .panel-body .subreddit-edit');
@@ -527,21 +540,15 @@ var app = (function($) {
 				getPosts(this.value, '', '', {target:getPostsParamArray, callback: setThreads});
 			})
 		});
-		var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body'
-		// MAKE CHANGE HERE - add type param to each of these bind functions
-		bindDeleteThread('delete-edit');
-		bindAddThreadButton(context, "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit");
-		bindCancelEdit(configObj, columnNum);
-		bindSaveEdit(configObj, columnNum, type);
 	}
 	function bindSaveEdit(configObj, columnNum, type) {
 		var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body',
-			parent = context+' #'+type+'-'+columnNum+'-add', settings = context+' #'+type+'-'+columnNum+'-add'
+			parent = context+' #'+type+'-'+columnNum+'-add', settings = context+' #'+type+'-'+columnNum+'-settings'
 		$(context+" .save-edit-button").unbind('click').bind('click', function() {
-			updateConfigObj(context+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', context+' .edit-column-settings', columnNum);
+			updateConfigObj(parent+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', settings+' .edit-column-settings', columnNum);
 			setInCache('config', config);
 			buildColumn(config[columnNum], columnNum);
-			makeItemActive(columnNum)
+			makeItemActive(columnNum);
 		})
 	}
 	function bindCancelEdit(configObj, columnNum) {
