@@ -78,7 +78,7 @@ var util = {
 		},
 		f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>" },
 		g : function(settings) { return "<div class='edit-column-settings'>"+settings+"</div>" },
-		h : function(navTabType, htmlString) {
+		h : function(navTabType, addThreadTab, settingsTab) {
 			return ['<ul class="nav nav-tabs">',
 						'<li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li>',
 						'<li><a data-toggle="tab" href="#'+navTabType+'-settings">Settings</a></li>',
@@ -86,8 +86,8 @@ var util = {
 						'<li><a data-toggle="tab" href="#'+navTabType+'-info">Info</a></li>',
 					'</ul>',
 					'<div class="tab-content">',
-						'<div class="tab-pane fade active in" id="'+navTabType+'-add">'+htmlString+'</div>',
-						'<div class="tab-pane fade" id="'+navTabType+'-settings">Settings</div>',
+						'<div class="tab-pane fade active in" id="'+navTabType+'-add">'+addThreadTab+'</div>',
+						'<div class="tab-pane fade" id="'+navTabType+'-settings">'+settingsTab+'</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-post">Post</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-info">Info</div>',
 					'</div>'].join('')
@@ -483,25 +483,29 @@ var app = (function($) {
 			buildColumn(config[i], i)
 		}
 	}
-	function buildFrameEdit(configObj, columnNum, type) {
-		var	htmlString = util.html.c('edit-button-group', [['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']]),
-			options = $('<div>').append($('#template > option').clone()).html(),
-			settings = $('<div>').append($('.column-settings').children().clone().each(function() {
+	function buildFrameMenu(configObj, columnNum, type) {
+		var addThreadTab = function() {
+			var addThread = util.html.c('edit-button-group', [['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']]),
+				options = $('<div>').append($('#template > option').clone()).html();
+			for (var i = 0, len = configObj.threads.length; i < len; i++) {
+				var threads = util.html.d(columnNum),
+					subreddit = util.html.e(options),
+					subreddit_group = util.html.f(subreddit, threads);
+				addThread += subreddit_group;
+			}; return addThread; 
+		}();
+		var settingsTab = function() {
+			var settingsButtons = util.html.c('edit-button-group', [['cancel-edit-button','close'],['save-edit-button','save']]),
+				settingSelects = $('<div>').append($('.column-settings').children().clone().each(function() {
 				var $label = $(this).find('label'); var $input = $(this).find('*[id]');
 				$label.each(function(i, lab){ $(lab).attr('for', type == 'column' 
 					? $(lab).attr('for')+'-column-'+columnNum : $(lab).attr('for')+'-config-'+columnNum )})
 				$input.each(function(i, inp){ $(inp).attr('id', type == 'column' 
 					? $(inp).attr('id')+'-column-'+columnNum : $(inp).attr('id')+'-config-'+columnNum)})
-			})).html();
-		for (var i = 0, len = configObj.threads.length; i < len; i++) {
-			var threads = util.html.d(columnNum),
-				subreddit = util.html.e(options),
-				subreddit_group = util.html.f(subreddit, threads);
-			htmlString += subreddit_group;
-		}
-		htmlString += util.html.g(settings);
+			})).html(); return util.html.g(settingsButtons+settingSelects);
+		}();
 		var navTabType = type=='column' ? 'column-'+columnNum : 'config-'+columnNum
-			navTabs = util.html.h(navTabType, htmlString);
+			navTabs = util.html.h(navTabType, addThreadTab, settingsTab);
 		type == 'column' 
 			? $(".edit-form[data-column="+columnNum+"]").append(navTabs) // edit form attached to column
 			: $('#collapse'+columnNum+' .panel-body').append(navTabs); // edit form attached to config in control panel
@@ -528,11 +532,12 @@ var app = (function($) {
 		bindDeleteThread('delete-edit');
 		bindAddThreadButton(context, "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit");
 		bindCancelEdit(configObj, columnNum);
-		bindSaveEdit(configObj, columnNum);
+		bindSaveEdit(configObj, columnNum, type);
 	}
-	function bindSaveEdit(configObj, columnNum) {
-		$(".edit-form[data-column="+columnNum+"] .save-edit-button").unbind('click').bind('click', function() {
-			var context = '.edit-form[data-column='+columnNum+']';
+	function bindSaveEdit(configObj, columnNum, type) {
+		var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body',
+			parent = context+' #'+type+'-'+columnNum+'-add', settings = context+' #'+type+'-'+columnNum+'-add'
+		$(context+" .save-edit-button").unbind('click').bind('click', function() {
 			updateConfigObj(context+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', context+' .edit-column-settings', columnNum);
 			setInCache('config', config);
 			buildColumn(config[columnNum], columnNum);
@@ -556,7 +561,7 @@ var app = (function($) {
 			item = util.html.o(num, framePosition);
 		buildColumnToUI(item, num);
 		bindColumnControls(num);
-		buildFrameEdit(configObj, num, 'column')
+		buildFrameMenu(configObj, num, 'column')
 		if (configObj.type=='reddit') {
 			getCommentsForColumn(configObj, num)
 			toggleRefresh(num)
@@ -662,7 +667,7 @@ var app = (function($) {
 			}
 			$configAccordions.append(configPanelHtml)
 			config.forEach(function(columnObj, i) {
-				buildFrameEdit(columnObj, i, 'config')
+				buildFrameMenu(columnObj, i, 'config')
 			});
 		} else { $('#current-config').removeClass('hide').addClass('hide'); }
 	}
