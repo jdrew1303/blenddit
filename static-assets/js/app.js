@@ -136,7 +136,7 @@ var util = {
 						'<div class="panel-body"></div>',
 					'</div>'].join('')
 		},
-		r : function(header, body) { return '<div class="panel panel-default">'+header+body+'</div>' },
+		r : function(header, body) { return '<div class="panel panel-default nopacity">'+header+body+'</div>' },
 		s : function(threadClass) { 
 			return ["<div class='form-group'>",
 						"<label class='control-label'>Threads</label>",
@@ -547,6 +547,7 @@ var app = (function($) {
 		$(context+" .save-edit-button").unbind('click').bind('click', function() {
 			updateConfigObj(parent+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', settings+' .edit-column-settings', columnNum);
 			setInCache('config', config);
+			buildConfigurationPanel();
 			buildColumn(config[columnNum], columnNum);
 			makeItemActive(columnNum);
 		})
@@ -672,7 +673,8 @@ var app = (function($) {
 					panel = util.html.r(header, body);
 				configPanelHtml += panel;	
 			}
-			$configAccordions.append(configPanelHtml)
+			$configAccordions.append(configPanelHtml);
+			$('#accordion .panel').each(function(i,elem){ fadeIn($(elem),500)})
 			config.forEach(function(columnObj, i) {
 				buildFrameMenu(columnObj, i, 'config')
 			});
@@ -693,7 +695,7 @@ var app = (function($) {
 				threads.push(thread);
 			}
 		});
-		if ($group.length>0) {
+		if ($group.length>0 && util.fn.any($group.find(threadClass), function(x){ return $(x).val()!=null})) {
 			column['threads'] = threads;
 			setting['name'] = settings[0].value;
 			setting['refreshRate'] = settings[1].value;

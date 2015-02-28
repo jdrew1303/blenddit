@@ -2,6 +2,9 @@ html, body {
   height: 100%;
   width: 100%;
 }
+body {
+  overflow-y: hidden;
+}
 /*-begin team styles-*/
 .icon-49ers, .icon-AZCardinals, .icon-falcons,
 .icon-ravens, .icon-buffalobills, .icon-panthers,
