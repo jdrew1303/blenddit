@@ -167,7 +167,7 @@ var util = {
 					"</div>"].join('')
 		},
 		y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"''>"},
-		z : function(author) { return "<textarea name='text' class='form-control' placeholder='Reply to "+author+"..'></textarea>" },
+		z : function(author) { return "<textarea name='text' class='form-control textarea-reply' placeholder='Reply to "+author+"..'></textarea>" },
 		aa : function(parentInput, textarea, buttons) {
 			return ["<div class='nopacity hide reply-form'>",
 						"<div class='submitting nopacity hide'>Submitting...</div>",
@@ -446,6 +446,7 @@ var app = (function($) {
 		fadeIn($('a.white'),100);
 		$('#reddit-logout').unbind('click').bind('click', function() { 
 			genericGet('/reddit-logout', function(data, textStatus, jqXHR) {
+				$('[data-reddituser]').data('reddituser',null)
 				$('.config-account').children().remove()
 				$('.config-account').append(data);
 				fadeIn($('a.white'),100);
@@ -812,7 +813,15 @@ var app = (function($) {
 			}
 			var formData = {thing_id: thing_id, text: text };
 			genericPost('/save-reddit-reply', formData, done, fail);
-
+		})
+		$('.textarea-reply').unbind('focus').bind('focus', function() {
+			if (!$('[data-reddituser]').data('reddituser')) {
+				genericPost('/check-login', {}, function(data, textStatus, jqXHR) {
+					if (data && data.needsLogin) {
+						$('#login-reddit-modal').modal()
+					}
+				});
+			}
 		})
 		$('.cancel-reply').unbind('click').click(function() { 
 			console.log('shut it down!')

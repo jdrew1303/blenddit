@@ -47,6 +47,11 @@ module.exports = function(app, globalware, elseware, kutil) {
 	  })(req, res, next);
 	});
 
+	app.post('/check-login', gware.ensureAuthenticated, function(req, res, next) {
+		res.setHeader('Content-Type', 'application/json');
+		res.send({needsLogin:false});
+	});
+
 	app.get('/reddit-login', function(req, res, next) {
 		res.setHeader('Content-Type', 'application/json');
 		res.send({needsLogin:true});
