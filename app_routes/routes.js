@@ -6,10 +6,6 @@ module.exports = function(app, globalware, elseware, kutil) {
 	    all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/:var(home|index)?', function(req, res){
-		res.renderPjax('index');
-	});
-	
-	app.get('/merger', function(req, res) {
 		var json = {}; json.reddit = {redditUserExists : req.user ? true : false, redditUser : req.user ? req.user.name : ''};
 		fs.readFile(require('path').dirname(require.main.filename)+'/teams.json', 'utf8', function (err, data) {
 		  if (err) { return console.log(err); }
@@ -17,6 +13,10 @@ module.exports = function(app, globalware, elseware, kutil) {
 		  res.renderPjax('merger', json);	
 		});
 	});
+
+	app.get('/r/:subreddit', function(req, res) {
+		res.send(req.params.subreddit)
+	})
 	
 	app.get('/lists', function(req, res) {
 		var json = {};

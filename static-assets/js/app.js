@@ -239,7 +239,7 @@ var app = (function($) {
 		$(document).on('pjax:send', function() {})
 		$(document).on('pjax:end', function() {
 				if ($('#listsjs').length>0) { listsjs();  
-				} else if ($('#merger').length>0) { merger();
+				} else if ($('#blenddit').length>0) { blenddit();
 				} else {
 					$('.teams').hide(); 
 					$('#sidebarTrigger').hide()
@@ -277,11 +277,11 @@ var app = (function($) {
 		  	});
 		}
 	}
-	/* parent function for thread merger application */
-	function merger() {
-		if ($('#merger').length>0) {
+	/* parent function for thread blenddit application */
+	function blenddit() {
+		if ($('#blenddit').length>0) {
 			$('.teams').show(); $('.social').hide(); $('.navbar-fixed-top').hide();
-			$('.navbar-brand > .text-warning').text('thread merger')
+			$('.navbar-brand > .text-warning').text('thread blenddit')
 			$('.open-controls').unbind('click').click(function() {launchControls();})
 			$('#delete-column').unbind('click').click(function() {
 				util.fn.remove(config, $(this).data('column'));
@@ -1057,7 +1057,7 @@ var app = (function($) {
 		init : function() {
 			pjx();
 			listsjs();
-			merger();
+			blenddit();
 		}
 	};
 })(jQuery);	
