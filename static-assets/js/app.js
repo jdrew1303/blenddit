@@ -1,3 +1,6 @@
+/*
+	Bug when there are two columns with one of the same thread. Each comment needs a column num appended to its id. Maybe a thread num too?
+*/
 var util = {
 	fn : {
 		remove : function(arr, from, to) {
@@ -276,12 +279,10 @@ var app = (function($) {
 		  		if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
 		  	});
 		}
-	}
-	/* parent function for thread blenddit application */
+	} 
 	function blenddit() {
 		if ($('#blenddit').length>0) {
 			$('.teams').show(); $('.social').hide(); $('.navbar-fixed-top').hide();
-			$('.navbar-brand > .text-warning').text('thread blenddit')
 			$('.open-controls').unbind('click').click(function() {launchControls();})
 			$('#delete-column').unbind('click').click(function() {
 				util.fn.remove(config, $(this).data('column'));
@@ -290,14 +291,33 @@ var app = (function($) {
 				buildConfigurationPanel();
 				buildConfigToUI(); 
 			})
+			startBlending();
+			contentResizeEvent();
+		}
+	}
+	function startBlending() {
+		var subredditURI = $('#reddit-uri').data('subreddituri'),
+			threadIdURI = $('#reddit-uri').data('threadiduri');
+		if (subredditURI && threadIdURI) { // user arrived from /r/subreddit/comments/linkid*
+			getThreadById(threadIdURI, function(data) {
+				// updateConfigObj(buildConfigObj(data))
+			}, undefined, configObjAction)
+		} else if (subredditURI) { // user arrived from /r/subreddit
+			
+		} else {
+			configObjAction();
+		}
+		function configObjAction() {
 			if (config.length > 0) {
 				buildConfigurationPanel();
 				buildConfigToUI(); 
 			} else {
 				watchList();
 			}
-			contentResizeEvent();
 		}
+	}
+	function buildConfigObj(data) {
+
 	}
 	function popOverOptions(paramPlacement, paramTitle, paramContent) {
 		return {placement:paramPlacement, title:paramTitle,content:paramContent, trigger:'manual'};
@@ -434,7 +454,6 @@ var app = (function($) {
 		bindAccounts();
 		$('#save-changes').unbind('click').bind('click',function() {
 			addColumnToConfig();
-			setInCache('config', config);
 			buildConfigToUI();
 		});
 		$('#controlModal').unbind('hide.bs.modal').on('hide.bs.modal', function (e) {
@@ -466,7 +485,7 @@ var app = (function($) {
 		if (!$('#reddit').hasClass('hide') && util.fn.any('.thread-controls', function(x){ return !($(x).val()==null)})) {
 			// Validate - Does the user have at least one thread?
 			// Reset add column functionality, take back to "Add Column"
-			updateConfigObj('.sub-group-controls', '.subreddit-controls', '.thread-controls', '#reddit .column-settings');
+			updateConfigObjFromDOM('.sub-group-controls', '.subreddit-controls', '.thread-controls', '#reddit .column-settings');
 			buildConfigurationPanel();
 			$('#cancel-column').trigger('click')
 		}
@@ -546,8 +565,7 @@ var app = (function($) {
 		var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body',
 			parent = context+' #'+type+'-'+columnNum+'-add', settings = context+' #'+type+'-'+columnNum+'-settings'
 		$(context+" .save-edit-button").unbind('click').bind('click', function() {
-			updateConfigObj(parent+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', settings+' .edit-column-settings', columnNum);
-			setInCache('config', config);
+			updateConfigObjFromDOM(parent+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', settings+' .edit-column-settings', columnNum);
 			buildConfigurationPanel();
 			buildColumn(config[columnNum], columnNum);
 			makeItemActive(columnNum);
@@ -681,7 +699,7 @@ var app = (function($) {
 			});
 		} else { $('#current-config').removeClass('hide').addClass('hide'); }
 	}
-	function updateConfigObj(parentClass, subClass, threadClass, settingsClass, num) {
+	function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClass, num) {
 		var column = {}, setting = {}, threads = [], $group = $(parentClass), settings = $(settingsClass).find('.form-control'),
 			type = typeof num !== 'undefined' && $(".frame-position[data-column="+num+"]").data('type')=='reddit' || !$('#reddit').hasClass('hide') 
 				? 'reddit' : 'twitter';
@@ -707,7 +725,12 @@ var app = (function($) {
 			typeof num !== 'undefined' 
 				? config[num] = column 
 				: config = config.concat(column);
+			setInCache('config', config);
 		}	
+	}
+	function updateConfigObj(column) {
+		config = config.concat(column);
+		setInCache('config', config);
 	}
 	function bindCancelButton() {
 		$('#cancel-column').unbind('click').bind('click',function() { 
@@ -953,7 +976,7 @@ var app = (function($) {
 			var linkid = $(this).data('linkid'), 
 				id = $(this).data('id') ? $(this).data('id') : $('#'+$(this).data('parent')).attr('id').substr(3),
 				isTopLevel = $('#t1_'+id).hasClass('parent');
-			getComments(linkid ? linkid : $('#'+$(this).data('parent')).data('linkid'), id, function(data){
+			getCommentsById(linkid ? linkid : $('#'+$(this).data('parent')).data('linkid'), id, function(data){
 				var htmlString = buildCommentHtmlString(data[1].data.children);
 				$('#t1_'+id).replaceWith(htmlString);
 				if (isTopLevel) { 
@@ -968,8 +991,14 @@ var app = (function($) {
 			})
 		})
 	}
-	function getComments(linkid, id, done, fail) {
-		genericGet("http://www.reddit.com/comments/"+linkid.substr(3)+"/_/"+id+'.json?sort=new', done, fail);
+	function getThreadById(id, done, fail, always) {
+		genericGet("http://www.reddit.com/by_id/t3_"+id+'.json', done, fail, always)
+	}
+	function getCommentsByLink(linkid, done, fail, always) { // get the whole payload of comments from the specific linkid
+		genericGet("http://www.reddit.com/comments/"+linkid+'.json?sort=new', done, fail, always)
+	}
+	function getCommentsById(linkid, id, done, fail, always) { // used to only retrieve replies from a specific id, thus avoiding a huge payload
+		genericGet("http://www.reddit.com/comments/"+linkid.substr(3)+"/_/"+id+'.json?sort=new', done, fail, always);
 	}
 	function getPermalink(link_id, id) {
 		// permalink = http://www.reddit.com/comments/<link_id>1p3qau/_/<id>ccz05xk

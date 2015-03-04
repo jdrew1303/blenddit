@@ -6,16 +6,30 @@ module.exports = function(app, globalware, elseware, kutil) {
 	    all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/:var(home|index)?', function(req, res){
-		var json = {}; json.reddit = {redditUserExists : req.user ? true : false, redditUser : req.user ? req.user.name : ''};
+		var json = {}; 
+		json.reddit = { 
+			redditUserExists : req.user ? true : false, 
+			redditUser : req.user ? req.user.name : '',
+			subredditURI : req.session.subreddit,
+			threadidURI : req.session.threadid
+		};
 		fs.readFile(require('path').dirname(require.main.filename)+'/teams.json', 'utf8', function (err, data) {
 		  if (err) { return console.log(err); }
 		  json.teams = JSON.parse(data);
-		  res.renderPjax('merger', json);	
+		  res.renderPjax('blenddit', json);	
 		});
+		req.session.subreddit = req.session.threadid = null;
 	});
 
+	app.get('/r/:subreddit/comments/:threadid*', function(req, res) {
+		req.session.subreddit = req.params.subreddit;
+		req.session.threadid = req.params.threadid;
+		res.redirect('/');
+	})
+
 	app.get('/r/:subreddit', function(req, res) {
-		res.send(req.params.subreddit)
+		req.session.subreddit = req.params.subreddit;
+		res.redirect('/');
 	})
 	
 	app.get('/lists', function(req, res) {
@@ -30,8 +44,8 @@ module.exports = function(app, globalware, elseware, kutil) {
 	app.get('/auth/reddit/callback', function(req, res, next){
 	  if (req.query.state == req.session.state){
 	    passport.authenticate('reddit', {
-	      successRedirect: '/merger',
-	      failureRedirect: '/merger'
+	      successRedirect: '/',
+	      failureRedirect: '/'
 	    })(req, res, next);
 	  }
 	  else {
