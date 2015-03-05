@@ -13,11 +13,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 			subredditURI : req.session.subreddit,
 			threadidURI : req.session.threadid
 		};
-		fs.readFile(require('path').dirname(require.main.filename)+'/teams.json', 'utf8', function (err, data) {
-		  if (err) { return console.log(err); }
-		  json.teams = JSON.parse(data);
-		  res.renderPjax('blenddit', json);	
-		});
+		res.renderPjax('blenddit', json);	
 		req.session.subreddit = req.session.threadid = null;
 	});
 

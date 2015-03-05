@@ -14,7 +14,7 @@ passport.use(new RedditStrategy({
     clientID: nconf.get('authKeys').REDDIT_CONSUMER_KEY,
     clientSecret: nconf.get('authKeys').REDDIT_CONSUMER_SECRET,
     callbackURL: "http://127.0.0.1:8080/auth/reddit/callback",
-    scope : ['submit']
+    scope : ['submit','vote']
   },
   function(accessToken, refreshToken, profile, done) {
     profile.redditAccessToken = accessToken;

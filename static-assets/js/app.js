@@ -48,7 +48,8 @@ var util = {
 					"</div></li>"].join('')
 		},
 		b : function(thing, timeElapsed) {
-			return ["<li class='list-group-item nopacity'>"+thing.title,
+			return ["<li data-subid="+thing.subreddit_id+" data-subreddit="+thing.subreddit+" data-thread="+thing.permalink+" data-threadid="+thing.id+" class='list-group-item nopacity'>",
+						thing.title,
 						" <span class='text-primary'>in /r/"+thing.subreddit+"</span>",
 						"<span class='badge pull-right'>"+timeElapsed+"</span>",
 					"</li>"].join('')
@@ -73,10 +74,10 @@ var util = {
 						"<select data-column='"+columnNum+"' class='form-control thread-edit'></select>",
 					"</div>"].join('')
 		},
-		e : function(options) {
+		e : function() {
 			return ["<div class='form-group'>",
 						"<label class='control-label'>Subreddit</label><span style='float:right;'><i class='fa fa-close fa-lg delete-edit'></i></span>",
-						"<select class='form-control subreddit-edit'>"+options+"</select>",
+						"<input type='text' class='form-control subreddit-edit' placeholder='Enter a subreddit'>",
 					"</div>"].join('')
 		},
 		f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>" },
@@ -149,7 +150,7 @@ var util = {
 		t : function(deleteClass, subClass) {
 			return ["<div class='form-group'>",
 						"<label class='control-label'>Subreddit</label><span style='float:right;'><i class='fa fa-close fa-lg "+deleteClass+"'></i></span>",
-						"<select class='form-control "+subClass+"'></select>",
+						"<input type='text' class='form-control "+subClass+"' placeholder='Enter a subreddit'>",
 					"</div>"].join('')
 		},
 		u : function(groupClass, subreddit, threads) { return "<div class='"+groupClass+" nopacity'>"+subreddit+threads+"</div>" },
@@ -415,6 +416,19 @@ var app = (function($) {
 					function hasWhite(x) { return $(x).hasClass('white')} 
 					if (util.fn.any('#watch-threads .list-group.contain li', hasWhite)) {
 						// build column
+						var children = []
+						$("#watch-threads .list-group.contain li.white").each(function(i, el) {
+							var threadObj = {}, data = {};
+							data.subreddit_id = $(el).data('subid');
+							data.subreddit = $(el).data('subreddit')
+							data.permalink = $(el).data('thread');
+							data.id = $(el).data('threadid');
+							data.title = $(el).text()
+							threadObj.data = data;
+							children.push(threadObj);
+						})
+						addToConfigObj(buildRedditConfigObjByThreads(children));
+						configObjAction()
 					} else {
 						$('#watch-threads .list-group-item.controls').launchPopOver(3000, 
 							popOverOptions('top','Verification', 'Please select at least one thread from the list.'));
@@ -524,11 +538,10 @@ var app = (function($) {
 	}
 	function buildFrameMenu(configObj, columnNum, type) {
 		var addThreadTab = function() {
-			var addThread = util.html.c('edit-button-group', [['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']]),
-				options = $('<div>').append($('#template > option').clone()).html();
+			var addThread = util.html.c('edit-button-group', [['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']]);
 			for (var i = 0, len = configObj.threads.length; i < len; i++) {
 				var threads = util.html.d(columnNum),
-					subreddit = util.html.e(options),
+					subreddit = util.html.e(),
 					subreddit_group = util.html.f(subreddit, threads);
 				addThread += subreddit_group;
 			}; return addThread; 
@@ -551,7 +564,7 @@ var app = (function($) {
 		
 		var context = type == 'column' ? ".edit-form[data-column="+columnNum+"]" : '#collapse'+columnNum+' .panel-body'
 		// MAKE CHANGE HERE - add type param to each of these bind functions
-		bindSelectLoad(type, columnNum);
+		bindInputLoad(type, columnNum);
 		bindDeleteThread('delete-edit');
 		bindAddThreadButton(context+' #'+type+'-'+columnNum+'-add', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit");
 		bindCancelEdit(configObj, columnNum);
@@ -564,7 +577,7 @@ var app = (function($) {
 		type == 'column' ? $('#limit-column-'+columnNum).val(configObj.settings.limitPosts) : $('#limit-config-'+columnNum).val(configObj.settings.limitPosts);
 		type == 'column' ? $('#sortBy-column-'+columnNum).val(configObj.settings.sortBy) : $('#sortBy-config-'+columnNum).val(configObj.settings.sortBy);
 	}
-	function bindSelectLoad(type, columnNum) {
+	function bindInputLoad(type, columnNum) {
 		var $subreddit_edit = type == 'column' 
 			? $(".edit-form[data-column="+columnNum+"] .subreddit-edit") 
 			: $('#collapse'+columnNum+' .panel-body .subreddit-edit');
@@ -652,9 +665,9 @@ var app = (function($) {
 				$frameContent.removeClass('faded').addClass('hide')
 				fadeIn($frameEdit, 100);
 				$(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index, el) {
-					var selectval = $(this).find('.subreddit-edit').val(),
+					var inputVal = $(this).find('.subreddit-edit').val(),
 						threadval = $(this).find('.thread-edit').val();
-					if (selectval != 'default' && threadval==null) {
+					if (inputVal != 'default' && threadval==null) {
 						$(this).find('.subreddit-edit').trigger('change')
 					}
 				});
@@ -764,10 +777,8 @@ var app = (function($) {
 		$(context+" .add-thread-button").unbind('click').click(function(){
 			var	threads = util.html.s(threadClass),
 				subreddit = util.html.t(deleteClass, subClass),
-				subreddit_group = util.html.u(groupClass, subreddit, threads),
-				$options = $('#template > option').clone();
-			$(subreddit_group).insertAfter(context+' .'+target);
-			$(context+' .'+subClass+':first').append($options);	
+				subreddit_group = util.html.u(groupClass, subreddit, threads);
+			$(subreddit_group).insertAfter(context+' .'+target);	
 			$(context+' .'+subClass+':first').unbind('change').bind('change',function(){
 				var index = $('.'+groupClass).index($(this).parent().parent());
 				getPosts(this.value, '', '', {target: ['.'+threadClass,index], callback: setThreads});

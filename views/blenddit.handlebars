@@ -141,12 +141,6 @@
               </div>
             </div>
           </div>
-          <select id='template' class='form-control hide'>
-            <option value='default'>Select Subreddit</option>
-            {{#each teams}}
-                <option value="{{this.subreddit}}">{{this.name}}</option>
-            {{/each}}
-          </select>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button id='save-changes' type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
