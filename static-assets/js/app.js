@@ -300,24 +300,43 @@ var app = (function($) {
 			threadIdURI = $('#reddit-uri').data('threadiduri');
 		if (subredditURI && threadIdURI) { // user arrived from /r/subreddit/comments/linkid*
 			getThreadById(threadIdURI, function(data) {
-				// updateConfigObj(buildConfigObj(data))
+				if (typeof data.data.children !== 'undefined') {
+					addToConfigObj(buildRedditConfigObjByThreads(data.data.children))
+				}
 			}, undefined, configObjAction)
 		} else if (subredditURI) { // user arrived from /r/subreddit
 			
 		} else {
 			configObjAction();
 		}
-		function configObjAction() {
-			if (config.length > 0) {
-				buildConfigurationPanel();
-				buildConfigToUI(); 
-			} else {
-				watchList();
-			}
+	}
+	function configObjAction() {
+		if (config.length > 0) {
+			buildConfigurationPanel();
+			buildConfigToUI(); 
+		} else {
+			watchList();
 		}
 	}
-	function buildConfigObj(data) {
-
+	function buildRedditConfigObjByThreads(children) {
+		var configObj = {}, settings = {}, threads = [];
+		children.forEach(function(thread){ 
+			var threadObj = {};
+			threadObj.subid = thread.data.subreddit_id;
+			threadObj.subreddit = ("/r/"+thread.data.subreddit).toLowerCase();
+			threadObj.thread = thread.data.permalink;
+			threadObj.threadid = thread.data.id;
+			threadObj.threadtitle = thread.data.title;
+			threads.push(threadObj);
+		});
+		settings.limitPosts = "50";
+		settings.name = children.length==1 ? children[0].data.title.substring(0,15)+' ...' : "My Column";
+		settings.refreshRate = "60";
+		settings.sortBy = "new";
+		configObj.type = "reddit";
+		configObj.settings = settings;
+		configObj.threads = threads;
+		return configObj;
 	}
 	function popOverOptions(paramPlacement, paramTitle, paramContent) {
 		return {placement:paramPlacement, title:paramTitle,content:paramContent, trigger:'manual'};
@@ -728,7 +747,7 @@ var app = (function($) {
 			setInCache('config', config);
 		}	
 	}
-	function updateConfigObj(column) {
+	function addToConfigObj(column) {
 		config = config.concat(column);
 		setInCache('config', config);
 	}
