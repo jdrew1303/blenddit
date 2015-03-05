@@ -58,7 +58,7 @@ module.exports = function(module) {
 			}
 			// remove www.
 			host = host.replace(/^www\./i, '');
-			href = protocol + host + request.url;
+			href = protocol + host + request.url + request.originalUrl;
 			response.statusCode = 301;
 			response.setHeader('Location', href);
 			response.write('Redirecting to ' + host + request.url + '');
