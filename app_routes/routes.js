@@ -17,13 +17,13 @@ module.exports = function(app, globalware, elseware, kutil) {
 		req.session.subreddit = req.session.threadid = null;
 	});
 
-	app.get('/r/:subreddit/comments/:threadid*', function(req, res) {
+	app.get('/r/:subreddit/comments/:threadid*', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		req.session.threadid = req.params.threadid;
 		res.redirect('/');
 	})
 
-	app.get('/r/:subreddit', function(req, res) {
+	app.get('/r/:subreddit', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		res.redirect('/');
 	})
