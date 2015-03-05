@@ -18,8 +18,10 @@ module.exports = function(module) {
 		},
 		refreshAccessToken : function(req,res,next) {
 			if (new Date() > new Date(req.session.passport.user.redditAccessTokenExpireTime)) { // an hour has passed since the the accessToken was retrieved
-			  	var options = {
-				    url: 'https://'+nconf.get('authKeys').REDDIT_CONSUMER_KEY+':'+nconf.get('authKeys').REDDIT_CONSUMER_SECRET+'@www.reddit.com/api/v1/access_token',
+				var reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
+					reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE,
+			  		options = {
+				    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/v1/access_token',
 				    headers: {
 				        'User-Agent': 'request',
 				        'Content-Type':'application/x-www-form-urlencoded'

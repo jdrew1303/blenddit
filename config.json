@@ -6,8 +6,10 @@
 		"book" : "/book"
 	},
 	"authKeys" : {
-		"REDDIT_CONSUMER_KEY" : "ZoJOkswok8mrhw",
-		"REDDIT_CONSUMER_SECRET" : "Hcy_0RzSaTuRmqPIkKG1ptCX8jc"
+		"REDDIT_CONSUMER_KEY_DEBUG" : "ZoJOkswok8mrhw",
+		"REDDIT_CONSUMER_SECRET_DEBUG" : "Hcy_0RzSaTuRmqPIkKG1ptCX8jc",
+		"REDDIT_CONSUMER_KEY_LIVE" : "QHHs17DAGyhlUg",
+		"REDDIT_CONSUMER_SECRET_LIVE" : "nME1dKnhpIQye_UB9-KNzN9uahQ"
 	},
 	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js","ga.js"],
 	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]

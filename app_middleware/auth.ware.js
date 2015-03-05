@@ -1,7 +1,8 @@
 var passport = require('passport'),
-	RedditStrategy = require('passport-reddit').Strategy,
-	nconf = require('nconf')
-nconf.add('config',{type: 'file', file:'config.json'})
+    RedditStrategy = require('passport-reddit').Strategy,
+    nconf = require('nconf'),
+    reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
+    reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE
 
 module.exports =
 passport.serializeUser(function(user, done) {
@@ -11,8 +12,8 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 passport.use(new RedditStrategy({
-    clientID: nconf.get('authKeys').REDDIT_CONSUMER_KEY,
-    clientSecret: nconf.get('authKeys').REDDIT_CONSUMER_SECRET,
+    clientID: reddit_key,
+    clientSecret: reddit_sec,
     callbackURL: "http://127.0.0.1:8080/auth/reddit/callback",
     scope : ['submit','vote']
   },
