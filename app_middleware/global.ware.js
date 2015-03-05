@@ -6,7 +6,7 @@ module.exports = function(module) {
 	/*public middleware*/
 	return {
 		get methods() {
-			return [this.ensureAuthenticated, this.refreshAccessToken];
+			return [this.ensureAuthenticated, this.refreshAccessToken, this.nowww];
 		}, 
 		ensureAuthenticated : function(req,res,next) {
 			if (req.isAuthenticated()) { return next(); }
@@ -46,6 +46,23 @@ module.exports = function(module) {
 			} else {
 				next();
 			}
+		},
+		nowww : function(request, response, next) {
+			var protocol = 'http' + (request.connection.encrypted ? 's' : '') + '://',
+				host = request.headers.host,
+				href;
+			// no www. present, nothing to do here
+			if (!/^www\./i.test(host)) {
+				next();
+				return;
+			}
+			// remove www.
+			host = host.replace(/^www\./i, '');
+			href = protocol + host + request.url;
+			response.statusCode = 301;
+			response.setHeader('Location', href);
+			response.write('Redirecting to ' + host + request.url + '');
+			response.end();
 		}
 	};
 }

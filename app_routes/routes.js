@@ -5,7 +5,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 	var gware = globalware, mware = elseware,
 	    all = gware.methods.concat(kutil.getMethods(mware));
 	
-	app.get('/:var(home|index)?', function(req, res){
+	app.get('/:var(home|index)?', gware.nowww, function(req, res){
 		var json = {}; 
 		json.reddit = { 
 			redditUserExists : req.user ? true : false, 
