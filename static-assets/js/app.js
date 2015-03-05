@@ -1120,6 +1120,6 @@ var app = (function($) {
 		}
 	};
 })(jQuery);	
-(function() {
+$(document).ready(function() {
 	app.init();
-})();
+});
