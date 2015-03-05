@@ -2,7 +2,8 @@ var passport = require('passport'),
     RedditStrategy = require('passport-reddit').Strategy,
     nconf = require('nconf'),
     reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
-    reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE
+    reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE,
+    redirect_uri = nconf.get('debug') ? "http://127.0.0.1:8080/auth/reddit/callback" : "http://www.blenddit.com/auth/reddit/callback"
 
 module.exports =
 passport.serializeUser(function(user, done) {
@@ -14,7 +15,7 @@ passport.deserializeUser(function(obj, done) {
 passport.use(new RedditStrategy({
     clientID: reddit_key,
     clientSecret: reddit_sec,
-    callbackURL: "http://127.0.0.1:8080/auth/reddit/callback",
+    callbackURL: redirect_uri,
     scope : ['submit','vote']
   },
   function(accessToken, refreshToken, profile, done) {
