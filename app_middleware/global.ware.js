@@ -1,5 +1,7 @@
 var nconf = require('nconf');
 nconf.add('config',{type: 'file', file:'config.json'})
+var reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
+	reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE;
 module.exports = function(module) {
 	/*private variables*/
 	kutil = module;
@@ -18,9 +20,7 @@ module.exports = function(module) {
 		},
 		refreshAccessToken : function(req,res,next) {
 			if (new Date() > new Date(req.session.passport.user.redditAccessTokenExpireTime)) { // an hour has passed since the the accessToken was retrieved
-				var reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
-					reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE,
-			  		options = {
+				var options = {
 				    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/v1/access_token',
 				    headers: {
 				        'User-Agent': 'request',

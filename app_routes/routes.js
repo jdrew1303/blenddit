@@ -1,6 +1,9 @@
 var passport = require('passport'),
 	crypto = require('crypto'),
-	fs = require('fs');
+	fs = require('fs'),
+	nconf = require('nconf'),
+	reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
+    reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE;
 module.exports = function(app, globalware, elseware, kutil) {
 	var gware = globalware, mware = elseware,
 	    all = gware.methods.concat(kutil.getMethods(mware));
@@ -88,6 +91,23 @@ module.exports = function(app, globalware, elseware, kutil) {
 	      : error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
 	        : res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
 	  }).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
+	});
+
+	app.post('/search-reddit-names', function(req, res, next) {
+		var options = {
+		    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',
+		    headers: {
+		        'User-Agent': 'request',
+		        'Content-Type':'application/x-www-form-urlencoded'
+		    }
+	  	};
+	  	require('request').post(options, function callback(error, response, body) {
+			res.setHeader('Content-Type', 'application/json');
+			!error && response.statusCode == 200 
+		    	? res.send(body)
+		      	: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
+		        	: res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
+		}).form({'query':req.body.query, 'include_over_18':'true'});
 	});
 
 	app.get('*', function(req,res) {

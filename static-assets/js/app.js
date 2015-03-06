@@ -782,7 +782,16 @@ var app = (function($) {
 			$(context+' .'+subClass+':first').unbind('change').bind('change',function(){
 				var index = $('.'+groupClass).index($(this).parent().parent());
 				getPosts(this.value, '', '', {target: ['.'+threadClass,index], callback: setThreads});
-			})	
+			})
+			$(context+' .'+subClass+':first').unbind('keyup').bind('keyup',function(e){
+				genericPost('/search-reddit-names', {query: $(this).val()}, function(data) {
+					if (data.names) {
+						data.names.forEach(function(name){
+							console.log(e.keyCode+': '+name);
+						})
+					}
+				});
+			});	
 			fadeIn('.'+groupClass, 100);
 			bindDeleteThread(deleteClass);
 		});
