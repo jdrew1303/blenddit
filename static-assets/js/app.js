@@ -315,13 +315,13 @@ var app = (function($) {
 			contentResizeEvent();
 		}
 	}
-	function typeAhead(inputSelector) {
+	function typeAhead(inputSelector, completeFn) {
 		$(inputSelector).typeahead(null, {
 		  name: 'reddit-names',
 		  displayKey: 'value',
 		  source: redditNames.ttAdapter()
 		}).on('typeahead:selected typeahead:autocompleted', function(){
-			console.log('hi')
+			if (completeFn) completeFn(this);
 		})
 	}
 	function startBlending() {
@@ -352,7 +352,7 @@ var app = (function($) {
 		children.forEach(function(thread){ 
 			var threadObj = {};
 			threadObj.subid = thread.data.subreddit_id;
-			threadObj.subreddit = ("/r/"+thread.data.subreddit).toLowerCase();
+			threadObj.subreddit = (thread.data.subreddit).toLowerCase();
 			threadObj.thread = thread.data.permalink;
 			threadObj.threadid = thread.data.id;
 			threadObj.threadtitle = thread.data.title;
@@ -611,13 +611,19 @@ var app = (function($) {
 			: $('#collapse'+columnNum+' .panel-body .subreddit-edit');
 		$subreddit_edit.each(function(index, el) {
 			this.value = config[columnNum].threads[index].subreddit
+			typeAhead(el, function(element){
+				var group = type == 'column' ? ".edit-form[data-column="+columnNum+"] .subreddit-edit" : '#collapse'+columnNum+' .panel-body .subreddit-edit',
+					thread = type == 'column' ? ".edit-form[data-column="+columnNum+"] #column-"+columnNum+"-add" : '#collapse'+columnNum+' .panel-body #config-'+columnNum+'-add',
+					index = $(group).parent().parent().parent().index($(element).parent().parent().parent());
+				getPosts('/r/'+element.value, '', '', {target: [thread+' .thread-edit',index], errorMsgLoc: element, callback: setThreads});
+			})
 			$(this).unbind('change').bind('change',function(){
 				var index = type == 'column' 
-					? $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").index($(this).parent().parent())
-					: $("#collapse"+columnNum+" .panel-body .subreddit-group-edit").index($(this).parent().parent()),
+					? $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").index($(this).parent().parent().parent())
+					: $("#collapse"+columnNum+" .panel-body .subreddit-group-edit").index($(this).parent().parent().parent()),
 					getPostsParamArray = type == 'column' 
 						? ['.edit-form .thread-edit',index,columnNum] : ['#collapse'+columnNum+' .panel-body .thread-edit',index]
-				getPosts(this.value, '', '', {target:getPostsParamArray, callback: setThreads});
+				getPosts(this.value.substring(0,3)=='/r/'?this.value:'/r/'+this.value, '', '', {target:getPostsParamArray, errorMsgLoc: this, callback: setThreads});
 			})
 		});
 	}
@@ -723,7 +729,7 @@ var app = (function($) {
 			var path = configObj.threads[i].thread,
 				sort = configObj.settings.sortBy,
 				limit = configObj.settings.limitPosts;
-			getPosts(path, sort, limit, {target: columnNum, timeout: '.frame[data-column='+columnNum+']', callback: function(data, target) {
+			getPosts(path, sort, limit, {target: columnNum, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
 				dataArray = dataArray.concat([data.concat(target)]);
 				if (config[target].threads && config[target].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
 					var mergedData = getMergedData(dataArray);
@@ -766,7 +772,7 @@ var app = (function($) {
 		$group.each(function(index, el) {
 			if ($(el).find(threadClass).val()) {
 				var thread = {}, $option = $(el).find(threadClass+' option:selected');
-				thread['subreddit'] = $(el).find(subClass).val();
+				thread['subreddit'] = $(el).find(subClass+'.tt-input').val();
 				thread['thread'] = $(el).find(threadClass).val();
 				thread['threadid'] = $option.data('threadid');
 				thread['threadtitle'] = $option.data('threadtitle');
@@ -807,31 +813,20 @@ var app = (function($) {
 				subreddit = util.html.t(deleteClass, subClass),
 				subreddit_group = util.html.u(groupClass, subreddit, threads);
 			$(subreddit_group).insertAfter(context+' .'+target);	
-			typeAhead(context+' .'+subClass+':first', );
-
-			$(context+' .'+subClass+'.tt-input:first').unbind('change').bind('change',function(){
-				
-			})
-			function populateThread(element, groupClass, threadClass) {
-				var index = $('.'+groupClass).index($(element).parent().parent().parent());
-				getPosts('/r/'+element.value, '', '', {target: ['.'+threadClass,index], callback: setThreads});
-			}
-			
-			// $(context+' .'+subClass+':first').unbind('keyup').bind('keyup',function(e){
-				// var inp = String.fromCharCode(e.keyCode);
-				// if (/[a-zA-Z0-9-_]/.test(inp)) {
-				// 	genericGet('/search-reddit-names?query='+$(this).val(), function(data) {
-				// 		if (data.names) {
-				// 			data.names.forEach(function(name){
-				// 				console.log(e.keyCode+': '+name);
-				// 			})
-				// 		}
-				// 	});		
-				// }
-			// });	
+			typeAhead(context+' .'+subClass+':first', function(element) {
+				var index = $(context+' .'+groupClass).index($(element).parent().parent().parent());
+				getPosts('/r/'+element.value, '', '', {target: [context+' .'+threadClass,index], errorMsgLoc: element, callback: setThreads});
+			});
+			bindPopulateThreadSelect(context+' .'+subClass+'.tt-input:first', groupClass, threadClass)
 			fadeIn('.'+groupClass, 100);
 			bindDeleteThread(deleteClass);
 		});
+	}
+	function bindPopulateThreadSelect(input, groupClass, threadClass) {
+		$(input).unbind('change').bind('change',function(){
+			var index = $('.'+groupClass).index($(this).parent().parent().parent());
+			getPosts('/r/'+this.value, '', '', {target: ['.'+threadClass,index], errorMsgLoc: this, callback: setThreads});
+		})
 	}
 	function bindDeleteThread(deleteClass) {
 		$('.'+deleteClass).unbind('click').bind('click', function() {
@@ -1135,8 +1130,12 @@ var app = (function($) {
 		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
 		.always(function() { if (always) always(); });
 	}
-	function handleTimeOut(selector) {
-		$(selector).launchPopOver(5000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));
+	function errorMessagePopOver(errorMsgLoc, type) {
+		if (type=='timeout') {
+			$(errorMsgLoc).launchPopOver(5000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));	
+		} else {
+			$(errorMsgLoc).launchPopOver(5000, popOverOptions('bottom','Generic Error', 'There was an error processing this request.'));
+		}
 	}
 	function getPosts(path, sort, limit, obj){
 		$.ajax({
@@ -1149,9 +1148,13 @@ var app = (function($) {
 			obj.callback(data, obj.target)
 		})
 		.fail(function(jqXHR, textStatus, errorThrown) {
-			if (errorThrown=='timeout') { // 504 Gateway Timeout - connection to reddit server error - display to user
-				if (typeof obj.timeout !== 'undefined') handleTimeOut(obj.timeout);
-			} else { console.log(errorThrown+': error retrieving - '+path);}
+			if (typeof obj.errorMsgLoc !== 'undefined') {
+				if (errorThrown=='timeout') {
+					errorMessagePopOver(obj.errorMsgLoc, 'timeout');	
+				} else {
+					errorMessagePopOver(obj.errorMsgLoc, 'generic');
+				}
+			}
 			hideLoader(obj.target);
 		})
 		.always(function() {	

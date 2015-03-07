@@ -56,7 +56,10 @@ html, body {
 .reply-form textarea { margin-bottom: 5px;}
 .reply-buttons button { margin-left: 5px;}
 .reply-buttons { text-align: right;}
-.thumb {margin: 5px 5px 0 5px !important;}
+.thumb {
+  margin: 5px 5px 0 5px !important;
+  padding-right:0px !important;
+}
 .links-container .reply-switch, .links-container .perma, .links-container .refresh-comment, .vote, .list-group.edit-button-group .btn {
   color: white;
   opacity: .5;
