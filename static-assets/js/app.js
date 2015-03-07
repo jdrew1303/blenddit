@@ -618,12 +618,10 @@ var app = (function($) {
 				getPosts('/r/'+element.value, '', '', {target: [thread+' .thread-edit',index], errorMsgLoc: element, callback: setThreads});
 			})
 			$(this).unbind('change').bind('change',function(){
-				var index = type == 'column' 
-					? $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").index($(this).parent().parent().parent())
-					: $("#collapse"+columnNum+" .panel-body .subreddit-group-edit").index($(this).parent().parent().parent()),
-					getPostsParamArray = type == 'column' 
-						? ['.edit-form .thread-edit',index,columnNum] : ['#collapse'+columnNum+' .panel-body .thread-edit',index]
-				getPosts(this.value.substring(0,3)=='/r/'?this.value:'/r/'+this.value, '', '', {target:getPostsParamArray, errorMsgLoc: this, callback: setThreads});
+				var group = type == 'column' ? ".edit-form[data-column="+columnNum+"] .subreddit-edit" : '#collapse'+columnNum+' .panel-body .subreddit-edit',
+					thread = type == 'column' ? ".edit-form[data-column="+columnNum+"] #column-"+columnNum+"-add" : '#collapse'+columnNum+' .panel-body #config-'+columnNum+'-add',
+					index = $(group).parent().parent().parent().index($(this).parent().parent().parent());
+				getPosts('/r/'+this.value, '', '', {target: [thread+' .thread-edit',index], errorMsgLoc: this, callback: setThreads});
 			})
 		});
 	}
@@ -699,10 +697,12 @@ var app = (function($) {
 				$frameContent.removeClass('faded').addClass('hide')
 				fadeIn($frameEdit, 100);
 				$(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index, el) {
-					var inputVal = $(this).find('.subreddit-edit').val(),
-						threadval = $(this).find('.thread-edit').val();
-					if (inputVal != 'default' && threadval==null) {
-						$(this).find('.subreddit-edit').trigger('change')
+					var inputVal = $(this).find('.subreddit-edit.tt-input').val(), 
+						$thread = $(this).find('.thread-edit'),
+						threadval = $thread.val(), column = $thread.data('column');
+					if (inputVal != '' && threadval==null) { // existing subreddit thread needs to be populated
+						var thread = '#'+$(this).parent().attr('id')+' .thread-edit'
+						getPosts('/r/'+inputVal, '', '', {target: [thread,index,column], errorMsgLoc: this, callback: setThreads});
 					}
 				});
 			} else {
