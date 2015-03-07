@@ -1132,9 +1132,9 @@ var app = (function($) {
 	}
 	function errorMessagePopOver(errorMsgLoc, type) {
 		if (type=='timeout') {
-			$(errorMsgLoc).launchPopOver(5000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));	
+			$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));	
 		} else {
-			$(errorMsgLoc).launchPopOver(5000, popOverOptions('bottom','Generic Error', 'There was an error processing this request.'));
+			$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Generic Error', 'There was an error processing this request.'));
 		}
 	}
 	function getPosts(path, sort, limit, obj){
