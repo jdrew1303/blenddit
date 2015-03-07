@@ -93,7 +93,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 	  }).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
 	});
 
-	app.post('/search-reddit-names', function(req, res, next) {
+	app.get('/search-reddit-names', function(req, res, next) {
 		var options = {
 		    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',
 		    headers: {
@@ -107,7 +107,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		    	? res.send(body)
 		      	: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
 		        	: res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
-		}).form({'query':req.body.query, 'include_over_18':'true'});
+		}).form({'query':req.query.query, 'include_over_18':'true'});
 	});
 
 	app.get('*', function(req,res) {

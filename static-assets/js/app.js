@@ -235,7 +235,25 @@ var util = {
 };
 var app = (function($) {
 	var config = localStorage.getItem('config') ? getFromCache('config') : [],
-		watch = localStorage.getItem('watch') ? getFromCache('watch') : {};
+		watch = localStorage.getItem('watch') ? getFromCache('watch') : {},
+		redditNames = new Bloodhound({
+	  		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+	  		queryTokenizer: Bloodhound.tokenizers.whitespace,
+	  		remote: {
+			  	url : '/search-reddit-names?query=%QUERY',
+			  	filter: function(data) {
+			  		var keyValues = []
+			  		if (data.names) {
+			  			data.names.forEach(function(name) {
+			  				var keyValueObj = {};
+			  				keyValueObj.value = name;
+			  				keyValues.push(keyValueObj);
+			  			});
+			  		}
+			  		return keyValues;
+		  		}
+	  		} 
+		});
 	function getFromCache(item) { if (Storage) return JSON.parse(localStorage.getItem(item)) }
 	function setInCache(name, item) { if (Storage) localStorage.setItem(name, JSON.stringify(item))}
 	function pjx() {
@@ -292,9 +310,19 @@ var app = (function($) {
 				buildConfigurationPanel();
 				buildConfigToUI(); 
 			})
+			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
 		}
+	}
+	function typeAhead(inputSelector) {
+		$(inputSelector).typeahead(null, {
+		  name: 'reddit-names',
+		  displayKey: 'value',
+		  source: redditNames.ttAdapter()
+		}).on('typeahead:selected typeahead:autocompleted', function(){
+			console.log('hi')
+		})
 	}
 	function startBlending() {
 		var subredditURI = $('#reddit-uri').data('subreddituri'),
@@ -779,19 +807,28 @@ var app = (function($) {
 				subreddit = util.html.t(deleteClass, subClass),
 				subreddit_group = util.html.u(groupClass, subreddit, threads);
 			$(subreddit_group).insertAfter(context+' .'+target);	
-			$(context+' .'+subClass+':first').unbind('change').bind('change',function(){
-				var index = $('.'+groupClass).index($(this).parent().parent());
-				getPosts(this.value, '', '', {target: ['.'+threadClass,index], callback: setThreads});
+			typeAhead(context+' .'+subClass+':first', );
+
+			$(context+' .'+subClass+'.tt-input:first').unbind('change').bind('change',function(){
+				
 			})
-			$(context+' .'+subClass+':first').unbind('keyup').bind('keyup',function(e){
-				genericPost('/search-reddit-names', {query: $(this).val()}, function(data) {
-					if (data.names) {
-						data.names.forEach(function(name){
-							console.log(e.keyCode+': '+name);
-						})
-					}
-				});
-			});	
+			function populateThread(element, groupClass, threadClass) {
+				var index = $('.'+groupClass).index($(element).parent().parent().parent());
+				getPosts('/r/'+element.value, '', '', {target: ['.'+threadClass,index], callback: setThreads});
+			}
+			
+			// $(context+' .'+subClass+':first').unbind('keyup').bind('keyup',function(e){
+				// var inp = String.fromCharCode(e.keyCode);
+				// if (/[a-zA-Z0-9-_]/.test(inp)) {
+				// 	genericGet('/search-reddit-names?query='+$(this).val(), function(data) {
+				// 		if (data.names) {
+				// 			data.names.forEach(function(name){
+				// 				console.log(e.keyCode+': '+name);
+				// 			})
+				// 		}
+				// 	});		
+				// }
+			// });	
 			fadeIn('.'+groupClass, 100);
 			bindDeleteThread(deleteClass);
 		});
@@ -1086,8 +1123,8 @@ var app = (function($) {
 		if (a.data.created_utc > b.data.created_utc) return -1
 		return 0
 	}
-	function genericGet(url, done, fail, always) {
-		$.ajax({ url: url, type: "GET", timeout:7000, cache: false })
+	function genericGet(url, done, fail, always, cacheBool) {
+		$.ajax({ url: url, type: "GET", timeout:7000, cache: cacheBool || false })
 		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR); })
 		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown); })
 		.always(function() { if (always) always(); });
