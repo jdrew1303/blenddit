@@ -729,17 +729,28 @@ var app = (function($) {
 			var path = configObj.threads[i].thread,
 				sort = configObj.settings.sortBy,
 				limit = configObj.settings.limitPosts;
-			getPosts(path, sort, limit, {target: columnNum, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
-				dataArray = dataArray.concat([data.concat(target)]);
-				if (config[target].threads && config[target].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
+			getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
+				dataArray = dataArray.concat([data]);
+				if (config[target.columnNum].threads && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
 					var mergedData = getMergedData(dataArray);
 					if ($(".frame-content[data-column="+columnNum+"]").children().length==0 && mergedData[1].data.children.length>0) {
-						markFirstComment(mergedData[1].data.children[0].data.name, target);	
+						markFirstComment(mergedData[1].data.children[0].data.name, target.columnNum);	
 					}
-					displayComments(mergedData, target);
-					hideLoader(target);
+					displayComments(mergedData, target.columnNum);
+					hideLoader(target.columnNum);
 				}
 			}})
+		}
+	}
+	function appendColNumAndThreadNum(data, columnNum, threadNum) {
+		if (typeof data[1] !== 'undefined'){
+			data[1].data.children.forEach(function(child, i) {
+				var replies = child.kind!='more'&&child.data.replies.hasOwnProperty('data') 
+					? child.data.replies.data.children:[], replyLength = replies.length;
+				child.data.name += '-'+columnNum+'-'+threadNum
+				child.data.parent_id += '-'+columnNum+'-'+threadNum
+				appendColNumAndThreadNum(replies, columnNum, threadNum);
+			})
 		}
 	}
 	function markFirstComment(firstCommentName, column) {
