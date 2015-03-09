@@ -190,7 +190,7 @@ var util = {
 							"<a class='btn time-elapsed white'>"+timeElapsed+"</a>",
 							"<a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a>",
 							"<a class='btn perma' href='"+permaLink+"' target='_blank'><i class='fa fa-link fa-lg'></i></a>",
-							"<a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.id+"'><i class='fa fa-refresh fa-lg'></i></a>",
+							"<a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.name+"'><i class='fa fa-refresh fa-lg'></i></a>",
 							(replyLength!=0 ? util.html.af(comment, replyLength) : ''),
 						"</div>",
 						replyForm,
@@ -730,7 +730,7 @@ var app = (function($) {
 				sort = configObj.settings.sortBy,
 				limit = configObj.settings.limitPosts;
 			getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
-				dataArray = dataArray.concat([data]);
+				dataArray = dataArray.concat([data.concat(target.columnNum).concat(target.threadNum)]);
 				if (config[target.columnNum].threads && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
 					var mergedData = getMergedData(dataArray);
 					if ($(".frame-content[data-column="+columnNum+"]").children().length==0 && mergedData[1].data.children.length>0) {
@@ -742,16 +742,15 @@ var app = (function($) {
 			}})
 		}
 	}
-	function appendColNumAndThreadNum(data, columnNum, threadNum) {
-		if (typeof data[1] !== 'undefined'){
-			data[1].data.children.forEach(function(child, i) {
-				var replies = child.kind!='more'&&child.data.replies.hasOwnProperty('data') 
-					? child.data.replies.data.children:[], replyLength = replies.length;
-				child.data.name += '-'+columnNum+'-'+threadNum
-				child.data.parent_id += '-'+columnNum+'-'+threadNum
-				appendColNumAndThreadNum(replies, columnNum, threadNum);
-			})
-		}
+	function appendColNumAndThreadNum(children, columnNum, threadNum) {
+		children.forEach(function(child, i) {
+			var replies = child.kind!='more'&&child.data.replies.hasOwnProperty('data') 
+				? child.data.replies.data.children:[]
+			child.data.name += '-'+columnNum+'-'+threadNum
+			child.data.parent_id += '-'+columnNum+'-'+threadNum
+		appendColNumAndThreadNum(replies, columnNum, threadNum);
+		})
+		return children;
 	}
 	function markFirstComment(firstCommentName, column) {
 		if (typeof firstCommentName !== "undefined") {
@@ -901,23 +900,25 @@ var app = (function($) {
 			}
 		});
 		$('.save-reply').unbind('click').click(function() { 
-			var thing_id = this.form.thing_id.value,
+			var thing_id_raw = this.form.thing_id.value,
+				thing_id = thing_id_raw.split('-')[0],
+				additionalData = {columnNum: thing_id_raw.split('-')[1], threadNum: thing_id_raw.split('-')[2]},
 				text = this.form.text.value,
 				$submitting = $(this.form.previousSibling);
 			if (text.length==0) return;
 			$(this.form).addClass('hide');
 			fadeIn($submitting.removeClass('hide'), 100);
-			function done(data, textStatus, jqXHR) {
+			function done(data, textStatus, jqXHR, additionalData) {
 				data && data.needsLogin ? $('#login-reddit-modal').modal()
 					: data.statusCode ? console.log(data.statusCode)
 						: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
-							: insertReplyIntoDOM(data.json.data.things);
+							: insertReplyIntoDOM(data.json.data.things, additionalData);
 			}
 			function fail(jqXHR, textStatus, errorThrown){
 				console.log(textStatus)
 			}
 			var formData = {thing_id: thing_id, text: text };
-			genericPost('/save-reddit-reply', formData, done, fail);
+			genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
 		})
 		$('.textarea-reply').unbind('focus').bind('focus', function() {
 			if (!$('[data-reddituser]').data('reddituser')) {
@@ -932,8 +933,9 @@ var app = (function($) {
 			console.log('shut it down!')
 		})
 	}
-	function insertReplyIntoDOM(objArray) {
-		$(buildCommentHtmlString(objArray,true)).insertAfter('#'+objArray[0].data.parent_id+' .comment-footer:first');
+	function insertReplyIntoDOM(objArray, additionalData) {
+		$(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
+			.insertAfter('#'+objArray[0].data.parent_id+' .comment-footer:first');
 		$('#'+objArray[0].data.parent_id+' .fa-reply:first').trigger('click');
 		commentBindings();
 		fadeIn($('#'+objArray[0].data.name), 100);
@@ -1056,19 +1058,20 @@ var app = (function($) {
 	function bindRefreshComment() {
 		$('.refresh-comment, .load-comments').unbind('click').bind('click', function() {
 			var linkid = $(this).data('linkid'), 
-				id = $(this).data('id') ? $(this).data('id') : $('#'+$(this).data('parent')).attr('id').substr(3),
-				isTopLevel = $('#t1_'+id).hasClass('parent');
-			getCommentsById(linkid ? linkid : $('#'+$(this).data('parent')).data('linkid'), id, function(data){
-				var htmlString = buildCommentHtmlString(data[1].data.children);
-				$('#t1_'+id).replaceWith(htmlString);
+				id = $(this).data('id'),
+				isTopLevel = $('#'+id).hasClass('parent');
+			getCommentsById(linkid, id.substr(3).split('-')[0], function(data){
+				var columnNum = id.split('-')[1], threadNum = id.split('-')[2],
+					htmlString = buildCommentHtmlString(appendColNumAndThreadNum(data[1].data.children, columnNum, threadNum));
+				$('#'+id).replaceWith(htmlString);
 				if (isTopLevel) { 
-					$('#t1_'+id).addClass('parent');
-					$('#t1_'+id).children(':first').addClass($('#t1_'+id).data('icon'));
+					$('#'+id).addClass('parent');
+					$('#'+id).children(':first').addClass($('#'+id).data('icon'));
 				}
-				$('footer[data-id=t1_'+id+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square')
-				$('#t1_'+id+' .media[data-parentid='+$('#t1_'+id).attr('id')+']').removeClass('hide').addClass('faded');
-				$('#t1_'+id).addClass('nopacity')	
-				fadeIn($('#t1_'+id), 100);
+				$('footer[data-id='+id+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square')
+				$('#'+id+' .media[data-parentid='+$('#'+id).attr('id')+']').removeClass('hide').addClass('faded');
+				$('#'+id).addClass('nopacity')	
+				fadeIn($('#'+id), 100);
 				commentBindings();
 			})
 		})
@@ -1116,7 +1119,9 @@ var app = (function($) {
 	function getMergedData(dataArray) {
 		var children = [];
 		dataArray.forEach(function(data, i){
-			if (data.length>0) { children = children.concat(data[1].data.children)} 
+			if (data.length>0) { 
+				children = children.concat(appendColNumAndThreadNum(data[1].data.children, dataArray[i][2], dataArray[i][3]))
+			} 
 		})
 		children = children.filter(function(x){ if (x.kind != 'more') return x }).sort(byTimeCreated)
 		dataArray[0][1].data.children = children
@@ -1135,9 +1140,9 @@ var app = (function($) {
 		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown); })
 		.always(function() { if (always) always(); });
 	}
-	function genericPost(url, data, done, fail, always) {
+	function genericPost(url, data, done, fail, always, additionalData) {
 		$.ajax({ url: url, type: 'POST', timeout:7000, data: data, cache: false })
-		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR);})
+		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData);})
 		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
 		.always(function() { if (always) always(); });
 	}
@@ -1166,7 +1171,7 @@ var app = (function($) {
 					errorMessagePopOver(obj.errorMsgLoc, 'generic');
 				}
 			}
-			hideLoader(obj.target);
+			hideLoader(obj.target.columnNum);
 		})
 		.always(function() {	
 			if (obj.always) obj.always(obj.target);
