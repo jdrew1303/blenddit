@@ -508,7 +508,15 @@ span.twitter-typeahead {
 }
 .label-width {
   width:100%;
-}  
+}
+.modal {
+  position: absolute !important;
+  overflow: scroll !important;
+}
+.transparent { 
+  background-color: transparent;
+  border-color: transparent;
+}
 @media (min-width: 0px) and (max-width: 640px) {
   .frame-position {
     display:block;

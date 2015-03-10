@@ -840,7 +840,23 @@ var app = (function($) {
 	}
 	function bindInfoThread(infoClass) {
 		$('.'+infoClass).unbind('click').bind('click', function() {
-			$('#info-modal').modal()
+			var threadid = $(this).parents('.form-group').find('select option:selected').data('threadid');
+			if (threadid) {
+				getThreadById(threadid, function(data) {
+					if (data.data.children[0].data.selftext_html) {
+						$('#info-title, #info-content').children().remove()
+						$('#info-title').html('<a target="_blank" href="'+data.data.children[0].data.url+'">'+data.data.children[0].data.title+'</a>');
+						$('#info-content').append($("<div/>").html(data.data.children[0].data.selftext_html).text());
+						$('#author-button').text('/u/'+data.data.children[0].data.author).attr("onclick", "window.open('http://www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');")
+						$('#time-button').text(getTimeElapsed(data.data.children[0].data.created_utc));
+						externalLinks('#info-content .md a');
+						$('#info-modal').modal();
+					} else {
+						var win = window.open(data.data.children[0].data.url, '_blank');
+  						win.focus();
+					}
+				});
+			}
 		})
 	}
 	function bindDeleteThread(deleteClass) {
@@ -946,14 +962,17 @@ var app = (function($) {
 		fadeIn($('#'+objArray[0].data.name), 100);
 	}
 	function commentBindings() {
-		$('.md a').each(function(index, el) {
+		externalLinks('.md a');
+		bindReplySwitch();
+		bindRefreshComment();
+		bindShowReply();
+	}
+	function externalLinks(selector) {
+		$(selector).each(function(index, el) {
 			$(el).attr('target','_blank');
 			$(el).attr('href').substring(0,3)=='/u/' || $(el).attr('href').substring(0,3)=='/r/'
 				? $(el).attr('href', 'http://www.reddit.com'+$(el).attr('href')) : '';
 		});
-		bindReplySwitch();
-		bindRefreshComment();
-		bindShowReply();
 	}
 	function displayComments(data, columnNum) {
 		var $frameContent = $(".frame-content[data-column="+columnNum+"]");
