@@ -216,7 +216,7 @@ blockquote, blockquote p {
   cursor: pointer;
   margin-right: 5px;
 }
-.fa-close, .info-edit, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, #watch-subreddits .input-group-addon, #watch-matching .input-group-addon {
+.delete-edit, .info-edit, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, #watch-subreddits .input-group-addon, #watch-matching .input-group-addon {
   cursor: pointer;
 }
 .load-comments {
@@ -506,9 +506,8 @@ span.twitter-typeahead {
 .input-group.input-group-sm span.twitter-typeahead .tt-dropdown-menu {
   top: 28px !important;
 }
-.label-icons {
-  padding-right: 2px;
-  float:right;
+.label-width {
+  width:100%;
 }  
 @media (min-width: 0px) and (max-width: 640px) {
   .frame-position {

@@ -70,13 +70,13 @@ var util = {
 		},
 		d : function(columnNum) {
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Threads</label><span class='label-icons'><i class='fa fa-info fa-lg info-edit'></i></span>",
+						"<label class='control-label label-width'>Threads <span class='info-edit label label-default pull-right'>Info</span></label>",
 						"<select data-column='"+columnNum+"' class='form-control thread-edit'></select>",
 					"</div>"].join('')
 		},
 		e : function() {
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Subreddit</label><span class='label-icons'><i class='fa fa-close fa-lg delete-edit'></i></span>",
+						"<label class='control-label label-width'>Subreddit <span class='label label-danger delete-edit pull-right'>Delete</span></label>",
 						"<input type='text' class='form-control subreddit-edit' placeholder='Enter a subreddit'>",
 					"</div>"].join('')
 		},
@@ -141,13 +141,13 @@ var util = {
 		r : function(header, body) { return '<div class="panel panel-default nopacity">'+header+body+'</div>' },
 		s : function(infoClass, threadClass) { 
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Threads</label><span class='label-icons'><i class='fa fa-info fa-lg "+infoClass+"'></i></span>",
+						"<label class='control-label label-width'>Threads <span class='"+infoClass+" label label-default pull-right'>Info</span></label>",
 						"<select class='form-control "+threadClass+"'></select>",
 					"</div>"].join('')
 		},
 		t : function(deleteClass, subClass) {
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Subreddit</label><span style='float:right;'><i class='fa fa-close fa-lg "+deleteClass+"'></i></span>",
+						"<label class='control-label label-width'>Subreddit <span class='"+deleteClass+" label label-danger pull-right'>Delete</span></label>",
 						"<input type='text' class='form-control "+subClass+"' placeholder='Enter a subreddit'>",
 					"</div>"].join('')
 		},
