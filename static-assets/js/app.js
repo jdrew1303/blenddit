@@ -70,13 +70,13 @@ var util = {
 		},
 		d : function(columnNum) {
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Threads</label>",
+						"<label class='control-label'>Threads</label><span class='label-icons'><i class='fa fa-info fa-lg info-edit'></i></span>",
 						"<select data-column='"+columnNum+"' class='form-control thread-edit'></select>",
 					"</div>"].join('')
 		},
 		e : function() {
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Subreddit</label><span style='float:right;'><i class='fa fa-close fa-lg delete-edit'></i></span>",
+						"<label class='control-label'>Subreddit</label><span class='label-icons'><i class='fa fa-close fa-lg delete-edit'></i></span>",
 						"<input type='text' class='form-control subreddit-edit' placeholder='Enter a subreddit'>",
 					"</div>"].join('')
 		},
@@ -87,13 +87,11 @@ var util = {
 						'<li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li>',
 						'<li><a data-toggle="tab" href="#'+navTabType+'-settings">Settings</a></li>',
 						'<li><a data-toggle="tab" href="#'+navTabType+'-post">Post</a></li>',
-						'<li><a data-toggle="tab" href="#'+navTabType+'-info">Info</a></li>',
 					'</ul>',
 					'<div class="tab-content">',
 						'<div class="tab-pane fade active in" id="'+navTabType+'-add">'+addThreadTab+'</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-settings">'+settingsTab+'</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-post">Post</div>',
-						'<div class="tab-pane fade" id="'+navTabType+'-info">Info</div>',
 					'</div>'].join('')
 		},
 		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"},
@@ -141,9 +139,9 @@ var util = {
 					'</div>'].join('')
 		},
 		r : function(header, body) { return '<div class="panel panel-default nopacity">'+header+body+'</div>' },
-		s : function(threadClass) { 
+		s : function(infoClass, threadClass) { 
 			return ["<div class='form-group'>",
-						"<label class='control-label'>Threads</label>",
+						"<label class='control-label'>Threads</label><span class='label-icons'><i class='fa fa-info fa-lg "+infoClass+"'></i></span>",
 						"<select class='form-control "+threadClass+"'></select>",
 					"</div>"].join('')
 		},
@@ -594,7 +592,8 @@ var app = (function($) {
 		// MAKE CHANGE HERE - add type param to each of these bind functions
 		bindInputLoad(type, columnNum);
 		bindDeleteThread('delete-edit');
-		bindAddThreadButton(context+' #'+type+'-'+columnNum+'-add', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit");
+		bindInfoThread('info-edit');
+		bindAddThreadButton(context+' #'+type+'-'+columnNum+'-add', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit");
 		bindCancelEdit(configObj, columnNum);
 		bindSaveEdit(configObj, columnNum, type);
 		setSettingsFromConfig(type, columnNum, configObj);
@@ -817,9 +816,9 @@ var app = (function($) {
 			} 
 		})
 	}
-	function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass) { 
+	function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass) { 
 		$(context+" .add-thread-button").unbind('click').click(function(){
-			var	threads = util.html.s(threadClass),
+			var	threads = util.html.s(infoClass, threadClass),
 				subreddit = util.html.t(deleteClass, subClass),
 				subreddit_group = util.html.u(groupClass, subreddit, threads);
 			$(subreddit_group).insertAfter(context+' .'+target);	
@@ -830,12 +829,18 @@ var app = (function($) {
 			bindPopulateThreadSelect(context+' .'+subClass+'.tt-input:first', groupClass, threadClass)
 			fadeIn('.'+groupClass, 100);
 			bindDeleteThread(deleteClass);
+			bindInfoThread(infoClass)
 		});
 	}
 	function bindPopulateThreadSelect(input, groupClass, threadClass) {
 		$(input).unbind('change').bind('change',function(){
 			var index = $('.'+groupClass).index($(this).parent().parent().parent());
 			getPosts('/r/'+this.value, '', '', {target: ['.'+threadClass,index], errorMsgLoc: this, callback: setThreads});
+		})
+	}
+	function bindInfoThread(infoClass) {
+		$('.'+infoClass).unbind('click').bind('click', function() {
+			$('#info-modal').modal()
 		})
 	}
 	function bindDeleteThread(deleteClass) {
