@@ -172,7 +172,7 @@ var util = {
 		z : function(author, isTopLevel) { 
 			return [(isTopLevel ? "<label>Comment</label>" : ""),
 					"<textarea name='text' class='form-control textarea-reply'", 
-						"placeholder='"+(!isTopLevel ? 'Reply to "+author+"..' : 'Write a comment')+"'></textarea>"].join('')
+						"placeholder='"+(!isTopLevel ? 'Reply to '+author+'..' : 'Write a comment')+"'></textarea>"].join('')
 		},
 		aa : function(parentInput, textarea, buttons, topLevel) {
 			return ["<div class='"+(!topLevel ? 'nopacity hide' : 'isTopLevel')+" reply-form'>",
