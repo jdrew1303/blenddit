@@ -320,7 +320,7 @@ var app = (function($) {
 		}
 	}
 	function subredditSearch() {
-		typeAheadReddit('#subreddit-search-input');
+		typeAheadReddit('.subreddit-search-input');
 		$('#subreddit-search-submit').unbind('click').bind('click', function() {
 			// we dont want a new request. Just expose the data returned from the value of the subreddit
 			// window.location.href = '/r/'+ document.getElementById('subreddit-search-input').value;
@@ -624,7 +624,7 @@ var app = (function($) {
 			: $('#collapse'+columnNum+' .panel-body .subreddit-edit');
 		$subreddit_edit.each(function(index, el) {
 			this.value = config[columnNum].threads[index].subreddit
-			typeAhead(el, function(element){
+			typeAheadReddit(el, function(element){
 				var group = type == 'column' ? ".edit-form[data-column="+columnNum+"] .subreddit-edit" : '#collapse'+columnNum+' .panel-body .subreddit-edit',
 					thread = type == 'column' ? ".edit-form[data-column="+columnNum+"] #column-"+columnNum+"-add" : '#collapse'+columnNum+' .panel-body #config-'+columnNum+'-add',
 					index = $(group).parent().parent().parent().index($(element).parent().parent().parent());
