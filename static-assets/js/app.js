@@ -1,5 +1,5 @@
 /*
-	Bug when there are two columns with one of the same thread. Each comment needs a column num appended to its id. Maybe a thread num too?
+	Make all get/post ajax requets use the popover convention using the errorMsgObj
 */
 var util = {
 	fn : {
@@ -82,7 +82,7 @@ var util = {
 		},
 		f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>" },
 		g : function(settings) { return "<div class='edit-column-settings'>"+settings+"</div>" },
-		h : function(navTabType, addThreadTab, settingsTab) {
+		h : function(navTabType, addThreadTab, settingsTab, postTab) {
 			return ['<ul class="nav nav-tabs">',
 						'<li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li>',
 						'<li><a data-toggle="tab" href="#'+navTabType+'-settings">Settings</a></li>',
@@ -91,7 +91,7 @@ var util = {
 					'<div class="tab-content">',
 						'<div class="tab-pane fade active in" id="'+navTabType+'-add">'+addThreadTab+'</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-settings">'+settingsTab+'</div>',
-						'<div class="tab-pane fade" id="'+navTabType+'-post">Post</div>',
+						'<div class="tab-pane fade" id="'+navTabType+'-post">'+postTab+'</div>',
 					'</div>'].join('')
 		},
 		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"},
@@ -169,9 +169,13 @@ var util = {
 					"</div>"].join('')
 		},
 		y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"''>"},
-		z : function(author) { return "<textarea name='text' class='form-control textarea-reply' placeholder='Reply to "+author+"..'></textarea>" },
-		aa : function(parentInput, textarea, buttons) {
-			return ["<div class='nopacity hide reply-form'>",
+		z : function(author, isTopLevel) { 
+			return [(isTopLevel ? "<label>Comment</label>" : ""),
+					"<textarea name='text' class='form-control textarea-reply'", 
+						"placeholder='"+(!isTopLevel ? 'Reply to "+author+"..' : 'Write a comment')+"'></textarea>"].join('')
+		},
+		aa : function(parentInput, textarea, buttons, topLevel) {
+			return ["<div class='"+(!topLevel ? 'nopacity hide' : 'isTopLevel')+" reply-form'>",
 						"<div class='submitting nopacity hide'>Submitting...</div>",
 						"<form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form>",
 					"</div>"].join('')
@@ -228,7 +232,8 @@ var util = {
 							'<input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span>',
 						'</div>',
 					'</li>'].join('')
-		}
+		},
+		am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control"></select></div>';}
 	}
 };
 var app = (function($) {
@@ -582,8 +587,9 @@ var app = (function($) {
 					? $(inp).attr('id')+'-column-'+columnNum : $(inp).attr('id')+'-config-'+columnNum)})
 			})).html(); return util.html.g(settingsButtons+settingSelects);
 		}();
+		var postTab = util.html.am()+buildReplyForm('','', true);
 		var navTabType = type=='column' ? 'column-'+columnNum : 'config-'+columnNum
-			navTabs = util.html.h(navTabType, addThreadTab, settingsTab);
+			navTabs = util.html.h(navTabType, addThreadTab, settingsTab, postTab);
 		type == 'column' 
 			? $(".edit-form[data-column="+columnNum+"]").append(navTabs) // edit form attached to column
 			: $('#collapse'+columnNum+' .panel-body').append(navTabs); // edit form attached to config in control panel
@@ -852,10 +858,9 @@ var app = (function($) {
 						externalLinks('#info-content .md a');
 						$('#info-modal').modal();
 					} else {
-						var win = window.open(data.data.children[0].data.url, '_blank');
-  						win.focus();
+						window.open(data.data.children[0].data.url, '_blank');
 					}
-				});
+				}, undefined, undefined, true, this);
 			}
 		})
 	}
@@ -901,11 +906,11 @@ var app = (function($) {
 	function getIcon(subreddit) {
 		return 'icon-'+subreddit;
 	}
-	function buildReplyForm(thing_id, author, replyLength) {
+	function buildReplyForm(thing_id, author, isTopLevel) {
 		var buttons = util.html.x(),
 			parentInput = util.html.y(thing_id),
-			textarea = util.html.z(author),
-			form = util.html.aa(parentInput, textarea, buttons);
+			textarea = util.html.z(author, isTopLevel),
+			form = util.html.aa(parentInput, textarea, buttons, isTopLevel);
 		return form;
 	}
 	function bindReplySwitch() {
@@ -1100,8 +1105,8 @@ var app = (function($) {
 			})
 		})
 	}
-	function getThreadById(id, done, fail, always) {
-		genericGet("http://www.reddit.com/by_id/t3_"+id+'.json', done, fail, always)
+	function getThreadById(id, done, fail, always, cacheBool, errorMsgLoc) {
+		genericGet("http://www.reddit.com/by_id/t3_"+id+'.json', done, fail, always, cacheBool, errorMsgLoc);
 	}
 	function getCommentsByLink(linkid, done, fail, always) { // get the whole payload of comments from the specific linkid
 		genericGet("http://www.reddit.com/comments/"+linkid+'.json?sort=new', done, fail, always)
@@ -1158,10 +1163,13 @@ var app = (function($) {
 		if (a.data.created_utc > b.data.created_utc) return -1
 		return 0
 	}
-	function genericGet(url, done, fail, always, cacheBool) {
+	function genericGet(url, done, fail, always, cacheBool, errorMsgLoc) {
 		$.ajax({ url: url, type: "GET", timeout:7000, cache: cacheBool || false })
 		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR); })
-		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown); })
+		.fail(function(jqXHR, textStatus, errorThrown) { 
+			if (fail) fail(jqXHR, textStatus, errorThrown);
+			errorPop(errorMsgLoc, errorThrown); 
+		})
 		.always(function() { if (always) always(); });
 	}
 	function genericPost(url, data, done, fail, always, additionalData) {
@@ -1170,11 +1178,13 @@ var app = (function($) {
 		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
 		.always(function() { if (always) always(); });
 	}
-	function errorMessagePopOver(errorMsgLoc, type) {
-		if (type=='timeout') {
-			$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));	
-		} else {
-			$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Generic Error', 'There was an error processing this request.'));
+	function errorPop(errorMsgLoc, errorThrown) {
+		if (typeof errorMsgLoc !== 'undefined') {
+			if (errorThrown=='timeout') {
+				$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));
+			} else {
+				$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Generic Error', 'There was an error processing this request.'));
+			}
 		}
 	}
 	function getPosts(path, sort, limit, obj){
@@ -1188,13 +1198,7 @@ var app = (function($) {
 			obj.callback(data, obj.target)
 		})
 		.fail(function(jqXHR, textStatus, errorThrown) {
-			if (typeof obj.errorMsgLoc !== 'undefined') {
-				if (errorThrown=='timeout') {
-					errorMessagePopOver(obj.errorMsgLoc, 'timeout');	
-				} else {
-					errorMessagePopOver(obj.errorMsgLoc, 'generic');
-				}
-			}
+			errorPop(obj.errorMsgLoc, errorThrown);
 			hideLoader(obj.target.columnNum);
 		})
 		.always(function() {	

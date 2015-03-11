@@ -53,6 +53,9 @@ html, body {
 /*-end team styles-*/
 .md {word-break: break-word;}
 .reply-form {margin-top: 5px;}
+.reply-form.isTopLevel textarea {
+  min-height: 150px;
+}
 .reply-form textarea { margin-bottom: 5px;}
 .reply-buttons button { margin-left: 5px;}
 .reply-buttons { text-align: right;}
