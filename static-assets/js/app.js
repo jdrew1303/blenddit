@@ -22,6 +22,8 @@ var util = {
 				if (f(elem)) { bool = true; return;}
 			}); return bool;
 		},
+		getFromCache : function(item) { if (Storage) return JSON.parse(localStorage.getItem(item)) },
+		setInCache : function(name, item) { if (Storage) localStorage.setItem(name, JSON.stringify(item))},
 		jQueryExtensions : function() {
 			$.fn.launchPopOver = function(closeTime, options) {
 				var that = this;
@@ -237,8 +239,8 @@ var util = {
 	}
 };
 var app = (function($) {
-	var config = localStorage.getItem('config') ? getFromCache('config') : [],
-		watch = localStorage.getItem('watch') ? getFromCache('watch') : {},
+	var config = localStorage.getItem('config') ? util.fn.getFromCache('config') : [],
+		watch = localStorage.getItem('watch') ? util.fn.getFromCache('watch') : {},
 		redditNames = new Bloodhound({
 	  		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 	  		queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -257,8 +259,6 @@ var app = (function($) {
 		  		}
 	  		} 
 		});
-	function getFromCache(item) { if (Storage) return JSON.parse(localStorage.getItem(item)) }
-	function setInCache(name, item) { if (Storage) localStorage.setItem(name, JSON.stringify(item))}
 	function pjx() {
 		$(document).pjax('a[data-pjax]', '#pjax-container')
 		$(document).on('pjax:send', function() {})
@@ -309,16 +309,24 @@ var app = (function($) {
 			$('#delete-column').unbind('click').click(function() {
 				util.fn.remove(config, $(this).data('column'));
 				deleteRefresh($(this).data('column'))
-				setInCache('config', config);
+				util.fn.setInCache('config', config);
 				buildConfigurationPanel();
 				buildConfigToUI(); 
 			})
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
+			subredditSearch()
 		}
 	}
-	function typeAhead(inputSelector, completeFn) {
+	function subredditSearch() {
+		typeAheadReddit('#subreddit-search-input');
+		$('#subreddit-search-submit').unbind('click').bind('click', function() {
+			// we dont want a new request. Just expose the data returned from the value of the subreddit
+			// window.location.href = '/r/'+ document.getElementById('subreddit-search-input').value;
+		})
+	}
+	function typeAheadReddit(inputSelector, completeFn) {
 		$(inputSelector).typeahead(null, {
 		  name: 'reddit-names',
 		  displayKey: 'value',
@@ -483,7 +491,7 @@ var app = (function($) {
 			}); return matchArray;
 		}();
 		watch = watchList;
-		setInCache('watch', watch);
+		util.fn.setInCache('watch', watch);
 	}
 	function bindWatchThreads() {
 		$('#watch-threads .list-group-item').unbind('click').click(function() {
@@ -806,12 +814,12 @@ var app = (function($) {
 			typeof num !== 'undefined' 
 				? config[num] = column 
 				: config = config.concat(column);
-			setInCache('config', config);
+			util.fn.setInCache('config', config);
 		}	
 	}
 	function addToConfigObj(column) {
 		config = config.concat(column);
-		setInCache('config', config);
+		util.fn.setInCache('config', config);
 	}
 	function bindCancelButton() {
 		$('#cancel-column').unbind('click').bind('click',function() { 
@@ -828,7 +836,7 @@ var app = (function($) {
 				subreddit = util.html.t(deleteClass, subClass),
 				subreddit_group = util.html.u(groupClass, subreddit, threads);
 			$(subreddit_group).insertAfter(context+' .'+target);	
-			typeAhead(context+' .'+subClass+':first', function(element) {
+			typeAheadReddit(context+' .'+subClass+':first', function(element) {
 				var index = $(context+' .'+groupClass).index($(element).parent().parent().parent());
 				getPosts('/r/'+element.value, '', '', {target: [context+' .'+threadClass,index], errorMsgLoc: element, callback: setThreads});
 			});

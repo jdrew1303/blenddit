@@ -520,6 +520,10 @@ span.twitter-typeahead {
   background-color: transparent;
   border-color: transparent;
 }
+#subreddit-search-input {
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
+}
 @media (min-width: 0px) and (max-width: 640px) {
   .frame-position {
     display:block;
