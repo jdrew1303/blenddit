@@ -512,9 +512,9 @@ span.twitter-typeahead {
 .label-width {
   width:100%;
 }
-.modal {
-  position: absolute !important;
-  overflow: scroll !important;
+.modal .modal-body {
+  max-height: 420px !important;
+  overflow-y: auto !important;
 }
 .transparent { 
   background-color: transparent;
