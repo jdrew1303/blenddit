@@ -31,7 +31,7 @@ KUtil.prototype = {
 		this.printDirContents('./app_routes');
 		c.log('----------------------------');
 		c.log(date.toString());
-		c.log('Server listening on '.concat(this.nconf.get('port')).bold.green);
+		c.log('Server listening on '.concat(this.nconf.get('debug') ? this.nconf.get('port_debug') : this.nconf.get('port_live')).bold.green);
 		c.log('----------------------------');
 	},
 	printDirContents : function(route) {

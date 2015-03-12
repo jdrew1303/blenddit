@@ -47,5 +47,5 @@ app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/
 */
 routes(app, globalware, [], kutil);
 
-app.listen(8080);
+app.listen(nconf.get('debug') ? nconf.get('port_debug') : nconf.get('port_live'));
 kutil.serverOut();

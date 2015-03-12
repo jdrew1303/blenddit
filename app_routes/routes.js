@@ -8,7 +8,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 	var gware = globalware, mware = elseware,
 	    all = gware.methods.concat(kutil.getMethods(mware));
 	
-	app.get('/:var(home|index)?', gware.nowww, function(req, res){
+	app.get('/', gware.nowww, function(req, res){
 		var json = {}; 
 		json.reddit = { 
 			redditUserExists : req.user ? true : false, 
@@ -26,7 +26,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		res.redirect('/');
 	})
 
-	app.get('/r/:subreddit', gware.nowww, function(req, res) {
+	app.get('/r/:subreddit*', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		res.redirect('/');
 	})
