@@ -23,6 +23,7 @@ nconf.add('config',{type: 'file', file:'config.json'});
 nconf.add('package',{type: 'file', file:'package.json'});
 kutil.configure(nconf);
 app = express();
+app.enable('strict routing');
 hbs = exphbs.create({ /* config */ });
 kutil.compressAssets(__dirname+'/static-assets');
 app.use(compression());
@@ -37,7 +38,6 @@ app.use(session({ secret: 'dat-ass', resave: false, saveUninitialized: true}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(pjax());
-app.use(globalware.trailingSlashes)
 app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/',{maxAge:31536000000}));
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/',{maxAge:31536000000}));
 app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/',{maxAge:31536000000}));

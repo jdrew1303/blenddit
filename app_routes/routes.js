@@ -110,7 +110,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}).form({'query':req.query.query, 'include_over_18':'true'});
 	});
 
-	app.get('*', function(req,res) {
+	app.get('/*', function(req,res) {
 		res.redirect('/');
 	});
 }

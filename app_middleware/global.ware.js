@@ -63,11 +63,6 @@ module.exports = function(module) {
 			response.setHeader('Location', href);
 			response.write('Redirecting to ' + host + request.url + '');
 			response.end();
-		},
-		trailingSlashes : function(req, res, next){ 
-		    req.url.substr(-1)=='/' && req.url.length>1
-		        ? res.redirect(301, req.url.slice(0, -1))
-		    	: next();
 		}
 	};
 }
