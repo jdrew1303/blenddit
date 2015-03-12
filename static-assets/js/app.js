@@ -88,12 +88,12 @@ var util = {
 			return ['<ul class="nav nav-tabs">',
 						'<li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li>',
 						'<li><a data-toggle="tab" href="#'+navTabType+'-settings">Settings</a></li>',
-						'<li><a data-toggle="tab" href="#'+navTabType+'-post">Post</a></li>',
+						(postTab ? '<li class="post-tab"><a data-toggle="tab" href="#'+navTabType+'-post">Post</a></li>' : ''),
 					'</ul>',
 					'<div class="tab-content">',
 						'<div class="tab-pane fade active in" id="'+navTabType+'-add">'+addThreadTab+'</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-settings">'+settingsTab+'</div>',
-						'<div class="tab-pane fade" id="'+navTabType+'-post">'+postTab+'</div>',
+						(postTab ? '<div class="tab-pane fade" id="'+navTabType+'-post">'+postTab+'</div>' : ''),
 					'</div>'].join('')
 		},
 		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"},
@@ -170,7 +170,7 @@ var util = {
 						"<button type='submit' class='save-reply btn btn-primary'>Save</button>",
 					"</div>"].join('')
 		},
-		y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"''>"},
+		y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"'>"},
 		z : function(author, isTopLevel) { 
 			return [(isTopLevel ? "<label>Comment</label>" : ""),
 					"<textarea name='text' class='form-control textarea-reply'", 
@@ -235,7 +235,8 @@ var util = {
 						'</div>',
 					'</li>'].join('')
 		},
-		am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control"></select></div>';}
+		am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control post-thread"></select></div>';},
+		an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>' }
 	}
 };
 var app = (function($) {
@@ -595,9 +596,9 @@ var app = (function($) {
 					? $(inp).attr('id')+'-column-'+columnNum : $(inp).attr('id')+'-config-'+columnNum)})
 			})).html(); return util.html.g(settingsButtons+settingSelects);
 		}();
-		var postTab = util.html.am()+buildReplyForm('','', true);
+		var postTab = util.html.am()+buildReplyForm("","",true);
 		var navTabType = type=='column' ? 'column-'+columnNum : 'config-'+columnNum
-			navTabs = util.html.h(navTabType, addThreadTab, settingsTab, postTab);
+			navTabs = util.html.h(navTabType, addThreadTab, settingsTab, (type=='column' ? postTab : undefined));
 		type == 'column' 
 			? $(".edit-form[data-column="+columnNum+"]").append(navTabs) // edit form attached to column
 			: $('#collapse'+columnNum+' .panel-body').append(navTabs); // edit form attached to config in control panel
@@ -610,7 +611,23 @@ var app = (function($) {
 		bindAddThreadButton(context+' #'+type+'-'+columnNum+'-add', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit");
 		bindCancelEdit(configObj, columnNum);
 		bindSaveEdit(configObj, columnNum, type);
+		bindPostNavTab();
 		setSettingsFromConfig(type, columnNum, configObj);
+	}
+	function bindPostNavTab() {
+		$('.post-tab').unbind('click').bind('click', function() {
+			var columnNum = $(this).parents('form').data('column'),
+				context = '.edit-form[data-column='+columnNum+']';
+			setPostThreads(context);
+		})
+	}
+	function setPostThreads(context) {
+		var $postThread = $(context+' .post-thread'),
+			$threadsToGetOptionsFrom = $(context+' .thread-edit');
+		$postThread.children().remove();
+		$threadsToGetOptionsFrom.each(function(i, select) {
+			if ($(select).val()) $postThread.append($(select).find('option:selected').clone());
+		})
 	}
 	function setSettingsFromConfig(type, columnNum, configObj) {
 		type == 'column' ? $('#column-name-column-'+columnNum).val(configObj.settings.name) : $('#column-name-config-'+columnNum).val(configObj.settings.name);
@@ -715,7 +732,7 @@ var app = (function($) {
 						threadval = $thread.val(), column = $thread.data('column');
 					if (inputVal != '' && threadval==null) { // existing subreddit thread needs to be populated
 						var thread = '#'+$(this).parent().attr('id')+' .thread-edit'
-						getPosts('/r/'+inputVal, '', '', {target: [thread,index,column], errorMsgLoc: this, callback: setThreads});
+						getPosts('/r/'+inputVal, '', '', {target: [thread,index,column], errorMsgLoc: this, callback: setThreads})
 					}
 				});
 			} else {
@@ -859,7 +876,7 @@ var app = (function($) {
 				getThreadById(threadid, function(data) {
 					if (data.data.children[0].data.selftext_html) {
 						$('#info-title, #info-content').children().remove()
-						$('#info-title').html('<a target="_blank" href="'+data.data.children[0].data.url+'">'+data.data.children[0].data.title+'</a>');
+						$('#info-title').html(util.html.an(data.data.children[0].data.url, data.data.children[0].data.title));
 						$('#info-content').append($("<div/>").html(data.data.children[0].data.selftext_html).text());
 						$('#author-button').text('/u/'+data.data.children[0].data.author).attr("onclick", "window.open('http://www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');")
 						$('#time-button').text(getTimeElapsed(data.data.children[0].data.created_utc));
@@ -933,26 +950,36 @@ var app = (function($) {
 				$replyForm.removeClass('faded').addClass('hide');
 			}
 		});
-		$('.save-reply').unbind('click').click(function() { 
-			var thing_id_raw = this.form.thing_id.value,
-				thing_id = thing_id_raw.split('-')[0],
+		$('.save-reply').unbind('click').click(function() {
+			var $postPane = $(this).parents('.tab-pane'),
+				thing_id_raw = this.form.thing_id.value,
+				thing_id = thing_id_raw.split('-')[0] || 't3_'+$postPane.find('.post-thread option:selected').data('threadid');
 				additionalData = {columnNum: thing_id_raw.split('-')[1], threadNum: thing_id_raw.split('-')[2]},
 				text = this.form.text.value,
 				$submitting = $(this.form.previousSibling);
 			if (text.length==0) return;
 			$(this.form).addClass('hide');
 			fadeIn($submitting.removeClass('hide'), 100);
-			function done(data, textStatus, jqXHR, additionalData) {
-				data && data.needsLogin ? $('#login-reddit-modal').modal()
-					: data.statusCode ? console.log(data.statusCode)
-						: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
-							: insertReplyIntoDOM(data.json.data.things, additionalData);
-			}
+
+			var done = $postPane.length > 0  
+				? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
+					data && data.needsLogin ? $('#login-reddit-modal').modal()
+						: data.statusCode ? console.log(data.statusCode)
+							: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
+								: alert('shit got posted');
+				}
+				: function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply 
+					data && data.needsLogin ? $('#login-reddit-modal').modal()
+						: data.statusCode ? console.log(data.statusCode)
+							: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
+								: insertReplyIntoDOM(data.json.data.things, additionalData);	
+				}
+
 			function fail(jqXHR, textStatus, errorThrown){
-				console.log(textStatus)
+				console.log(textStatus);
 			}
 			var formData = {thing_id: thing_id, text: text };
-			genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
+			genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData, this);
 		})
 		$('.textarea-reply').unbind('focus').bind('focus', function() {
 			if (!$('[data-reddituser]').data('reddituser')) {
@@ -1094,9 +1121,9 @@ var app = (function($) {
 	}
 	function bindRefreshComment() {
 		$('.refresh-comment, .load-comments').unbind('click').bind('click', function() {
-			var linkid = $(this).data('linkid'), 
-				id = $(this).data('id'),
-				isTopLevel = $('#'+id).hasClass('parent');
+			var linkid = $(this).data('linkid') || $('#'+$(this).data('parent')).data('linkid'), 
+				id = $(this).data('id') || $('#'+$(this).data('parent')).attr('id'),
+				isTopLevel = $('#'+id).hasClass('parent') || $('#'+$(this).data('parent')).hasClass('parent');
 			getCommentsById(linkid, id.substr(3).split('-')[0], function(data){
 				var columnNum = id.split('-')[1], threadNum = id.split('-')[2],
 					htmlString = buildCommentHtmlString(appendColNumAndThreadNum(data[1].data.children, columnNum, threadNum));
@@ -1180,10 +1207,13 @@ var app = (function($) {
 		})
 		.always(function() { if (always) always(); });
 	}
-	function genericPost(url, data, done, fail, always, additionalData) {
+	function genericPost(url, data, done, fail, always, additionalData, errorMsgLoc) {
 		$.ajax({ url: url, type: 'POST', timeout:7000, data: data, cache: false })
 		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData);})
-		.fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
+		.fail(function(jqXHR, textStatus, errorThrown) { 
+			if (fail) fail(jqXHR, textStatus, errorThrown);
+			errorPop(errorMsgLoc, errorThrown);
+		})
 		.always(function() { if (always) always(); });
 	}
 	function errorPop(errorMsgLoc, errorThrown) {
