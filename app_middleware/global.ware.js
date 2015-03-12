@@ -8,7 +8,7 @@ module.exports = function(module) {
 	/*public middleware*/
 	return {
 		get methods() {
-			return [this.ensureAuthenticated, this.refreshAccessToken, this.nowww];
+			return [this.ensureAuthenticated, this.refreshAccessToken, this.nowww, this.trailingSlashes];
 		}, 
 		ensureAuthenticated : function(req,res,next) {
 			if (req.isAuthenticated()) { return next(); }
@@ -63,6 +63,11 @@ module.exports = function(module) {
 			response.setHeader('Location', href);
 			response.write('Redirecting to ' + host + request.url + '');
 			response.end();
+		},
+		trailingSlashes : function(req, res, next){ 
+		    req.url.substr(-1)=='/' && req.url.length>1
+		        ? res.redirect(301, req.url.slice(0, -1))
+		    	: next();
 		}
 	};
 }

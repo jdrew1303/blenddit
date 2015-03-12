@@ -111,6 +111,6 @@ module.exports = function(app, globalware, elseware, kutil) {
 	});
 
 	app.get('*', function(req,res) {
-		res.status(404).redirect('/')
+		res.redirect('/');
 	});
 }
