@@ -327,7 +327,7 @@ var app = (function($) {
 			if (subreddit) {
 				genericGet('http://www.reddit.com/r/'+subreddit+'.json', function(data, textStatus, jqXHR, subreddit) {
 					subredditResults(data, subreddit);
-				}, configObjAction, undefined, false, '#subreddit-search .subreddit-search-input', subreddit)
+				}, undefined, undefined, false, '#'+this.form.id, subreddit)
 			}
 		})
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
@@ -541,9 +541,20 @@ var app = (function($) {
 			addColumnToConfig();
 			buildConfigToUI();
 		});
+		$('.home').unbind('click').bind('click', function() {
+			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
+			$('#greeting').removeClass('hide');
+			$('#content-container, #subreddit-container').addClass('hide');
+		});
+		$('.columns').unbind('click').bind('click', function() {
+			if (config.length > 0) {
+				buildConfigurationPanel();
+				buildConfigToUI();
+			}
+		});
 		$('#controlModal').unbind('hide.bs.modal').on('hide.bs.modal', function (e) {
 			$('#config-rows').children().remove();
-		})
+		});
 		$('#controlModal').modal();
 	}
 	function bindAccounts() {
@@ -579,7 +590,7 @@ var app = (function($) {
 		$('.carousel-inner').children().remove();
 		if (config.length==0) {
 			$('#greeting').removeClass('hide');
-			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
+			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : '';
 		} else {
 			$('#content-container').removeClass('hide');
 			$('#greeting, #subreddit-container').addClass('hide');

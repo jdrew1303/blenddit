@@ -93,7 +93,16 @@
           <ul class='media-list'>
             <li class='media'>
               <a class='pull-left' href='#'>
-                <img class='media-object' src='/bootstrap/images/64.jpg' alt='the fuck happened?'>
+                <img class='media-object' src='/bootstrap/images/64.jpg' alt='error'>
+              </a>
+              <div class="media-body">
+                <h4 class='media-heading'>This is a heading. This is a heading.</h4>
+                <p>Some text. Some text</p>
+              </div>
+            </li>
+            <li class='media'>
+              <a class='pull-left' href='#'>
+                <img class='media-object' src='/bootstrap/images/64.jpg' alt='error'>
               </a>
               <div class="media-body">
                 <h4 class='media-heading'>This is a heading. This is a heading.</h4>
@@ -192,8 +201,14 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button id='save-changes' type="button" class="btn btn-primary" data-dismiss="modal">Save changes</button>
+          <div class='pull-left'>
+            <button type="button" class="btn btn-default home" data-dismiss="modal"><i class='fa fa-home fa-lg'></i></button>
+            <button type="button" class="btn btn-default columns" data-dismiss="modal"><i class='fa fa-columns fa-lg'></i></button>
+          </div>
+          <div>
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button id='save-changes' type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+          </div>
         </div>
       </div>
     </div>
