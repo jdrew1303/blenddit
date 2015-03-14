@@ -317,15 +317,27 @@ var app = (function($) {
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
-			subredditSearch()
+			subredditSearch('#subreddit-search', true)
 		}
 	}
-	function subredditSearch() {
-		typeAheadReddit('.subreddit-search-input');
-		$('#subreddit-search-submit').unbind('click').bind('click', function() {
-			// we dont want a new request. Just expose the data returned from the value of the subreddit
-			// window.location.href = '/r/'+ document.getElementById('subreddit-search-input').value;
+	function subredditSearch(parent, trigger) {
+		if (!$(parent+' .subreddit-search-input').hasClass('tt-input')) typeAheadReddit(parent+' .subreddit-search-input');
+		$(parent+' .subreddit-search-submit').unbind('click').bind('click', function() {
+			var subreddit = $(parent+' .subreddit-search-input.tt-input').val()
+			if (subreddit) {
+				genericGet('http://www.reddit.com/r/'+subreddit+'.json', function(data, textStatus, jqXHR, subreddit) {
+					subredditResults(data, subreddit);
+				}, configObjAction, undefined, false, '#subreddit-search .subreddit-search-input', subreddit)
+			}
 		})
+		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
+	}
+	function subredditResults(data, subreddit) {
+		$('#content-container, #greeting').addClass('hide')
+		$('#subreddit-container').removeClass('hide');
+		$('#subreddit-result-title').text(subreddit);
+		subredditSearch('#subreddit-search-results')
+
 	}
 	function typeAheadReddit(inputSelector, completeFn) {
 		$(inputSelector).typeahead(null, {
@@ -346,7 +358,7 @@ var app = (function($) {
 				}
 			}, undefined, configObjAction)
 		} else if (subredditURI) { // user arrived from /r/subreddit
-			
+			$('#subreddit-search .subreddit-search-input').val(subredditURI);
 		} else {
 			configObjAction();
 		}
@@ -569,7 +581,8 @@ var app = (function($) {
 			$('#greeting').removeClass('hide');
 			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
 		} else {
-			$('#greeting').addClass('hide');
+			$('#content-container').removeClass('hide');
+			$('#greeting, #subreddit-container').addClass('hide');
 		}
 		contentResizeEvent();
 		for (var i = 0, len = config.length; i < len; i++) {
@@ -1198,9 +1211,9 @@ var app = (function($) {
 		if (a.data.created_utc > b.data.created_utc) return -1
 		return 0
 	}
-	function genericGet(url, done, fail, always, cacheBool, errorMsgLoc) {
+	function genericGet(url, done, fail, always, cacheBool, errorMsgLoc, additionalData) {
 		$.ajax({ url: url, type: "GET", timeout:7000, cache: cacheBool || false })
-		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR); })
+		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData); })
 		.fail(function(jqXHR, textStatus, errorThrown) { 
 			if (fail) fail(jqXHR, textStatus, errorThrown);
 			errorPop(errorMsgLoc, errorThrown); 

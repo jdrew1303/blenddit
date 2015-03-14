@@ -1,6 +1,6 @@
 <div class='framework'>  
   <div id="blenddit">
-    <div class='container' id='greeting' style='padding-top: 10px; padding-bottom: 40px;'>
+    <div class='container' id='greeting' style='padding-top: 10px; padding-bottom: 50px;'>
       <div class="jumbotron">
         <h3>Blenddit</h3>
         <p class="lead">A web application for aggregating live reddit streams and twitter feeds with a column interface.</p>
@@ -71,6 +71,37 @@
     <div id='content-container'>
       <div id='carousel' class='carousel slide' data-interval='false'>
         <div class="carousel-inner"></div>
+      </div>
+    </div>
+    <div id='subreddit-container' class='container hide' style='padding-top: 10px; padding-bottom: 50px;'>
+      <div class='row'>
+        <div class='col-sm-6'>
+          <h2>/r/<span id='subreddit-result-title'></span></h2>
+        </div>
+        <div class='col-sm-6'>
+          <form id='subreddit-search-results' role='form' action='javascript:void(0)'>
+            <label>Reddit</label>
+            <div class="input-group form-group">
+              <input class="form-control subreddit-search-input" type="text" placeholder='Enter a subreddit...'><span class="input-group-addon"><i class="fa fa-reddit"></i></span>
+              <input class='subreddit-search-submit hide' type='submit'>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class='row'>
+        <div class='col-lg-12'>
+          <ul class='media-list'>
+            <li class='media'>
+              <a class='pull-left' href='#'>
+                <img class='media-object' src='/bootstrap/images/64.jpg' alt='the fuck happened?'>
+              </a>
+              <div class="media-body">
+                <h4 class='media-heading'>This is a heading. This is a heading.</h4>
+                <p>Some text. Some text</p>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
     <div id='reddit-uri' data-subredditURI='{{reddit.subredditURI}}' data-threadidURI='{{reddit.threadidURI}}'></div>
