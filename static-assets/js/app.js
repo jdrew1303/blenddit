@@ -98,15 +98,15 @@ var util = {
 		},
 		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"},
 		j : function(num) { 
-			return ["<span style='float:right;'>",
-						"<i data-column='"+num+"' class='fa fa-toggle-on fa-lg refreshSwitch'></i>",
-						"<i data-column='"+num+"' class='fa fa-edit fa-lg'></i>",
-						"<i data-column='"+num+"' class='fa fa-close fa-lg'></i>",
+			return ["<span class='pull-right column-bars'>",
+						// "<i data-column='"+num+"' class='fa fa-toggle-on fa-lg refreshSwitch'></i>",
+						"<i data-column='"+num+"' class='fa fa-bars fa-lg'></i>",
+						// "<i data-column='"+num+"' class='fa fa-close fa-lg'></i>",
 					"</span>"].join('')
 		},
 		k : function(num) {
 			return ["<div data-column='"+num+"' class='frame-edit nopacity hide'>",
-						"<form data-column='"+num+"' role='form' class='edit-form'></form>",
+						"<div data-column='"+num+"' role='form' class='edit-form'></div>",
 					"</div>"].join('')
 		},
 		l : function(num, configObj, icons, frameEdit, frameContent) {
@@ -117,7 +117,7 @@ var util = {
 								?"<i class='fa fa-reddit fa-lg'></i> ":"<i class='fa fa-twitter'></i> ")+configObj.settings.name+icons,
 							"</h6>"+frameEdit,
 						"</div>",
-					"</div>"+frameContent].join('')
+					"</div>"+util.html.p(num)+frameContent].join('')
 		},
 		m : function(frame) { return "<div class='frame-container'>"+frame+"</div>" },
 		n : function(num, configObj, frameContainer) {
@@ -126,13 +126,28 @@ var util = {
 		o : function(num, framePosition) {
 			return "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>"
 		},
-		p : function(i, configObj) {
-			return ['<div class="panel-heading" role="tab" id="heading'+i+'">',
-						'<h4 class="panel-title">',
-							'<a data-toggle="collapse" data-parent="#accordion" href="#collapse'+i+'" aria-expanded="true" aria-controls="collapse'+i+'">',
-								(i+1)+'. '+configObj.settings.name,
-							'</a>',
-						'</h4>',
+		p : function(columnNum) {
+			return ['<div data-column="'+columnNum+'" class="column-options btn-group">',
+						'<a data-column="'+columnNum+'" class="btn column-option teal">',
+							'<i class="fa fa-newspaper-o fa-2x"></i>',
+							'<p>THREADS</p>',
+						'</a>',
+						'<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod">',
+							'<i class="fa fa-cog fa-2x"></i>',
+							'<p>SETTINGS</p>',
+						'</a>',
+						'<a data-column="'+columnNum+'" class="btn column-option cornflowerblue">',
+							'<i class="fa fa-pencil fa-2x"></i>',
+							'<p>WRITE COMMENT</p>',
+						'</a>',
+						'<a data-column="'+columnNum+'" class="btn column-option slateblue">',
+							'<i class="fa fa-toggle-on fa-2x"></i>',
+							'<p>REFRESH</p>',
+						'</a>',
+						'<a data-column="'+columnNum+'" class="btn column-option darkred">',
+							'<i class="fa fa-trash fa-2x"></i>',
+							'<p>DELETE COLUMN</p>',
+						'</a>',
 					'</div>'].join('')
 		},
 		q : function(i) {
@@ -311,8 +326,7 @@ var app = (function($) {
 				util.fn.remove(config, $(this).data('column'));
 				deleteRefresh($(this).data('column'))
 				util.fn.setInCache('config', config);
-				buildConfigurationPanel();
-				buildConfigToUI(); 
+				buildConfigToUI();
 			})
 			redditNames.initialize();
 			startBlending();
@@ -365,7 +379,6 @@ var app = (function($) {
 	}
 	function configObjAction() {
 		if (config.length > 0) {
-			buildConfigurationPanel();
 			buildConfigToUI(); 
 		} else {
 			watchList();
@@ -535,7 +548,6 @@ var app = (function($) {
 	}
 	function launchControls() {
 		vendorGroupDisplay();
-		buildConfigurationPanel();
 		bindAccounts();
 		$('#save-changes').unbind('click').bind('click',function() {
 			addColumnToConfig();
@@ -548,12 +560,8 @@ var app = (function($) {
 		});
 		$('.columns').unbind('click').bind('click', function() {
 			if (config.length > 0) {
-				buildConfigurationPanel();
 				buildConfigToUI();
-			}
-		});
-		$('#controlModal').unbind('hide.bs.modal').on('hide.bs.modal', function (e) {
-			$('#config-rows').children().remove();
+			} // else throw popover?
 		});
 		$('#controlModal').modal();
 	}
@@ -582,7 +590,6 @@ var app = (function($) {
 			// Validate - Does the user have at least one thread?
 			// Reset add column functionality, take back to "Add Column"
 			updateConfigObjFromDOM('.sub-group-controls', '.subreddit-controls', '.thread-controls', '#reddit .column-settings');
-			buildConfigurationPanel();
 			$('#cancel-column').trigger('click')
 		}
 	}
@@ -684,7 +691,6 @@ var app = (function($) {
 			parent = context+' #'+type+'-'+columnNum+'-add', settings = context+' #'+type+'-'+columnNum+'-settings'
 		$(context+" .save-edit-button").unbind('click').bind('click', function() {
 			updateConfigObjFromDOM(parent+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', settings+' .edit-column-settings', columnNum);
-			buildConfigurationPanel();
 			buildColumn(config[columnNum], columnNum);
 			makeItemActive(columnNum);
 		})
@@ -742,7 +748,7 @@ var app = (function($) {
 			if ($(this).hasClass('fa-toggle-on')) getCommentsForColumn(config[columnNum], columnNum)
 			toggleRefresh(columnNum);
 		})
-		$(".fa-edit[data-column="+columnNum+"]").unbind('click').bind('click',function(){  // edit
+		$(".fa-bars[data-column="+columnNum+"]").unbind('click').bind('click',function(){  // edit
 			var columnNum = $(this).data('column'),
 				$frameEdit = $(".frame-edit[data-column="+columnNum+"]"),
 				$frameContent = $(".frame-content[data-column="+columnNum+"]");
@@ -810,24 +816,6 @@ var app = (function($) {
 		if (typeof firstCommentName !== "undefined") {
 			app['firstComment'+column] = firstCommentName
 		} 
-	}
-	function buildConfigurationPanel() {
-		if (config.length > 0) {  // columns exist
-			$('#current-config').removeClass('hide');
-			var $configAccordions = $('#accordion'), configPanelHtml = '';
-			$configAccordions.children().remove();
-			for (var i = 0, len = config.length; i < len; i++) {
-				var header = util.html.p(i, config[i]),
-					body = util.html.q(i),
-					panel = util.html.r(header, body);
-				configPanelHtml += panel;	
-			}
-			$configAccordions.append(configPanelHtml);
-			$('#accordion .panel').each(function(i,elem){ fadeIn($(elem),500)})
-			config.forEach(function(columnObj, i) {
-				buildFrameMenu(columnObj, i, 'config')
-			});
-		} else { $('#current-config').removeClass('hide').addClass('hide'); }
 	}
 	function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClass, num) {
 		var column = {}, setting = {}, threads = [], $group = $(parentClass), settings = $(settingsClass).find('.form-control'),

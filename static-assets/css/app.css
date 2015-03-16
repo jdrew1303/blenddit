@@ -186,6 +186,9 @@ blockquote, blockquote p {
     display: inline-block;
     float:none;
 }
+.column-bars {
+  padding-right: 5px;
+}
 .icon-config {
   padding-right: 15px
 }
@@ -215,11 +218,7 @@ blockquote, blockquote p {
   text-align: center;
   padding: 0;
 }
-.fa-edit {
-  cursor: pointer;
-  margin-right: 5px;
-}
-.delete-edit, .info-edit, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, #watch-subreddits .input-group-addon, #watch-matching .input-group-addon {
+.fa-bars, .delete-edit, .info-edit, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, #watch-subreddits .input-group-addon, #watch-matching .input-group-addon {
   cursor: pointer;
 }
 .load-comments {
@@ -524,6 +523,30 @@ span.twitter-typeahead {
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
 }
+.column-options, .column-option {
+  width: 100%;
+}
+.column-options .column-option {
+  color: white;
+  border-radius: 0;
+  margin: 0 !important;
+}
+.column-option.teal {
+  background-color: teal;
+}
+.column-option.darkgoldenrod {
+  background-color: darkgoldenrod;
+}
+.column-option.cornflowerblue {
+  background-color: cornflowerblue;
+}
+.column-option.slateblue {
+  background-color: slateblue;
+}
+.column-option.darkred {
+  background-color: darkred;
+}
+
 @media (min-width: 0px) and (max-width: 640px) {
   .frame-position {
     display:block;
