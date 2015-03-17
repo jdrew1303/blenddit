@@ -130,6 +130,7 @@ var util = {
 							'<i class="fa fa-newspaper-o fa-2x"></i>',
 							'<p>THREADS</p>',
 						'</a>',
+						'<div data-column="'+columnNum+'" class="edit-form teal"></div>',
 						'<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod">',
 							'<i class="fa fa-cog fa-2x"></i>',
 							'<p>SETTINGS</p>',
@@ -625,7 +626,7 @@ var app = (function($) {
 		}();
 		var postTab = util.html.am()+buildReplyForm("","",true);
  
-		//$(".edit-form[data-column="+columnNum+"]").append(navTabs) // edit form attached to column
+		$(".edit-form[data-column="+columnNum+"]").append(addThreadTab); // edit form attached to column
 		
 		bindInputLoad(columnNum);
 		bindDeleteThread('delete-edit');

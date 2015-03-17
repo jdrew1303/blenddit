@@ -202,15 +202,13 @@ blockquote, blockquote p {
 .list-group.edit-button-group {
   margin: 0;
 }
-.edit-form .tab-content, #accordion .tab-content {
-  padding-top: 10px;
+.edit-form {
+  float: left;
+  width: 100%;
+  padding: 0 5px 5px 5px;
 }
-.edit-form .nav-tabs, #accordion .nav-tabs {
-  text-align: center;
-}
-.edit-form .nav-tabs > li, #accordion .nav-tabs > li {
-  float: none;
-  display: inline-block;
+.edit-form label {
+  color: white;
 }
 .list-group-item.controls { 
   background-color: transparent;
@@ -531,13 +529,13 @@ span.twitter-typeahead {
   border-radius: 0;
   margin: 0 !important;
 }
-.column-option.teal {
+.teal {
   background-color: teal;
 }
-.column-option.darkgoldenrod {
+.darkgoldenrod {
   background-color: darkgoldenrod;
 }
-.column-option.cornflowerblue {
+.cornflowerblue {
   background-color: cornflowerblue;
 }
 .column-option.slateblue {
