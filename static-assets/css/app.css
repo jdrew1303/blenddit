@@ -202,12 +202,12 @@ blockquote, blockquote p {
 .list-group.edit-button-group {
   margin: 0;
 }
-.edit-form {
+.edit-form, .settings-tab {
   float: left;
   width: 100%;
   padding: 0 5px 5px 5px;
 }
-.edit-form label {
+.edit-form label, .settings-tab label {
   color: white;
 }
 .list-group-item.controls { 

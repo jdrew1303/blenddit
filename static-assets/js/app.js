@@ -102,11 +102,6 @@ var util = {
 						"<i data-column='"+num+"' class='fa fa-bars fa-lg'></i>",
 					"</span>"].join('')
 		},
-		k : function(num) {
-			return ["<div data-column='"+num+"' class='frame-edit nopacity hide'>",
-						"<div data-column='"+num+"' role='form' class='edit-form'></div>",
-					"</div>"].join('')
-		},
 		l : function(num, configObj, icons, frameContent) {
 			return ["<i data-column='"+num+"' class='nopacity loading fa fa-refresh fa-spin fa-2x'></i>",
 					"<div class='frame-overlay' data-column='"+num+"'>",
@@ -126,15 +121,16 @@ var util = {
 		},
 		p : function(columnNum) {
 			return ['<div data-column="'+columnNum+'" class="nopacity hide column-options btn-group">',
-						'<a data-column="'+columnNum+'" class="btn column-option teal">',
+						'<a data-column="'+columnNum+'" class="btn column-option teal manage-threads">',
 							'<i class="fa fa-newspaper-o fa-2x"></i>',
 							'<p>THREADS</p>',
 						'</a>',
-						'<div data-column="'+columnNum+'" class="edit-form teal"></div>',
-						'<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod">',
+						'<div data-column="'+columnNum+'" class="nopacity hide edit-form teal"></div>',
+						'<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod settings-switch">',
 							'<i class="fa fa-cog fa-2x"></i>',
 							'<p>SETTINGS</p>',
 						'</a>',
+						'<div data-column="'+columnNum+'" class="nopacity hide settings-tab darkgoldenrod"></div>',
 						'<a data-column="'+columnNum+'" class="btn column-option cornflowerblue">',
 							'<i class="fa fa-pencil fa-2x"></i>',
 							'<p>WRITE COMMENT</p>',
@@ -626,12 +622,14 @@ var app = (function($) {
 		}();
 		var postTab = util.html.am()+buildReplyForm("","",true);
  
-		$(".edit-form[data-column="+columnNum+"]").append(addThreadTab); // edit form attached to column
+		$(".edit-form[data-column="+columnNum+"]").append(addThreadTab);
+		$(".settings-tab[data-column="+columnNum+"]").append(settingsTab);
+
 		
 		bindInputLoad(columnNum);
 		bindDeleteThread('delete-edit');
 		bindInfoThread('info-edit');
-		bindAddThreadButton('#column-'+columnNum+'-add', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit");
+		bindAddThreadButton('.edit-form[data-column='+columnNum+']', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit");
 		bindCancelEdit(configObj, columnNum);
 		bindSaveEdit(configObj, columnNum);
 		bindPostNavTab();
@@ -652,11 +650,11 @@ var app = (function($) {
 			if ($(select).val()) $postThread.append($(select).find('option:selected').clone());
 		})
 	}
-	function setSettingsFromConfig(type, columnNum, configObj) {
-		// $('#column-name-column-'+columnNum).val(configObj.settings.name);
-		// $('#refresh-column-'+columnNum).val(configObj.settings.refreshRate);
-		// $('#limit-column-'+columnNum).val(configObj.settings.limitPosts);
-		// $('#sortBy-column-'+columnNum).val(configObj.settings.sortBy);
+	function setSettingsFromConfig(columnNum, configObj) {
+		$('#column-name-column-'+columnNum).val(configObj.settings.name);
+		$('#refresh-column-'+columnNum).val(configObj.settings.refreshRate);
+		$('#limit-column-'+columnNum).val(configObj.settings.limitPosts);
+		$('#sortBy-column-'+columnNum).val(configObj.settings.sortBy);
 	}
 	function bindInputLoad(columnNum) {
 		var $subreddit_edit = $(".edit-form[data-column="+columnNum+"] .subreddit-edit") 
@@ -664,15 +662,13 @@ var app = (function($) {
 			this.value = config[columnNum].threads[index].subreddit
 			typeAheadReddit(el, function(element){
 				var group = ".edit-form[data-column="+columnNum+"] .subreddit-edit",
-					thread = ".edit-form[data-column="+columnNum+"] #column-"+columnNum+"-add",
 					index = $(group).parent().parent().parent().index($(element).parent().parent().parent());
-				getPosts('/r/'+element.value, '', '', {target: [thread+' .thread-edit',index], errorMsgLoc: element, callback: setThreads});
+				getPosts('/r/'+element.value, '', '', {target: ['.edit-form[data-column='+columnNum+'] .thread-edit',index], errorMsgLoc: element, callback: setThreads});
 			})
 			$(this).unbind('change').bind('change',function(){
 				var group = ".edit-form[data-column="+columnNum+"] .subreddit-edit",
-					thread = ".edit-form[data-column="+columnNum+"] #column-"+columnNum+"-add",
 					index = $(group).parent().parent().parent().index($(this).parent().parent().parent());
-				getPosts('/r/'+this.value, '', '', {target: [thread+' .thread-edit',index], errorMsgLoc: this, callback: setThreads});
+				getPosts('/r/'+this.value, '', '', {target: ['.edit-form[data-column='+columnNum+'] .thread-edit',index], errorMsgLoc: this, callback: setThreads});
 			})
 		});
 	}
@@ -751,13 +747,21 @@ var app = (function($) {
 						$thread = $(this).find('.thread-edit'),
 						threadval = $thread.val(), column = $thread.data('column');
 					if (inputVal != '' && threadval==null) { // existing subreddit thread needs to be populated
-						var thread = '#'+$(this).parent().attr('id')+' .thread-edit'
+						var thread = '.edit-form[data-column='+column+'] .thread-edit'
 						getPosts('/r/'+inputVal, '', '', {target: [thread,index,column], errorMsgLoc: this, callback: setThreads})
 					}
 				});
 			} else {
 				$columnOptions.removeClass('faded').addClass('hide')
 			}
+		})
+		$(".manage-threads[data-column="+columnNum+"]").unbind('click').bind('click', function() {
+			var columnNum = $(this).data('column'), $edit_form = $('.edit-form[data-column='+columnNum+']');
+			$edit_form.hasClass('hide') ? fadeIn($edit_form.removeClass('hide'), 100) : $edit_form.removeClass('faded').addClass('hide');
+		})
+		$(".settings-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
+			var columnNum = $(this).data('column'), $settings_form = $('.settings-tab[data-column='+columnNum+']');
+			$settings_form.hasClass('hide') ? fadeIn($settings_form.removeClass('hide'), 100) : $settings_form.removeClass('faded').addClass('hide');
 		})
 		$(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').bind('click',function(){ 
 			var columnNum = $(this).data('column');
