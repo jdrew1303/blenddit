@@ -57,7 +57,7 @@ html, body {
   min-height: 150px;
 }
 .reply-form textarea { margin-bottom: 5px;}
-.reply-buttons button { margin-left: 5px;}
+.reply-buttons button { margin-left: 5px !important;}
 .reply-buttons { text-align: right;}
 .thumb {
   margin: 5px 5px 0 5px !important;
@@ -151,9 +151,29 @@ blockquote, blockquote p {
 #content-container {
   width:100%;
   height:100%;
-  float:left;
   overflow-y:hidden;
   white-space:nowrap;
+  position:relative;
+  z-index: 2;
+}
+#content-container:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2;
+    background-image: url("../imgs/logo.png");
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 500px 500px;
+}
+.blenddit-text {
+  background-image: url("../imgs/text.png");
+  height: 20px;
+  width: 100px;
 }
 .subreddit-group {
   padding: 5px 0 5px 0;
@@ -202,12 +222,12 @@ blockquote, blockquote p {
 .list-group.edit-button-group {
   margin: 0;
 }
-.edit-form, .settings-tab {
+.edit-form, .settings-tab, .write-comment {
   float: left;
   width: 100%;
   padding: 0 5px 5px 5px;
 }
-.edit-form label, .settings-tab label {
+.edit-form label, .settings-tab label, .write-comment label {
   color: white;
 }
 .list-group-item.controls { 
@@ -544,8 +564,30 @@ span.twitter-typeahead {
 .column-option.darkred {
   background-color: darkred;
 }
+.logo-responsive {
+  width: 350px;
+  height: 350px;
+}
 
 @media (min-width: 0px) and (max-width: 640px) {
+  #content-container:before {
+    content: ' ';
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.2;
+    background-image: url("../imgs/logo.png");
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 350px 350px;
+  }
+  .logo-responsive {
+    width: 250px;
+    height: 250px;   
+  }
   .frame-position {
     display:block;
     max-width: none;
