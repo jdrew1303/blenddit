@@ -673,10 +673,9 @@ var app = (function($) {
 		});
 	}
 	function bindSaveEdit(configObj, columnNum) {
-		var context = ".edit-form[data-column="+columnNum+"]",
-			parent = '#column-'+columnNum+'-add', settings = '#column-'+columnNum+'-settings'
-		$(context+" .save-edit-button").unbind('click').bind('click', function() {
-			updateConfigObjFromDOM(parent+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', settings+' .edit-column-settings', columnNum);
+		var context = '.column-options[data-column='+columnNum+']'
+		$(".column-options[data-column="+columnNum+"] .save-edit-button").unbind('click').bind('click', function() {
+			updateConfigObjFromDOM(context+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', context+' .edit-column-settings', columnNum);
 			buildColumn(config[columnNum], columnNum);
 			makeItemActive(columnNum);
 		})
