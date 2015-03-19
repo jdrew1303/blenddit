@@ -546,7 +546,6 @@ span.twitter-typeahead {
   border-bottom-right-radius: 4px !important; 
 }
 .column-options {
-  max-height: 380px;
   overflow: auto;
 }
 .column-options, .column-option {
