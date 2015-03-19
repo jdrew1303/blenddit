@@ -63,7 +63,8 @@ html, body {
   margin: 5px 5px 0 5px !important;
   padding-right:0px !important;
 }
-.links-container .reply-switch, .links-container .perma, .links-container .refresh-comment, .vote, .list-group.edit-button-group .btn {
+.links-container .reply-switch, .links-container .perma, 
+.links-container .refresh-comment, .vote, .list-group.edit-button-group .btn {
   color: white;
   opacity: .5;
 }
@@ -207,7 +208,13 @@ blockquote, blockquote p {
     float:none;
 }
 .column-bars {
-  padding-right: 5px;
+  position: absolute;
+  top:6px;
+  right:5px;
+  z-index: 10;
+}
+.column-bars > a {
+  color: white;
 }
 .icon-config {
   padding-right: 15px
@@ -236,7 +243,9 @@ blockquote, blockquote p {
   text-align: center;
   padding: 0;
 }
-.fa-bars, .delete-edit, .info-edit, .reply, .open-controls, .reply-switch, .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, #watch-subreddits .input-group-addon, #watch-matching .input-group-addon {
+.fa-bars, .delete-edit, .info-edit, .reply, .open-controls, .reply-switch, 
+.refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
+#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header {
   cursor: pointer;
 }
 .load-comments {

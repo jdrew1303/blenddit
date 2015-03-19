@@ -98,17 +98,20 @@ var util = {
 		},
 		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"},
 		j : function(num) { 
-			return ["<span class='pull-right column-bars'>",
-						"<i data-column='"+num+"' class='fa fa-bars fa-lg'></i>",
-					"</span>"].join('')
+			return ["<div data-column='"+num+"' class='btn-group column-bars'>",
+						"<a class='btn'>",
+							"<i data-column='"+num+"' class='fa fa-bars fa-lg'></i>",
+						"</a>",
+					"</div>"].join('')
 		},
 		l : function(num, configObj, icons, frameContent) {
 			return ["<i data-column='"+num+"' class='nopacity loading fa fa-refresh fa-spin fa-2x'></i>",
 					"<div class='frame-overlay' data-column='"+num+"'>",
 						"<div data-column='"+num+"' class='frame'>",
 							"<h6 class='frame-header'>"+(configObj.type=='reddit'
-								?"<i class='fa fa-reddit fa-lg'></i> ":"<i class='fa fa-twitter'></i> ")+configObj.settings.name+icons,
+								?"<i class='fa fa-reddit fa-lg'></i> ":"<i class='fa fa-twitter'></i> ")+configObj.settings.name,
 							"</h6>",
+							icons,
 						"</div>",
 					"</div>"+util.html.p(num)+frameContent].join('')
 		},
@@ -725,11 +728,11 @@ var app = (function($) {
 			if ($icon.hasClass('fa-toggle-on')) getCommentsForColumn(config[columnNum], columnNum)
 			toggleRefresh(columnNum);
 		})
-		$('.frame[data-column='+columnNum+']').unbind('click').bind('click', function(){
-			//getCommentsForColumn(config[columnNum], columnNum);
+		$('.frame[data-column='+columnNum+'] .frame-header').unbind('click').bind('click', function(){
+			getCommentsForColumn(config[columnNum], columnNum);
 		});
-		$(".fa-bars[data-column="+columnNum+"]").unbind('click').bind('click',function(){  // edit
-			var columnNum = $(this).data('column'),
+		$(".column-bars[data-column="+columnNum+"] > a").unbind('click').bind('click',function(){  // edit
+			var columnNum = $(this).parent().data('column'),
 				$columnOptions = $(".column-options[data-column="+columnNum+"]");
 			if ($columnOptions.hasClass('hide')) {
 				$columnOptions.removeClass('hide')
