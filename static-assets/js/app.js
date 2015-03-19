@@ -120,22 +120,22 @@ var util = {
 			return "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>"
 		},
 		p : function(columnNum) {
-			return ['<div data-column="'+columnNum+'" class="nopacity hide column-options btn-group">',
+			return ['<div data-column="'+columnNum+'" class="hide column-options btn-group">',
 						'<a data-column="'+columnNum+'" class="btn column-option teal manage-threads">',
 							'<i class="fa fa-newspaper-o fa-2x"></i>',
 							'<p>THREADS</p>',
 						'</a>',
-						'<div data-column="'+columnNum+'" class="nopacity hide edit-form teal"></div>',
+						'<div data-column="'+columnNum+'" class="hide edit-form teal"></div>',
 						'<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod settings-switch">',
 							'<i class="fa fa-cog fa-2x"></i>',
 							'<p>SETTINGS</p>',
 						'</a>',
-						'<div data-column="'+columnNum+'" class="nopacity hide settings-tab darkgoldenrod"></div>',
+						'<div data-column="'+columnNum+'" class="hide settings-tab darkgoldenrod"></div>',
 						'<a data-column="'+columnNum+'" class="btn column-option write-comment-switch cornflowerblue">',
 							'<i class="fa fa-pencil fa-2x"></i>',
 							'<p>WRITE COMMENT</p>',
 						'</a>',
-						'<div data-column="'+columnNum+'" class="nopacity hide write-comment cornflowerblue"></div>',
+						'<div data-column="'+columnNum+'" class="hide write-comment cornflowerblue"></div>',
 						'<a data-column="'+columnNum+'" class="refreshSwitch btn column-option slateblue">',
 							'<i class="fa fa-toggle-on fa-2x"></i>',
 							'<p>AUTO REFRESH</p>',
@@ -733,7 +733,6 @@ var app = (function($) {
 				$columnOptions = $(".column-options[data-column="+columnNum+"]");
 			if ($columnOptions.hasClass('hide')) {
 				$columnOptions.removeClass('hide')
-				fadeIn($columnOptions, 100);
 				$(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index, el) {
 					var inputVal = $(this).find('.subreddit-edit.tt-input').val(), 
 						$thread = $(this).find('.thread-edit'),
@@ -744,23 +743,23 @@ var app = (function($) {
 					}
 				});
 			} else {
-				$columnOptions.removeClass('faded').addClass('hide')
+				$columnOptions.addClass('hide')
 			}
 		})
 		$(".manage-threads[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), $edit_form = $('.edit-form[data-column='+columnNum+']');
-			$edit_form.hasClass('hide') ? fadeIn($edit_form.removeClass('hide'), 100) : $edit_form.removeClass('faded').addClass('hide');
+			$edit_form.hasClass('hide') ? $edit_form.removeClass('hide') : $edit_form.addClass('hide');
 		})
 		$(".settings-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), $settings_form = $('.settings-tab[data-column='+columnNum+']');
-			$settings_form.hasClass('hide') ? fadeIn($settings_form.removeClass('hide'), 100) : $settings_form.removeClass('faded').addClass('hide');
+			$settings_form.hasClass('hide') ? $settings_form.removeClass('hide') : $settings_form.addClass('hide');
 		})
 		$(".write-comment-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), 
 				$write_comment = $('.write-comment[data-column='+columnNum+']'),
 				targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
 			setPostThreads(targetContext, fromContext);
-			$write_comment.hasClass('hide') ? fadeIn($write_comment.removeClass('hide'), 100) : $write_comment.removeClass('faded').addClass('hide');
+			$write_comment.hasClass('hide') ? $write_comment.removeClass('hide') : $write_comment.addClass('hide');
 		})
 		$(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').bind('click',function(){ 
 			var columnNum = $(this).data('column');

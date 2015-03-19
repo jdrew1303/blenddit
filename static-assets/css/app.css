@@ -271,7 +271,7 @@ blockquote, blockquote p {
   border-right: 1px solid rgba(255,255,255,.25);
   border-top: 1px solid rgba(255,255,255,.25);
 }
-.frame-content::-webkit-scrollbar, .frame-edit::-webkit-scrollbar { 
+.frame-content::-webkit-scrollbar, .frame-edit::-webkit-scrollbar, .column-options::-webkit-scrollbar { 
     display: none; 
 }
 .frame-content {
@@ -540,6 +540,14 @@ span.twitter-typeahead {
 .subreddit-search-input {
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
+}
+#subreddit-search .input-group-addon, #subreddit-search-results .input-group-addon {
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important; 
+}
+.column-options {
+  max-height: 380px;
+  overflow: auto;
 }
 .column-options, .column-option {
   width: 100%;
