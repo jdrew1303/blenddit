@@ -22,8 +22,24 @@ var util = {
 				if (f(elem)) { bool = true; return;}
 			}); return bool;
 		},
-		getFromCache : function(item) { if (Storage) return JSON.parse(localStorage.getItem(item)) },
-		setInCache : function(name, item) { if (Storage) localStorage.setItem(name, JSON.stringify(item))},
+		setCookie : function(cname, cvalue) {
+			document.cookie = cname + "=" + cvalue + ";";
+		},
+		getCookie : function(cname) {
+			var name = cname + "=";
+			var ca = document.cookie.split(';');
+			for(var i=0; i<ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0)==' ') c = c.substring(1);
+				if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+			}
+			return "";
+		},
+		cookieExists : function(cname) {		    
+		    return util.fn.getCookie(cname) ? true : false
+		},		
+		getFromCookie : function(item) { return JSON.parse(util.fn.getCookie(item)) },
+		setInCookie : function(name, item) { util.fn.setCookie(name, JSON.stringify(item))},
 		jQueryExtensions : function() {
 			$.fn.launchPopOver = function(closeTime, options) {
 				var that = this;
@@ -254,8 +270,8 @@ var util = {
 	}
 };
 var app = (function($) {
-	var config = localStorage.getItem('config') ? util.fn.getFromCache('config') : [],
-		watch = localStorage.getItem('watch') ? util.fn.getFromCache('watch') : {},
+	var config = util.fn.cookieExists('config') ? util.fn.getFromCookie('config') : [],
+		watch = util.fn.cookieExists('watch') ? util.fn.getFromCookie('watch') : {},
 		redditNames = new Bloodhound({
 	  		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 	  		queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -324,7 +340,7 @@ var app = (function($) {
 			$('#delete-column').unbind('click').click(function() {
 				util.fn.remove(config, $(this).data('column'));
 				deleteRefresh($(this).data('column'))
-				util.fn.setInCache('config', config);
+				util.fn.setInCookie('config', config);
 				buildConfigToUI();
 			})
 			redditNames.initialize();
@@ -429,6 +445,7 @@ var app = (function($) {
 	}
 	function fetchWatchThreads(matchingArray) {
 		$('#watch-threads .list-group.contain').children().remove();
+		$('#watch-list-no-results').removeClass('hide');
 		$('#watch-subreddits input').each(function(i, sub){ 
 			getPosts('/r/'+sub.value, '', '', {target:matchingArray, callback: function(data, target){ 
 				data.data.children.forEach(function(thread, index) { 
@@ -436,6 +453,7 @@ var app = (function($) {
 						var pattern = new RegExp(str.toLowerCase());
 						return pattern.test(thread.data.title.toLowerCase())
 					})) {
+						$('#watch-list-no-results').addClass('hide');
 						$('#watch-threads .list-group.contain').append(buildWatchInputOrThreadHtmlString(thread.data))
 					}
 					fadeIn($('#watch-threads .list-group-item'),100);
@@ -516,7 +534,7 @@ var app = (function($) {
 			}); return matchArray;
 		}();
 		watch = watchList;
-		util.fn.setInCache('watch', watch);
+		util.fn.setInCookie('watch', watch);
 	}
 	function bindWatchThreads() {
 		$('#watch-threads .list-group-item').unbind('click').click(function() {
@@ -836,12 +854,12 @@ var app = (function($) {
 			typeof num !== 'undefined' 
 				? config[num] = column 
 				: config = config.concat(column);
-			util.fn.setInCache('config', config);
+			util.fn.setInCookie('config', config);
 		}	
 	}
 	function addToConfigObj(column) {
 		config = config.concat(column);
-		util.fn.setInCache('config', config);
+		util.fn.setInCookie('config', config);
 	}
 	function bindCancelButton() {
 		$('#cancel-column').unbind('click').bind('click',function() { 
@@ -970,13 +988,13 @@ var app = (function($) {
 				? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
 					data && data.needsLogin ? $('#login-reddit-modal').modal()
 						: data.statusCode ? console.log(data.statusCode)
-							: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
-								: alert('shit got posted');
+							: data.json && data.json.errors.length > 0 ? alert(data.json.errors[0][1])
+								: alert('shit got posted'); // probably just a popover here
 				}
 				: function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply 
 					data && data.needsLogin ? $('#login-reddit-modal').modal()
 						: data.statusCode ? console.log(data.statusCode)
-							: data.json && data.json.errors.length > 0 ? console.log(data.json.errors)
+							: data.json && data.json.errors.length > 0 ? alert(data.json.errors[0][1])	
 								: insertReplyIntoDOM(data.json.data.things, additionalData);	
 				}
 
