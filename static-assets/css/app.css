@@ -78,6 +78,10 @@ html, body {
 .links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover {
   opacity: 1;
 }
+#watch-list-no-results > p {
+  font-size: 21px;
+  font-weight: 200;
+}
 .tab-pane 
 blockquote, blockquote p {
   font-size: 12px !important;
