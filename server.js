@@ -12,6 +12,9 @@ var express = require('express'),
     session = require('express-session'),
     methodOverride = require('method-override'),
     cookieParser = require('cookie-parser'),
+    fs = require('fs'),
+    http = require('http'),
+    https = require('https'),
 // Middleware
     kutil = require('./app_middleware/utility.ware'),
     globalware = require('./app_middleware/global.ware')(kutil),
@@ -30,6 +33,7 @@ app.use(compression());
 app.locals={ debug : nconf.get('debug'), version : new Date().getTime()};
 app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
+app.use(globalware.requireHTTPS)
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -48,5 +52,10 @@ app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/
 */
 routes(app, globalware, [], kutil);
 
-app.listen(nconf.get('debug') ? nconf.get('port_debug') : nconf.get('port_live'));
+http.createServer(app).listen(nconf.get('port_http'));
+https.createServer({key:fs.readFileSync('key.pem'), cert:fs.readFileSync('cert.pem')}, app).listen(nconf.get('port_https'));
 kutil.serverOut();
+
+// iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080 (used this in live)
+// iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
+// iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 3000

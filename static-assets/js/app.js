@@ -225,7 +225,7 @@ var util = {
 						"<a class='btn vote'><i class='fa fa-arrow-up'></i></a>",
 						"<a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a>",
 						"<a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a>",
-						"<a class='btn author' href='http://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
+						"<a class='btn author' href='https://www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
 						(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;"),
 					"</div>"+text].join('')
 		},
@@ -338,7 +338,7 @@ var app = (function($) {
 		$(parent+' .subreddit-search-submit').unbind('click').bind('click', function() {
 			var subreddit = $(parent+' .subreddit-search-input.tt-input').val()
 			if (subreddit) {
-				genericGet('http://www.reddit.com/r/'+subreddit+'.json', function(data, textStatus, jqXHR, subreddit) {
+				genericGet('https://www.reddit.com/r/'+subreddit+'.json', function(data, textStatus, jqXHR, subreddit) {
 					subredditResults(data, subreddit);
 				}, undefined, undefined, false, '#'+this.form.id, subreddit)
 			}
@@ -883,7 +883,7 @@ var app = (function($) {
 						$('#info-title, #info-content').children().remove()
 						$('#info-title').html(util.html.an(data.data.children[0].data.url, data.data.children[0].data.title));
 						$('#info-content').append($("<div/>").html(data.data.children[0].data.selftext_html).text());
-						$('#author-button').text('/u/'+data.data.children[0].data.author).attr("onclick", "window.open('http://www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');")
+						$('#author-button').text('/u/'+data.data.children[0].data.author).attr("onclick", "window.open('https://www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');")
 						$('#time-button').text(getTimeElapsed(data.data.children[0].data.created_utc));
 						externalLinks('#info-content .md a');
 						$('#info-modal').modal();
@@ -1016,7 +1016,7 @@ var app = (function($) {
 		$(selector).each(function(index, el) {
 			$(el).attr('target','_blank');
 			$(el).attr('href').substring(0,3)=='/u/' || $(el).attr('href').substring(0,3)=='/r/'
-				? $(el).attr('href', 'http://www.reddit.com'+$(el).attr('href')) : '';
+				? $(el).attr('href', 'https://www.reddit.com'+$(el).attr('href')) : '';
 		});
 	}
 	function displayComments(data, columnNum) {
@@ -1146,17 +1146,17 @@ var app = (function($) {
 		})
 	}
 	function getThreadById(id, done, fail, always, cacheBool, errorMsgLoc) {
-		genericGet("http://www.reddit.com/by_id/t3_"+id+'.json', done, fail, always, cacheBool, errorMsgLoc);
+		genericGet("https://www.reddit.com/by_id/t3_"+id+'.json', done, fail, always, cacheBool, errorMsgLoc);
 	}
 	function getCommentsByLink(linkid, done, fail, always) { // get the whole payload of comments from the specific linkid
-		genericGet("http://www.reddit.com/comments/"+linkid+'.json?sort=new', done, fail, always)
+		genericGet("https://www.reddit.com/comments/"+linkid+'.json?sort=new', done, fail, always)
 	}
 	function getCommentsById(linkid, id, done, fail, always) { // used to only retrieve replies from a specific id, thus avoiding a huge payload
-		genericGet("http://www.reddit.com/comments/"+linkid.substr(3)+"/_/"+id+'.json?sort=new', done, fail, always);
+		genericGet("https://www.reddit.com/comments/"+linkid.substr(3)+"/_/"+id+'.json?sort=new', done, fail, always);
 	}
 	function getPermalink(link_id, id) {
-		// permalink = http://www.reddit.com/comments/<link_id>1p3qau/_/<id>ccz05xk
-		return "http://www.reddit.com/comments/"+link_id.substr(3)+"/_/"+id
+		// permalink = https://www.reddit.com/comments/<link_id>1p3qau/_/<id>ccz05xk
+		return "https://www.reddit.com/comments/"+link_id.substr(3)+"/_/"+id
 	}
 	function getTimeElapsed(then) {
 		if (!then) return;
@@ -1232,7 +1232,7 @@ var app = (function($) {
 	}
 	function getPosts(path, sort, limit, obj){
 		$.ajax({
-			url: "http://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?",
+			url: "https://www.reddit.com"+path+"/.json?sort="+sort+"&limit="+limit+"&jsonp=?",
 			dataType: 'json',
 			timeout: 7000,
 			cache: false

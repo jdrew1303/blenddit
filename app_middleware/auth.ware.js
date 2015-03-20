@@ -3,7 +3,7 @@ var passport = require('passport'),
     nconf = require('nconf'),
     reddit_key = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_KEY_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_KEY_LIVE,
     reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE,
-    redirect_uri = nconf.get('debug') ? "http://127.0.0.1:8080/auth/reddit/callback" : "http://blenddit.com/auth/reddit/callback"
+    redirect_uri = nconf.get('debug') ? "https://127.0.0.1:8443/auth/reddit/callback" : "https://blenddit.com/auth/reddit/callback"
 
 module.exports =
 passport.serializeUser(function(user, done) {

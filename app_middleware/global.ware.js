@@ -8,7 +8,7 @@ module.exports = function(module) {
 	/*public middleware*/
 	return {
 		get methods() {
-			return [this.ensureAuthenticated, this.refreshAccessToken, this.nowww, this.trailingSlashes];
+			return [this.ensureAuthenticated, this.refreshAccessToken, this.nowww, this.requireHTTPS];
 		}, 
 		ensureAuthenticated : function(req,res,next) {
 			if (req.isAuthenticated()) { return next(); }
@@ -63,6 +63,13 @@ module.exports = function(module) {
 			response.setHeader('Location', href);
 			response.write('Redirecting to ' + host + request.url + '');
 			response.end();
+		},
+		requireHTTPS : function(req, res, next) {
+			if(!req.secure) {
+				var host = nconf.get('debug') ? '127.0.0.1:8443' : req.get('Host');
+				return res.redirect(['https://', host, req.url].join(''));
+			}
+			next();
 		}
 	};
 }

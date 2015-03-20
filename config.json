@@ -1,7 +1,7 @@
 {	
 	"debug" : true,
-	"port_debug":8080,
-	"port_live":8080,
+	"port_http":8080,
+	"port_https":8443,
 	"available" : {
 		"home" : "/whome",
 		"book" : "/book"
