@@ -75,7 +75,7 @@ html, body {
   border-top-color: white !important;
   border-bottom-color: white !important;
 }
-.links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover {
+.bookmark a:hover, .links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover {
   opacity: 1;
 }
 #watch-list-no-results > p {
@@ -285,6 +285,14 @@ blockquote, blockquote p {
 }
 .frame-content::-webkit-scrollbar, .frame-edit::-webkit-scrollbar, .column-options::-webkit-scrollbar { 
     display: none; 
+}
+.bookmark {
+  position: absolute;
+}
+.bookmark a {
+  background-color:transparent !important;
+  border-color:transparent !important;
+  opacity: .5;
 }
 .frame-content {
   opacity: 0;

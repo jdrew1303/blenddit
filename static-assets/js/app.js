@@ -343,6 +343,7 @@ var app = (function($) {
 				util.fn.setInCookie('config', config);
 				buildConfigToUI();
 			})
+			$('[data-toggle="tooltip"]').tooltip();
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
@@ -411,7 +412,7 @@ var app = (function($) {
 			threads.push(threadObj);
 		});
 		settings.limitPosts = "50";
-		settings.name = children.length==1 ? children[0].data.title.substring(0,15)+' ...' : "My Column";
+		settings.name = children.length==1 ? children[0].data.title.substring(0,22)+' ...' : "My Column";
 		settings.refreshRate = "60";
 		settings.sortBy = "new";
 		configObj.type = "reddit";
@@ -557,7 +558,6 @@ var app = (function($) {
 		});
 		function columnSizing() {
 			$('.frame-content').css('height', window.innerHeight-107);
-			$('.frame-edit').css('height', window.innerHeight-115);
 			$('#greeting').hasClass('hide') 
 				? $('.carousel-inner').css('height', window.innerHeight-50) 
 				: $('.carousel-inner').removeAttr('style');
