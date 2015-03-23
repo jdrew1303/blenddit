@@ -337,18 +337,42 @@ var app = (function($) {
 		if ($('#blenddit').length>0) {
 			$('.teams').show(); $('.social').hide(); $('.navbar-fixed-top').hide();
 			$('.open-controls').unbind('click').click(function() {launchControls();})
+			$('.help').unbind('click').bind('click', function() {
+				console.log('help modal')
+			});
 			$('#delete-column').unbind('click').click(function() {
 				util.fn.remove(config, $(this).data('column'));
 				deleteRefresh($(this).data('column'))
 				util.fn.setInCookie('config', config);
 				buildConfigToUI();
 			})
+			columnsOrHomeButton();
 			$('[data-toggle="tooltip"]').tooltip();
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
 			subredditSearch('#subreddit-search', true)
 		}
+	}
+	function columnsOrHomeButton() {
+		function buttonType() {
+			var type; 
+			if ($('#greeting').hasClass('hide')) { $('.columns-or-home i').removeClass('fa-columns').addClass('fa-home'); type = 'home';
+			} else { $('.columns-or-home i').removeClass('fa-home').addClass('fa-columns'); type = 'columns'; }
+			return type;
+		}; buttonType();
+		$('.columns-or-home').unbind('click').bind('click', function() {
+			var type = buttonType();
+			if (type=='columns') {
+				config.length > 0
+					? buildConfigToUI() : void 0;
+			} else { // type home
+				$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
+				$('#greeting').removeClass('hide');
+				$('#content-container, #subreddit-container').addClass('hide');
+				buttonType();
+			}
+		});
 	}
 	function subredditSearch(parent, trigger) {
 		if (!$(parent+' .subreddit-search-input').hasClass('tt-input')) typeAheadReddit(parent+' .subreddit-search-input');
@@ -427,7 +451,7 @@ var app = (function($) {
 		var localWatch;
 		Object.keys(watch).length
 			? localWatch = watch 
-			: localWatch = {subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey', 'soccer'], match:['Game Thread','Match Thread','Live Thread']}
+			: localWatch = {subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey', 'soccer','collegebasketball'], match:['Game Thread','Match Thread','Live Thread']}
 		buildWatchList(localWatch);
 		fetchWatchThreads(localWatch.match);
 		bindDeleteWatchButtons();
@@ -570,16 +594,6 @@ var app = (function($) {
 			addColumnToConfig();
 			buildConfigToUI();
 		});
-		$('.home').unbind('click').bind('click', function() {
-			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
-			$('#greeting').removeClass('hide');
-			$('#content-container, #subreddit-container').addClass('hide');
-		});
-		$('.columns').unbind('click').bind('click', function() {
-			if (config.length > 0) {
-				buildConfigToUI();
-			} // else throw popover?
-		});
 		$('#controlModal').modal();
 	}
 	function bindAccounts() {
@@ -619,6 +633,7 @@ var app = (function($) {
 			$('#content-container').removeClass('hide');
 			$('#greeting, #subreddit-container').addClass('hide');
 		}
+		columnsOrHomeButton();
 		contentResizeEvent();
 		for (var i = 0, len = config.length; i < len; i++) {
 			buildColumn(config[i], i)

@@ -88,7 +88,7 @@ html, body {
   float:none;
   display:inline-block;
 }
-#watch-list-no-results > p {
+p.title-text {
   font-size: 21px;
   font-weight: 200;
 }
@@ -259,7 +259,7 @@ blockquote, blockquote p {
 }
 .fa-bars, .delete-edit, .info-edit, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
-#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header {
+#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help {
   cursor: pointer;
 }
 .load-comments {

@@ -5,10 +5,10 @@
       <div class="jumbotron">
         <div class='text-center'>
           <img class='logo-responsive' src='static-assets/imgs/logo.png' alt='error'></img>
-          <p class="lead">Build columns of live reddit threads or twitter feeds.</p>
+          <p class="lead">Build columns of live reddit threads or twitter feeds. <a class='help'>See how</a>.</p>
         </div>
         <div class='row'>
-          <div class='col-sm-6'>
+          <div class='col-xs-6'>
             <form id='subreddit-search' role='form' action='javascript:void(0)'>
               <label>Reddit</label>
               <div class="input-group form-group">
@@ -17,7 +17,7 @@
               </div>
             </form>
           </div>
-          <div class='col-sm-6'>
+          <div class='col-xs-6'>
             <label>Twitter</label>
             <div class="input-group form-group">
               <input disabled class="form-control" type="text" placeholder='Search twitter...'><span class="input-group-addon"><i class="fa fa-twitter"></i></span>
@@ -59,7 +59,7 @@
               </ul>
             </div>
             <div class="tab-pane fade active in" id="watch-threads">
-              <div id='watch-list-no-results' class='text-center'>
+              <div id='watch-list-no-results' class='title-text text-center'>
                 <p><span class='text-warning'>There were no results matching your criteria. Adjust your subreddits and matching phrases and then refresh.</span></p>
               </div>
               <ul class="list-group contain"></ul>
@@ -84,7 +84,7 @@
     <div id='subreddit-container' class='container hide' style='padding-top: 10px; padding-bottom: 50px;'>
       <div class='row'>
         <div class='col-sm-6'>
-          <h2>/r/<span id='subreddit-result-title'></span></h2>
+          <h2><span class='text-warning'>/r/<span id='subreddit-result-title'></span></span></h2>
         </div>
         <div class='col-sm-6'>
           <form id='subreddit-search-results' role='form' action='javascript:void(0)'>
@@ -204,10 +204,6 @@
           </div>
         </div>
         <div class="modal-footer">
-          <div class='pull-left'>
-            <button type="button" class="btn btn-default home" data-dismiss="modal"><i class='fa fa-home fa-lg'></i></button>
-            <button type="button" class="btn btn-default columns" data-dismiss="modal"><i class='fa fa-columns fa-lg'></i></button>
-          </div>
           <div>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button id='save-changes' type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
