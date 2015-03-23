@@ -79,7 +79,7 @@ html, body {
   opacity: 1;
 }
 .jumbotron {
-  margin-bottom: 0;
+  margin-bottom: 10px;
 }
 .watch-list-tabs {
   text-align: center;
