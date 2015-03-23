@@ -346,12 +346,12 @@ var app = (function($) {
 				util.fn.setInCookie('config', config);
 				buildConfigToUI();
 			})
-			columnsOrHomeButton();
 			$('[data-toggle="tooltip"]').tooltip();
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
-			subredditSearch('#subreddit-search', true)
+			subredditSearch('#subreddit-search', true);
+			columnsOrHomeButton();
 		}
 	}
 	function columnsOrHomeButton() {
@@ -391,7 +391,7 @@ var app = (function($) {
 		$('#subreddit-container').removeClass('hide');
 		$('#subreddit-result-title').text(subreddit);
 		subredditSearch('#subreddit-search-results')
-
+		columnsOrHomeButton();
 	}
 	function typeAheadReddit(inputSelector, completeFn) {
 		$(inputSelector).typeahead(null, {
