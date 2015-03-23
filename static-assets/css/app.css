@@ -78,6 +78,16 @@ html, body {
 .bookmark a:hover, .links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover {
   opacity: 1;
 }
+.jumbotron {
+  margin-bottom: 0;
+}
+.watch-list-tabs {
+  text-align: center;
+}
+.watch-list-tabs > li {
+  float:none;
+  display:inline-block;
+}
 #watch-list-no-results > p {
   font-size: 21px;
   font-weight: 200;
