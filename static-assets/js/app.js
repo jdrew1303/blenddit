@@ -208,7 +208,7 @@ var util = {
 		},
 		aa : function(parentInput, textarea, buttons, topLevel) {
 			return ["<div class='"+(!topLevel ? 'nopacity hide' : 'isTopLevel')+" reply-form'>",
-						"<div class='submitting nopacity hide'>Submitting...</div>",
+						"<div class='submitting nopacity hide'>"+(topLevel ? "<b><span class='black'>Submitting...</span></b>" : "Submitting...")+"</div>",
 						"<form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form>",
 					"</div>"].join('')
 		},
@@ -366,7 +366,7 @@ var app = (function($) {
 			if (type=='columns') {
 				config.length > 0
 					? buildConfigToUI() : $(this).parent().launchPopOver(3000, 
-					popOverOptions('top','No columns','Build at least one column to view columns.'));;
+					popOverOptions('top','No columns','Build at least one column to view columns.'));
 			} else { // type home
 				$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
 				showFeature('#greeting');
@@ -996,10 +996,10 @@ var app = (function($) {
 			}
 		});
 		$('.save-reply').unbind('click').click(function() {
-			var $postPane = $(this).parents('.tab-pane'),
+			var $postPane = $(this).parents('.write-comment'),
 				thing_id_raw = this.form.thing_id.value,
 				thing_id = thing_id_raw.split('-')[0] || 't3_'+$postPane.find('.post-thread option:selected').data('threadid');
-				additionalData = {columnNum: thing_id_raw.split('-')[1], threadNum: thing_id_raw.split('-')[2]},
+				additionalData = {columnNum: thing_id_raw.split('-')[1] || $postPane.data('column'), threadNum: thing_id_raw.split('-')[2], postPane:$postPane},
 				text = this.form.text.value,
 				$submitting = $(this.form.previousSibling);
 			if (text.length==0) return;
@@ -1011,7 +1011,7 @@ var app = (function($) {
 					data && data.needsLogin ? $('#login-reddit-modal').modal()
 						: data.statusCode ? console.log(data.statusCode)
 							: data.json && data.json.errors.length > 0 ? alert(data.json.errors[0][1])
-								: alert('shit got posted'); // probably just a popover here
+								: postTopLevelComment(data.json.data.things, additionalData);
 				}
 				: function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply 
 					data && data.needsLogin ? $('#login-reddit-modal').modal()
@@ -1036,8 +1036,17 @@ var app = (function($) {
 			}
 		})
 		$('.cancel-reply').unbind('click').click(function() { 
-			console.log('shut it down!')
+			$(this).parents('.comment-footer').find('.reply-switch').trigger('click')
 		})
+	}
+	function postTopLevelComment(objArray, additionalData) {
+		var $form = $(additionalData.postPane).find('form'),
+			$submitting = $(additionalData.postPane).find('.submitting');
+		$form.find('.textarea-reply').val('');
+		$submitting.removeClass('faded').addClass('hide');
+		$form.removeClass('hide')
+		$form.launchPopOver(3000, 
+			popOverOptions('bottom','Success','You successfully posted a top level comment.'))
 	}
 	function insertReplyIntoDOM(objArray, additionalData) {
 		$(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
