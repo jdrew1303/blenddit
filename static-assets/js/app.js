@@ -573,18 +573,36 @@ var app = (function($) {
 	}
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
-		columnSizing();
+		carousel_inner_height();
+		frame_content_height();
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
-				columnSizing();
+				carousel_inner_height();
+				frame_content_height();
 				app.height = window.innerHeight;
 			}
 		});
-		function columnSizing() {
-			$('.frame-content').css('height', window.innerHeight-107);
+		function carousel_inner_height() {
 			$('#greeting').hasClass('hide') 
 				? $('.carousel-inner').css('height', window.innerHeight-53) 
 				: $('.carousel-inner').removeAttr('style');
+		}
+	}
+	function column_options_height(columnNum, optInt) {
+		var $column_options = $('.column-options[data-column='+columnNum+']');
+		$column_options.removeAttr('style').css('max-height', $column_options.height());
+		frame_content_height(columnNum, optInt);
+	}
+	function frame_content_height(columnNum, optInt) {
+		var $frame_content = typeof columnNum !== 'undefined' ? $('.frame-content[data-column='+columnNum+']') : $('.frame-content');
+		if (typeof columnNum === 'undefined') {
+			$frame_content.each(function(i, frameContent) {
+				var localOffset = typeof optInt !== 'undefined' ? optInt : $('.column-options[data-column='+i+']').height();
+				$(frameContent).removeAttr('style').css('height', window.innerHeight-(107+localOffset));
+			})
+		} else {
+			var localOffset = typeof optInt !== 'undefined' ? optInt : $('.column-options[data-column='+columnNum+']').height();
+			$frame_content.removeAttr('style').css('height', window.innerHeight-(107+localOffset));
 		}
 	}
 	function launchControls() {
@@ -627,6 +645,15 @@ var app = (function($) {
 	function showFeature(feature) {
 		hideAllFeatures();
 		fadeIn($(feature).removeClass('hide'),100);
+	}
+	function showColumnOption(option, columnNum) {
+		hideAllColumnOptions(columnNum);
+		$(option).removeClass('hide');
+		// option[0].previousSibling.scrollIntoView();
+	}
+	function hideAllColumnOptions(columnNum) {
+		$('.write-comment[data-column='+columnNum+'], .edit-form[data-column='+columnNum+'], .settings-tab[data-column='+columnNum+']')
+		.addClass('hide');
 	}
 	function hideAllFeatures() {
 		$('#main-loader-container, #content-container, #greeting, #subreddit-container')
@@ -776,6 +803,7 @@ var app = (function($) {
 				$columnOptions = $(".column-options[data-column="+columnNum+"]");
 			if ($columnOptions.hasClass('hide')) {
 				$columnOptions.removeClass('hide')
+				column_options_height(columnNum);
 				$(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index, el) {
 					var inputVal = $(this).find('.subreddit-edit.tt-input').val(), 
 						$thread = $(this).find('.thread-edit'),
@@ -786,23 +814,27 @@ var app = (function($) {
 					}
 				});
 			} else {
-				$columnOptions.addClass('hide')
+				hideAllColumnOptions(columnNum);
+				$columnOptions.addClass('hide');
+				column_options_height(columnNum, 0);
 			}
+			
+
 		})
 		$(".manage-threads[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), $edit_form = $('.edit-form[data-column='+columnNum+']');
-			$edit_form.hasClass('hide') ? $edit_form.removeClass('hide') : $edit_form.addClass('hide');
+			showColumnOption($edit_form, columnNum);
 		})
 		$(".settings-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), $settings_form = $('.settings-tab[data-column='+columnNum+']');
-			$settings_form.hasClass('hide') ? $settings_form.removeClass('hide') : $settings_form.addClass('hide');
+			showColumnOption($settings_form, columnNum);
 		})
 		$(".write-comment-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), 
 				$write_comment = $('.write-comment[data-column='+columnNum+']'),
 				targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
 			setPostThreads(targetContext, fromContext);
-			$write_comment.hasClass('hide') ? $write_comment.removeClass('hide') : $write_comment.addClass('hide');
+			showColumnOption($write_comment, columnNum);
 		})
 		$(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').bind('click',function(){ 
 			var columnNum = $(this).data('column');
