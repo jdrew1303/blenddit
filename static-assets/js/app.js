@@ -365,11 +365,11 @@ var app = (function($) {
 			var type = buttonType();
 			if (type=='columns') {
 				config.length > 0
-					? buildConfigToUI() : void 0;
+					? buildConfigToUI() : $(this).parent().launchPopOver(3000, 
+					popOverOptions('top','No columns','Build at least one column to view columns.'));;
 			} else { // type home
 				$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : ''; 
-				$('#greeting').removeClass('hide');
-				$('#content-container, #subreddit-container').addClass('hide');
+				showFeature('#greeting');
 				buttonType();
 			}
 		});
@@ -387,8 +387,7 @@ var app = (function($) {
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
 	}
 	function subredditResults(data, subreddit) {
-		$('#content-container, #greeting').addClass('hide')
-		$('#subreddit-container').removeClass('hide');
+		showFeature('#subreddit-container');
 		$('#subreddit-result-title').text(subreddit);
 		subredditSearch('#subreddit-search-results')
 		columnsOrHomeButton();
@@ -421,6 +420,7 @@ var app = (function($) {
 		if (config.length > 0) {
 			buildConfigToUI(); 
 		} else {
+			showFeature('#greeting');
 			watchList();
 		}
 	}
@@ -583,7 +583,7 @@ var app = (function($) {
 		function columnSizing() {
 			$('.frame-content').css('height', window.innerHeight-107);
 			$('#greeting').hasClass('hide') 
-				? $('.carousel-inner').css('height', window.innerHeight-50) 
+				? $('.carousel-inner').css('height', window.innerHeight-53) 
 				: $('.carousel-inner').removeAttr('style');
 		}
 	}
@@ -624,14 +624,21 @@ var app = (function($) {
 			$('#cancel-column').trigger('click')
 		}
 	}
+	function showFeature(feature) {
+		hideAllFeatures();
+		fadeIn($(feature).removeClass('hide'),100);
+	}
+	function hideAllFeatures() {
+		$('#main-loader-container, #content-container, #greeting, #subreddit-container')
+		.removeClass('faded').addClass('hide')
+	}
 	function buildConfigToUI() {
 		$('.carousel-inner').children().remove();
 		if (config.length==0) {
-			$('#greeting').removeClass('hide');
+			showFeature('#greeting');
 			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : '';
 		} else {
-			$('#content-container').removeClass('hide');
-			$('#greeting, #subreddit-container').addClass('hide');
+			showFeature('#content-container');
 		}
 		columnsOrHomeButton();
 		contentResizeEvent();
