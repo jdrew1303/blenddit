@@ -1094,7 +1094,7 @@ var app = (function($) {
 		$submitting.removeClass('faded').addClass('hide');
 		$form.removeClass('hide')
 		$form.launchPopOver(3000, 
-			popOverOptions('bottom','Success','You successfully posted a top level comment.'))
+			popOverOptions('top','Success','You successfully posted a top level comment.'))
 	}
 	function insertReplyIntoDOM(objArray, additionalData) {
 		$(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
