@@ -276,6 +276,7 @@ var app = (function($) {
 	  		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 	  		queryTokenizer: Bloodhound.tokenizers.whitespace,
 	  		remote: {
+	  			rateLimitWait: 0,
 			  	url : '/search-reddit-names?query=%QUERY',
 			  	filter: function(data) {
 			  		var keyValues = []

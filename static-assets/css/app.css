@@ -504,6 +504,7 @@ select:focus, textarea:focus, input:focus {
 }
 span.twitter-typeahead .tt-dropdown-menu {
   position: absolute;
+  width: 100%;
   top: 100%;
   left: 0;
   z-index: 1000;
