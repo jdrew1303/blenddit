@@ -418,6 +418,7 @@ var app = (function($) {
 	}
 	function configObjAction() {
 		if (config.length > 0) {
+			$('.carousel-inner').children().remove();
 			buildConfigToUI(); 
 		} else {
 			showFeature('#greeting');
@@ -642,36 +643,47 @@ var app = (function($) {
 			$('#cancel-column').trigger('click')
 		}
 	}
-	function showFeature(feature) {
-		hideAllFeatures();
-		fadeIn($(feature).removeClass('hide'),100);
-	}
 	function showColumnOption(option, columnNum) {
 		hideAllColumnOptions(columnNum);
 		$(option).removeClass('hide');
-		// option[0].previousSibling.scrollIntoView();
+		$(option[0].previousSibling).removeClass('hide');
+	}
+	function showAllColumnOptions(columnNum) {
+		$(['.settings-switch[data-column='+columnNum+']', '.manage-threads[data-column='+columnNum+']',
+			'.write-comment-switch[data-column='+columnNum+']','.refreshSwitch[data-column='+columnNum+']',
+			'.trash[data-column='+columnNum+']'].join(',')).removeClass('hide');
+		$(['.write-comment[data-column='+columnNum+']','.edit-form[data-column='+columnNum+']',
+			'.settings-tab[data-column='+columnNum+']'].join(',')).addClass('hide');
 	}
 	function hideAllColumnOptions(columnNum) {
-		$('.write-comment[data-column='+columnNum+'], .edit-form[data-column='+columnNum+'], .settings-tab[data-column='+columnNum+']')
+		$(['.write-comment[data-column='+columnNum+']','.settings-switch[data-column='+columnNum+']',
+			'.edit-form[data-column='+columnNum+']','.manage-threads[data-column='+columnNum+']',
+			'.settings-tab[data-column='+columnNum+']','.write-comment-switch[data-column='+columnNum+']',
+			'.refreshSwitch[data-column='+columnNum+']','.trash[data-column='+columnNum+']'].join(','))
 		.addClass('hide');
+	}
+	function showFeature(feature) {
+		hideAllFeatures();
+		fadeIn($(feature).removeClass('hide'),100);
 	}
 	function hideAllFeatures() {
 		$('#main-loader-container, #content-container, #greeting, #subreddit-container')
 		.removeClass('faded').addClass('hide')
 	}
 	function buildConfigToUI() {
-		$('.carousel-inner').children().remove();
 		if (config.length==0) {
 			showFeature('#greeting');
 			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : '';
 		} else {
 			showFeature('#content-container');
+			if ($('.carousel-inner').children().length == 0) {
+				for (var i = 0, len = config.length; i < len; i++) {
+					buildColumn(config[i], i)
+				}
+			}
 		}
 		columnsOrHomeButton();
 		contentResizeEvent();
-		for (var i = 0, len = config.length; i < len; i++) {
-			buildColumn(config[i], i)
-		}
 	}
 	function buildColumnOptions(configObj, columnNum) {
 		var addThreadTab = function() {
@@ -700,7 +712,7 @@ var app = (function($) {
 		bindInputLoad(columnNum);
 		bindDeleteThread('delete-edit');
 		bindInfoThread('info-edit');
-		bindAddThreadButton('.edit-form[data-column='+columnNum+']', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit");
+		bindAddThreadButton('.edit-form[data-column='+columnNum+']', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit", columnNum);
 		bindCancelEdit(configObj, columnNum);
 		bindSaveEdit(configObj, columnNum);
 		setSettingsFromConfig(columnNum, configObj);
@@ -745,8 +757,7 @@ var app = (function($) {
 	}
 	function bindCancelEdit(configObj, columnNum) {
 		$(".edit-form[data-column="+columnNum+"] .cancel-edit-button, .settings-tab[data-column="+columnNum+"] .cancel-edit-button").unbind('click').bind('click', function() {
-			buildColumn(configObj, columnNum);
-			makeItemActive(columnNum);
+			showAllColumnOptions(columnNum);
 		})
 	}
 	function buildColumn(configObj, num) {
@@ -814,27 +825,26 @@ var app = (function($) {
 					}
 				});
 			} else {
-				hideAllColumnOptions(columnNum);
+				showAllColumnOptions(columnNum);
 				$columnOptions.addClass('hide');
 				column_options_height(columnNum, 0);
 			}
-			
-
 		})
 		$(".manage-threads[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), $edit_form = $('.edit-form[data-column='+columnNum+']');
-			showColumnOption($edit_form, columnNum);
+			!$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($edit_form, columnNum);
+			frame_content_height(columnNum);
 		})
 		$(".settings-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), $settings_form = $('.settings-tab[data-column='+columnNum+']');
-			showColumnOption($settings_form, columnNum);
+			!$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($settings_form, columnNum);
 		})
 		$(".write-comment-switch[data-column="+columnNum+"]").unbind('click').bind('click', function() {
 			var columnNum = $(this).data('column'), 
 				$write_comment = $('.write-comment[data-column='+columnNum+']'),
 				targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
 			setPostThreads(targetContext, fromContext);
-			showColumnOption($write_comment, columnNum);
+			!$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($write_comment, columnNum);
 		})
 		$(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').bind('click',function(){ 
 			var columnNum = $(this).data('column');
@@ -924,12 +934,13 @@ var app = (function($) {
 			} 
 		})
 	}
-	function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass) { 
+	function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass, optionalColumnNum) { 
 		$(context+" .add-thread-button").unbind('click').click(function(){
 			var	threads = util.html.s(infoClass, threadClass),
 				subreddit = util.html.t(deleteClass, subClass),
 				subreddit_group = util.html.u(groupClass, subreddit, threads);
-			$(subreddit_group).insertAfter(context+' .'+target);	
+			$(subreddit_group).insertAfter(context+' .'+target);
+			typeof optionalColumnNum !== 'undefined' ? frame_content_height(optionalColumnNum) : void 0;	
 			typeAheadReddit(context+' .'+subClass+':first', function(element) {
 				var index = $(context+' .'+groupClass).index($(element).parent().parent().parent());
 				getPosts('/r/'+element.value, '', '', {target: [context+' .'+threadClass,index], errorMsgLoc: element, callback: setThreads});
@@ -968,7 +979,9 @@ var app = (function($) {
 	}
 	function bindDeleteThread(deleteClass) {
 		$('.'+deleteClass).unbind('click').bind('click', function() {
-			$(this).parent().parent().parent().remove();
+			var columnNum = $(this).parents('.item').data('column');
+			$(this).parents('.subreddit-group-edit').remove();
+			if (typeof columnNum !== 'undefined') frame_content_height(columnNum);
 		})
 	}
 	function vendorGroupDisplay() {
@@ -1067,8 +1080,11 @@ var app = (function($) {
 				});
 			}
 		})
-		$('.cancel-reply').unbind('click').click(function() { 
-			$(this).parents('.comment-footer').find('.reply-switch').trigger('click')
+		$('.cancel-reply').unbind('click').click(function() {
+			var $comment_footer = $(this).parents('.comment-footer');
+			$comment_footer.length>0 
+				? $comment_footer.find('.reply-switch').trigger('click')
+				: showAllColumnOptions($(this).parents('.column-options').data('column'));
 		})
 	}
 	function postTopLevelComment(objArray, additionalData) {
