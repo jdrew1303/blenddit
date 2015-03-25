@@ -139,7 +139,7 @@ var util = {
 			return "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>"
 		},
 		p : function(columnNum) {
-			return ['<div data-column="'+columnNum+'" class="hide column-options btn-group">',
+			return ['<div data-column="'+columnNum+'" class="hide column-options btn-group" style="height:0;">',
 						'<a data-column="'+columnNum+'" class="btn column-option teal manage-threads">',
 							'<i class="fa fa-newspaper-o fa-2x"></i>',
 							'<p>THREADS</p>',
