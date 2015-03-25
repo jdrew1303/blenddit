@@ -1051,6 +1051,7 @@ var app = (function($) {
 			if (text.length==0) return;
 			$(this.form).addClass('hide');
 			fadeIn($submitting.removeClass('hide'), 100);
+			$postPane.length > 0 ? frame_content_height(additionalData.columnNum) : void 0;	
 
 			var done = $postPane.length > 0  
 				? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
@@ -1096,6 +1097,7 @@ var app = (function($) {
 		$form.removeClass('hide')
 		$form.launchPopOver(3000, 
 			popOverOptions('top','Success','You successfully posted a top level comment.'))
+		frame_content_height(additionalData.columnNum);
 	}
 	function insertReplyIntoDOM(objArray, additionalData) {
 		$(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
