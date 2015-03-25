@@ -846,6 +846,7 @@ var app = (function($) {
 				targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
 			setPostThreads(targetContext, fromContext);
 			!$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($write_comment, columnNum);
+			frame_content_height(columnNum);
 		})
 		$(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').bind('click',function(){ 
 			var columnNum = $(this).data('column');
