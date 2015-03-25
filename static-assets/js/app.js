@@ -1096,7 +1096,7 @@ var app = (function($) {
 		$form.find('.textarea-reply').val('');
 		$submitting.removeClass('faded').addClass('hide');
 		$form.removeClass('hide')
-		$('column-options[data-column='+additionalData.columnNum+']').launchPopOver(5000, 
+		$('.frame-overlay[data-column='+additionalData.columnNum+']').launchPopOver(5000, 
 			popOverOptions('bottom','Success','You successfully posted a top level comment.'))
 		frame_content_height(additionalData.columnNum);
 	}
