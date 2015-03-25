@@ -276,7 +276,7 @@ var app = (function($) {
 	  		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 	  		queryTokenizer: Bloodhound.tokenizers.whitespace,
 	  		remote: {
-	  			rateLimitWait: 0,
+	  			rateLimitWait: 50,
 			  	url : '/search-reddit-names?query=%QUERY',
 			  	filter: function(data) {
 			  		var keyValues = []
@@ -345,7 +345,7 @@ var app = (function($) {
 				util.fn.remove(config, $(this).data('column'));
 				deleteRefresh($(this).data('column'))
 				util.fn.setInCookie('config', config);
-				buildConfigToUI();
+				buildConfigToUI(true);
 			})
 			$('[data-toggle="tooltip"]').tooltip();
 			redditNames.initialize();
@@ -671,13 +671,14 @@ var app = (function($) {
 		$('#main-loader-container, #content-container, #greeting, #subreddit-container')
 		.removeClass('faded').addClass('hide')
 	}
-	function buildConfigToUI() {
+	function buildConfigToUI(deleteFlag) {
 		if (config.length==0) {
 			showFeature('#greeting');
 			$('#watch-threads .list-group.contain').children().length == 0 ? watchList() : '';
 		} else {
 			showFeature('#content-container');
-			if ($('.carousel-inner').children().length == 0) {
+			if ($('.carousel-inner').children().length == 0 || deleteFlag) {
+				if (deleteFlag) $('.carousel-inner').children().remove();
 				for (var i = 0, len = config.length; i < len; i++) {
 					buildColumn(config[i], i)
 				}
