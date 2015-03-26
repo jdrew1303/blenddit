@@ -668,7 +668,7 @@ var app = (function($) {
 	}
 	function showFeature(feature) {
 		hideAllFeatures();
-		feature == '#content-container' ? $('html, body').addClass('noverflow') : $('html, body').removedClass('noverflow')
+		feature == '#content-container' ? $('html, body').addClass('noverflow') : $('html, body').removeClass('noverflow')
 		fadeIn($(feature).removeClass('hide'),100);
 	}
 	function hideAllFeatures() {
