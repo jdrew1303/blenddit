@@ -579,11 +579,7 @@ span.twitter-typeahead {
   border-top-right-radius: 4px !important;
   border-bottom-right-radius: 4px !important; 
 }
-.auto-height {
-  height: auto !important;
-}
 .column-options {
-  height: 0;
   background-color: #3c3c3c;
   overflow: auto;
 }

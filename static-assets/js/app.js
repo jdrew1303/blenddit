@@ -140,7 +140,7 @@ var util = {
 			return "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>"
 		},
 		p : function(columnNum) {
-			return ['<div data-column="'+columnNum+'" class="hide column-options btn-group">',
+			return ['<div data-column="'+columnNum+'" class="hide column-options btn-group" style="height:0;">',
 						'<a data-column="'+columnNum+'" class="btn column-option teal manage-threads">',
 							'<i class="fa fa-newspaper-o fa-2x"></i>',
 							'<p>THREADS</p>',
@@ -592,7 +592,6 @@ var app = (function($) {
 	}
 	function column_options_height(columnNum, optInt) {
 		var $column_options = $('.column-options[data-column='+columnNum+']');
-		$column_options.addClass('auto-height');
 		$column_options.removeAttr('style').css('max-height', $column_options.height());
 		frame_content_height(columnNum, optInt);
 	}
