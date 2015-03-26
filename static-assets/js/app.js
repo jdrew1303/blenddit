@@ -303,6 +303,7 @@ var app = (function($) {
 					$('.navbar-fixed-top').show();
 					$('.navbar-brand > .text-warning').text('kurtlocker.org')
 					$('.social').show();
+					$('html, body').removeClass('noverflow');
 				}
 		});
 	}
@@ -348,6 +349,7 @@ var app = (function($) {
 				buildConfigToUI(true);
 			})
 			$('[data-toggle="tooltip"]').tooltip();
+			$('html, body').addClass('noverflow');
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
