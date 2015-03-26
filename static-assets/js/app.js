@@ -42,6 +42,7 @@ var util = {
 		setInCookie : function(name, item) { util.fn.setCookie(name, JSON.stringify(item))},
 		jQueryExtensions : function() {
 			$.fn.launchPopOver = function(closeTime, options) {
+				if (/popover/.test($(this).attr('aria-describedby'))) return;
 				var that = this;
 				$(this).popover('destroy');
 				$(this).popover(options);
@@ -1095,10 +1096,9 @@ var app = (function($) {
 			$submitting = $(additionalData.postPane).find('.submitting');
 		$form.find('.textarea-reply').val('');
 		$submitting.removeClass('faded').addClass('hide');
-		$form.removeClass('hide')
-		$('.frame-overlay[data-column='+additionalData.columnNum+']').launchPopOver(5000, 
-			popOverOptions('bottom','Success','You successfully posted a top level comment.'))
+		$form.removeClass('hide')	
 		frame_content_height(additionalData.columnNum);
+		$('.column-bars[data-column='+additionalData.columnNum+'] > a, .frame[data-column='+additionalData.columnNum+'] .frame-header').trigger('click');
 	}
 	function insertReplyIntoDOM(objArray, additionalData) {
 		$(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
