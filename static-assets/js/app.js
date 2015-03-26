@@ -1047,7 +1047,11 @@ var app = (function($) {
 			var $postPane = $(this).parents('.write-comment'),
 				thing_id_raw = this.form.thing_id.value,
 				thing_id = thing_id_raw.split('-')[0] || 't3_'+$postPane.find('.post-thread option:selected').data('threadid');
-				additionalData = {columnNum: thing_id_raw.split('-')[1] || $postPane.data('column'), threadNum: thing_id_raw.split('-')[2], postPane:$postPane},
+				additionalData = {
+					columnNum: thing_id_raw.split('-')[1] || $postPane.data('column'), 
+					threadNum: thing_id_raw.split('-')[2], 
+					postPane: $postPane.length > 0 ? $postPane : $(this).parents('.comment-footer')
+				},
 				text = this.form.text.value,
 				$submitting = $(this.form.previousSibling);
 			if (text.length==0) return;
@@ -1058,22 +1062,25 @@ var app = (function($) {
 			var done = $postPane.length > 0  
 				? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
 					data && data.needsLogin ? $('#login-reddit-modal').modal()
-						: data.statusCode ? console.log(data.statusCode)
-							: data.json && data.json.errors.length > 0 ? alert(data.json.errors[0][1])
+						: data.statusCode ? topLevelCommentFail(additionalData)
+							: data.json && data.json.errors.length > 0 ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
 								: postTopLevelComment(data.json.data.things, additionalData);
 				}
 				: function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply 
 					data && data.needsLogin ? $('#login-reddit-modal').modal()
 						: data.statusCode ? console.log(data.statusCode)
-							: data.json && data.json.errors.length > 0 ? alert(data.json.errors[0][1])	
+							: data.json && data.json.errors.length > 0 ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()	
 								: insertReplyIntoDOM(data.json.data.things, additionalData);	
 				}
-
-			function fail(jqXHR, textStatus, errorThrown){
-				console.log(textStatus);
-			}
+			var fail = $postPane.length > 0
+				? function(jqXHR, textStatus, errorThrown, additionalData){ 
+					topLevelCommentFail(additionalData);
+				}
+				: function(jqXHR, textStatus, errorThrown, additionalData){ 
+					replyLevelCommentFail(additionalData);
+				}
 			var formData = {thing_id: thing_id, text: text };
-			genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData, this);
+			genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
 		})
 		$('.textarea-reply').unbind('focus').bind('focus', function() {
 			if (!$('[data-reddituser]').data('reddituser')) {
@@ -1090,6 +1097,21 @@ var app = (function($) {
 				? $comment_footer.find('.reply-switch').trigger('click')
 				: showAllColumnOptions($(this).parents('.column-options').data('column'));
 		})
+	}
+	function replyLevelCommentFail(additionalData) {
+		var $form = $(additionalData.postPane).find('form'),
+			$submitting = $(additionalData.postPane).find('.submitting');
+		$form.removeClass('hide')
+		$submitting.removeClass('hide').addClass('hide')
+		$form.launchPopOver(3000, popOverOptions('top','','There was a problem posting your reply. Try again!'))
+	}
+	function topLevelCommentFail(additionalData) {
+		var $form = $(additionalData.postPane).find('form'),
+			$submitting = $(additionalData.postPane).find('.submitting');
+		$submitting.removeClass('faded').addClass('hide');
+		$form.removeClass('hide');
+		frame_content_height(additionalData.columnNum);
+		$form.find('.textarea-reply').launchPopOver(3000, popOverOptions('top','','There was a problem posting your comment. Try again!'))
 	}
 	function postTopLevelComment(objArray, additionalData) {
 		var $form = $(additionalData.postPane).find('form'),
@@ -1317,7 +1339,7 @@ var app = (function($) {
 		$.ajax({ url: url, type: 'POST', timeout:7000, data: data, cache: false })
 		.done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData);})
 		.fail(function(jqXHR, textStatus, errorThrown) { 
-			if (fail) fail(jqXHR, textStatus, errorThrown);
+			if (fail) fail(jqXHR, textStatus, errorThrown, additionalData);
 			errorPop(errorMsgLoc, errorThrown);
 		})
 		.always(function() { if (always) always(); });
