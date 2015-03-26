@@ -349,7 +349,6 @@ var app = (function($) {
 				buildConfigToUI(true);
 			})
 			$('[data-toggle="tooltip"]').tooltip();
-			$('html, body').addClass('noverflow');
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
@@ -669,6 +668,7 @@ var app = (function($) {
 	}
 	function showFeature(feature) {
 		hideAllFeatures();
+		feature == '#content-container' ? $('html, body').addClass('noverflow') : $('html, body').removedClass('noverflow')
 		fadeIn($(feature).removeClass('hide'),100);
 	}
 	function hideAllFeatures() {
