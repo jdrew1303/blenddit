@@ -615,7 +615,7 @@ var app = (function($) {
 		bindAccounts();
 		$('#save-changes').unbind('click').bind('click',function() {
 			addColumnToConfig();
-			buildConfigToUI();
+			buildConfigToUI(true);
 		});
 		$('#controlModal').modal();
 	}
