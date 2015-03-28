@@ -292,8 +292,7 @@ blockquote, blockquote p {
   right:0;
 }
 .frame-container {
-  padding-left: 2px;
-  padding-right:2px;
+  padding-left: 5px;
   min-width: 315px;
 }
 .frame-position {
@@ -663,6 +662,10 @@ span.twitter-typeahead {
   .logo-responsive {
     width: 250px;
     height: 250px;   
+  }
+  .frame-container {
+    padding-left: 0;
+    padding-right: 0;
   }
   .frame-position {
     display:block;

@@ -1171,7 +1171,7 @@ var app = (function($) {
 			var cachedfirstComment = app['firstComment'+columnNum];
 			if (!(cachedfirstComment == data[1].data.children[0].data.name)) {
 				var newComments = util.fn.takeWhile(data[1].data.children, cachedfirstComment, function(x, commentName){ 
-					return x.data.name != commentName;
+					return !document.getElementById(x.data.name) && x.data.name != commentName;
 				})
 				$(buildCommentHtmlString(newComments, true, true)).insertBefore(".frame-content[data-column="+columnNum+"] #"+cachedfirstComment);
 				newComments.forEach(function(comment){ fadeIn($('#'+comment.data.name),500) })
