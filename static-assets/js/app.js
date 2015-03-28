@@ -100,7 +100,11 @@ var util = {
 					"</div>"].join('')
 		},
 		f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>" },
-		g : function(settings) { return "<div class='edit-column-settings'>"+settings+"</div>" },
+		g : function(settings) { 
+			return ["<form action='javascript:void(0);' class='edit-column-settings'>"+settings,
+						"<input type='submit' class='hide'>",
+					"</form>"].join('') 
+		},
 		h : function(navTabType, addThreadTab, settingsTab, postTab) {
 			return ['<ul class="nav nav-tabs">',
 						'<li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li>',
@@ -145,7 +149,9 @@ var util = {
 							'<i class="fa fa-newspaper-o fa-2x"></i>',
 							'<p>THREADS</p>',
 						'</a>',
-						'<div data-column="'+columnNum+'" class="hide edit-form teal"></div>',
+						'<form action="javascript:void(0);" data-column="'+columnNum+'" class="hide edit-form teal">',
+							'<input data-column="'+columnNum+'" type="submit" class="hide">',
+						'</form>',
 						'<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod settings-switch">',
 							'<i class="fa fa-cog fa-2x"></i>',
 							'<p>SETTINGS</p>',
@@ -724,7 +730,14 @@ var app = (function($) {
 		bindAddThreadButton('.edit-form[data-column='+columnNum+']', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit", columnNum);
 		bindCancelEdit(configObj, columnNum);
 		bindSaveEdit(configObj, columnNum);
+		bindSubmitSave('.edit-form[data-column='+columnNum+']', columnNum);
+		bindSubmitSave('.settings-tab[data-column='+columnNum+']', columnNum);
 		setSettingsFromConfig(columnNum, configObj);
+	}
+	function bindSubmitSave(context, columnNum) {
+		$(context).find('input[type=submit]').unbind('click').bind('click', function() {
+			$(context).find('.save-edit-button').trigger('click');
+		})
 	}
 	function setPostThreads(context, fromContext) {
 		var $postThread = $(context+' .post-thread'),
