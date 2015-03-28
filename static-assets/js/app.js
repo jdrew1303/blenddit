@@ -333,11 +333,14 @@ var app = (function($) {
 		  	$('#page-content-wrapper').unbind('click').click(function() {
 		  		if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
 		  	});
+		  	$('.navbar-fixed-top, .navbar-fixed-bottom').removeClass('hide');
 		}
 	} 
 	function blenddit() {
 		if ($('#blenddit').length>0) {
-			$('.teams').show(); $('.social').hide(); $('.navbar-fixed-top').hide();
+			$('.teams').show(); $('.social').hide();
+			$('.navbar-fixed-bottom').removeClass('hide');
+			!$('.navbar-fixed-top').hasClass('hide') ? $('.navbar-fixed-top').addClass('hide'):void 0;
 			$('.open-controls').unbind('click').click(function() {launchControls();})
 			$('.help').unbind('click').bind('click', function() {
 				console.log('help modal')
