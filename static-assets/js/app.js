@@ -1178,9 +1178,16 @@ var app = (function($) {
 				$('.frame-overlay[data-column='+columnNum+']').launchPopOver(3000, popOverOptions('bottom','',newComments.length+' new comments!'))
 				markFirstComment(data[1].data.children[0].data.name, columnNum);
 			}
-			updateCommentStats(data[1].data.children)
+			updateCommentStats(data[1].data.children);
+			markOldComments(data[1].data.children[data[1].data.children.length-1].data.name, columnNum);
 		}	
 		commentBindings();
+	}
+	function markOldComments(lastCommentId, columnNum) {
+		var idArray = $.map($('.frame-content[data-column='+columnNum+'] .media'), function(comment){return comment.id});
+		idArray.slice(idArray.indexOf(lastCommentId)+1).forEach(function(id) {
+			$('#'+id+' .comment-footer[data-id='+id+'] .time-elapsed').text('old');
+		});
 	}
 	function updateCommentStats(comments) { 
 		comments.forEach(function(comment){
