@@ -1219,7 +1219,7 @@ var app = (function($) {
 					$('footer[data-id='+name+'] .reply').append(optionalExpander)
 					$('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square') 
 				}
-				$(commentFooter+' .new-comment .diff').text(newRepliesNum+' new');
+				newRepliesNum != 0 ? $(commentFooter+' .new-comment .diff').text(newRepliesNum+' new') : void 0;
 				newCommentBind(commentFooter+' .new-comment');
 			}
 		} else if (replyLength > 0) { // replies don't exist until now
