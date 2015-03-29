@@ -1208,7 +1208,7 @@ var app = (function($) {
 			newRepliesNum = replyLength - $preloadedReplies.length,
 			newButton = util.html.ab(newRepliesNum),
 			optionalExpander = util.html.ac(replyLength);
-		if (replyLength > 0 && $replySwitch.length>0) { // replies exist already 
+		if (replyLength > 0 && $replySwitch.length>0 && replyLength > $replySwitch.data('replylength')) { // replies exist already 
 			$replySwitch.data('replylength', replyLength);
 			$replyNum.text(replyLength);
 			if (newRepliesNum > 0 && $(commentFooter+' .new-comment').length==0) { 
@@ -1222,7 +1222,7 @@ var app = (function($) {
 				newRepliesNum <= 0 ? void 0 : $(commentFooter+' .new-comment .diff').text(newRepliesNum+' new');
 				newCommentBind(commentFooter+' .new-comment');
 			}
-		} else if (replyLength > 0) { // replies don't exist until now
+		} else if (replyLength > 0 && $replySwitch.length==0) { // replies don't exist until now
 			var existingRepls = util.html.ad(name, replyLength);
 			$(existingRepls).insertAfter(commentFooter+' .refresh-comment')
 			if (newRepliesNum > 0) {
