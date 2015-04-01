@@ -262,7 +262,9 @@ var util = {
 		ak : function(comment, icon, isParent, optionalNopacity, thumbnail, body, hide) {
 			return ["<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' ",
 						"data-icon='"+icon+"' id='"+comment.data.name+"' ",
-						"class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>"+thumbnail+body,
+						"class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>",
+						// "<a target='_blank' href='"+window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit+"' class='btn sub-signature'>"+comment.data.subreddit+"</a>",
+						thumbnail+body,
 					"</div>"].join('')
 		},
 		al : function() {
@@ -1173,9 +1175,9 @@ var app = (function($) {
 				var newComments = util.fn.takeWhile(data[1].data.children, cachedfirstComment, function(x, commentName){ 
 					return !document.getElementById(x.data.name) && x.data.name != commentName;
 				})
-				$(buildCommentHtmlString(newComments, true, true)).insertBefore(".frame-content[data-column="+columnNum+"] #"+cachedfirstComment);
+				$(".frame-content[data-column="+columnNum+"]").prepend(buildCommentHtmlString(newComments, true, true));
 				newComments.forEach(function(comment){ fadeIn($('#'+comment.data.name),500) })
-				$('.frame-overlay[data-column='+columnNum+']').launchPopOver(3000, popOverOptions('bottom','',newComments.length+' new comments!'))
+				if (newComments > 0) $('.frame-overlay[data-column='+columnNum+']').launchPopOver(3000, popOverOptions('bottom','',newComments.length+' new comments!'))
 				markFirstComment(data[1].data.children[0].data.name, columnNum);
 			}
 			updateCommentStats(data[1].data.children);
@@ -1376,7 +1378,8 @@ var app = (function($) {
 			if (errorThrown=='timeout') {
 				$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));
 			} else {
-				$(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Generic Error', 'There was an error processing this request.'));
+				$(errorMsgLoc).launchPopOver(3000, 
+					popOverOptions('bottom','Generic Error', 'There was an error processing this request. Reddit servers could not be reached or are busy. Try refreshing.'));
 			}
 		}
 	}

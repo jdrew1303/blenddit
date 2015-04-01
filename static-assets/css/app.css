@@ -103,6 +103,15 @@ blockquote, blockquote p {
   font-size: 12px !important;
   margin: 2px;
 }
+.sub-signature {
+  color: white;
+  opacity: .3;
+  position: absolute !important;
+  font-size: x-small;
+  padding: 0 !important;
+  top: 0;
+  right: 1px;
+}
 .new-comment {
   padding-left: 0;
 }
