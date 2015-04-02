@@ -1203,7 +1203,7 @@ var app = (function($) {
 				})
 				$(".frame-content[data-column="+columnNum+"]").prepend(buildCommentHtmlString(newComments, true, true));
 				newComments.forEach(function(comment){ fadeIn($('#'+comment.data.name),500) })
-				if (newComments > 0) $('.frame-overlay[data-column='+columnNum+']').launchPopOver(3000, popOverOptions('bottom','',newComments.length+' new comments!'))
+				if (newComments.length > 0) $('.frame-overlay[data-column='+columnNum+']').launchPopOver(3000, popOverOptions('bottom','',newComments.length+' new comments!'))
 				markFirstComment(data[1].data.children[0].data.name, columnNum);
 			}
 			updateCommentStats(data[1].data.children);
