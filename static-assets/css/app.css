@@ -66,6 +66,11 @@ html, body {
   margin: 5px 5px 0 5px !important;
   padding-right:0px !important;
 }
+.subreddit-thumb {
+  height: 70px !important;
+  width: 70px !important;
+  color: white;
+}
 .links-container .reply-switch, .links-container .perma, 
 .links-container .refresh-comment, .vote, 
 .list-group.edit-button-group .btn, #watch-subreddits .btn,
@@ -143,6 +148,12 @@ blockquote, blockquote p {
 .media-heading .btn {
   padding: 2px 2px 2px 0;
   color: white;
+}
+.media-results {
+  margin-bottom: 0;
+}
+.media-more li {
+  padding: 10px;
 }
 #refreshNumber {
   display: inline;
