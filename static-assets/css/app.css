@@ -66,10 +66,13 @@ html, body {
   margin: 5px 5px 0 5px !important;
   padding-right:0px !important;
 }
-.subreddit-thumb {
+.subreddit-thumb-alt {
   height: 70px !important;
   width: 70px !important;
   color: white;
+}
+.subreddit-thumb {
+  padding-left: 5px ;
 }
 .links-container .reply-switch, .links-container .perma, 
 .links-container .refresh-comment, .vote, 
@@ -86,7 +89,7 @@ html, body {
   border-bottom-color: white !important;
 }
 .bookmark a:hover, .links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover,
-#watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover {
+#watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover {
   opacity: 1;
 }
 .jumbotron {
@@ -149,8 +152,15 @@ blockquote, blockquote p {
   padding: 2px 2px 2px 0;
   color: white;
 }
+.media-results li, .media-more li {
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,.25) !important;
+}
 .media-results {
   margin-bottom: 0;
+}
+.media-results li {
+  opacity: .7;
 }
 .media-more li {
   padding: 10px;
@@ -301,7 +311,7 @@ blockquote, blockquote p {
 }
 .fa-bars, .delete-edit, .info-edit, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
-#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help {
+#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more {
   cursor: pointer;
 }
 .load-comments {

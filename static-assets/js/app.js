@@ -279,7 +279,7 @@ var util = {
 		an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>' },
 		ao : function(obj) {
 			return ["<li class='media nopacity'>",
-	          			"<a class='pull-left' href='#'>",
+	          			"<a class='subreddit-thumb pull-left' href='#'>",
 	            			(obj.data.thumbnail && obj.data.thumbnail != 'self' 
 	            				? "<img class='media-object' height='70' width='70' src='"+obj.data.thumbnail+"' alt='error' onerror='util.fn.brokenImage(this)'>" 
 	            				: util.html.ap()),
@@ -290,7 +290,7 @@ var util = {
               			"</div>",
             		"</li>"].join('')
 		},
-		ap : function() { return '<div class="subreddit-thumb center-containing"><i class="fa fa-reddit fa-3x"></i></div>'}
+		ap : function() { return '<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>'}
 	}
 };
 var app = (function($) {
