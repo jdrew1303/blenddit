@@ -90,7 +90,7 @@ html, body {
 }
 .bookmark a:hover, .links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover,
 #watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover {
-  opacity: 1;
+  opacity: 1 !important;
 }
 .jumbotron {
   margin-bottom: 10px;
@@ -156,14 +156,20 @@ blockquote, blockquote p {
   border-radius: 4px;
   border: 1px solid rgba(255,255,255,.25) !important;
 }
+.media-results li {
+   opacity: 0;
+}
 .media-results {
   margin-bottom: 0;
 }
-.media-results li {
-  opacity: .7;
-}
 .media-more li {
   padding: 10px;
+}
+.list-desc a {
+  color: #888888;
+}
+.list-desc a:hover {
+  color: #888888;
 }
 #refreshNumber {
   display: inline;
@@ -172,6 +178,9 @@ blockquote, blockquote p {
 }
 .Center-Container {
   position: relative;
+}
+.opacity-7 {
+  opacity: .7 !important;
 }
 .fa-caret-down {
   position: absolute;
@@ -247,7 +256,7 @@ blockquote, blockquote p {
 .column-settings {
   padding-top:5px;
 }
-.nopacity, .frame-overlay {
+.nopacity, .frame-overlay, .media-results li {
   transition: opacity .5s ease-in-out;
   -moz-transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;

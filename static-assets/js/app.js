@@ -277,8 +277,8 @@ var util = {
 		},
 		am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control post-thread"></select></div>';},
 		an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>' },
-		ao : function(obj) {
-			return ["<li class='media nopacity'>",
+		ao : function(obj, timeElapsed) {
+			return ["<li class='media'>",
 	          			"<a class='subreddit-thumb pull-left' href='#'>",
 	            			(obj.data.thumbnail && obj.data.thumbnail != 'self' 
 	            				? "<img class='media-object' height='70' width='70' src='"+obj.data.thumbnail+"' alt='error' onerror='util.fn.brokenImage(this)'>" 
@@ -286,7 +286,10 @@ var util = {
 	          			"</a>",
 	          			"<div class='media-body'>",
                 			"<h4 class='media-heading'>"+obj.data.title+"</h4>",
-                			"<p>Some text. Some text</p>",
+                			"<div class='list-desc btn-group'>",
+                				"<a class='btn'>"+obj.data.num_comments+" comments</a>",
+                				"<a class='btn'>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit+"</a>",
+                			"</div>",
               			"</div>",
             		"</li>"].join('')
 		},
@@ -425,9 +428,9 @@ var app = (function($) {
 		var $mediaList = $('#subreddit-container .media-results');
 		$mediaList.children().remove();
 		if (type == 't3') { // we're building a list of threads
-			data.data.children.forEach(function(thread) {
-				$mediaList.append(util.html.ao(thread));
-				fadeIn($('#subreddit-container .media-results li:last-child'), 100);
+			data.data.children.forEach(function(thread, i) {
+				$mediaList.append(util.html.ao(thread, getTimeElapsed(thread.data.created_utc)));
+				fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');
 			})
 		}
 	}
@@ -1066,8 +1069,8 @@ var app = (function($) {
 		$(".frame-overlay[data-column="+columnNum+"]").removeClass('half-fade');
 		$(".loading[data-column="+columnNum+"]").removeClass('faded')
 	}
-	function fadeIn(domElement, millsecs) {
-		setTimeout(function(){ $(domElement).addClass('faded')}, millsecs);
+	function fadeIn(domElement, millsecs, className) {
+		setTimeout(function(){ $(domElement).addClass(className ? className : 'faded')}, millsecs);
 	}
 	function getIcon(subreddit) {
 		return 'icon-'+subreddit;
