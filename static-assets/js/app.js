@@ -285,7 +285,7 @@ var util = {
 	            				: util.html.ap()),
 	          			"</a>",
 	          			"<div class='media-body'>",
-                			"<h4 class='media-heading'>"+obj.data.title+"</h4>",
+                			"<h4 class='media-heading'>"+obj.data.title+"<span class='badge pull-right'>"+obj.data.score+"</span></h4>",
                 			"<p>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit,
                 			" | <span class='text-warning'>"+obj.data.num_comments+" comments</span></p>",
               			"</div>",
