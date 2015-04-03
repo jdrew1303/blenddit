@@ -165,12 +165,6 @@ blockquote, blockquote p {
 .media-more li {
   padding: 10px;
 }
-.list-desc a {
-  color: #888888;
-}
-.list-desc a:hover {
-  color: #888888;
-}
 #refreshNumber {
   display: inline;
   position: absolute;

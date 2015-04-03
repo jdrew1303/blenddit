@@ -286,10 +286,8 @@ var util = {
 	          			"</a>",
 	          			"<div class='media-body'>",
                 			"<h4 class='media-heading'>"+obj.data.title+"</h4>",
-                			"<div class='list-desc btn-group'>",
-                				"<a class='btn'>"+obj.data.num_comments+" comments</a>",
-                				"<a class='btn'>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit+"</a>",
-                			"</div>",
+                			"<p>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit,
+                			" | <span class='text-warning'>"+obj.data.num_comments+" comments</span></p>",
               			"</div>",
             		"</li>"].join('')
 		},
