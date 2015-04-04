@@ -249,6 +249,7 @@ var util = {
 						"<a class='btn vote'><i class='fa fa-arrow-up'></i></a>",
 						"<a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a>",
 						"<a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a>",
+						"<a class='btn from-sub' target='_blank' href='"+window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit+"'>"+comment.data.subreddit+"</a>",
 						"<a class='btn author' href='"+window.location.protocol+"//www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
 						(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;"),
 					"</div>"+text].join('')
@@ -264,7 +265,6 @@ var util = {
 			return ["<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' ",
 						"data-icon='"+icon+"' id='"+comment.data.name+"' ",
 						"class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>",
-						// "<a target='_blank' href='"+window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit+"' class='btn sub-signature'>"+comment.data.subreddit+"</a>",
 						thumbnail+body,
 					"</div>"].join('')
 		},

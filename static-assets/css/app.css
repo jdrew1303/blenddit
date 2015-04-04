@@ -77,7 +77,7 @@ html, body {
 .links-container .reply-switch, .links-container .perma, 
 .links-container .refresh-comment, .vote, 
 .list-group.edit-button-group .btn, #watch-subreddits .btn,
-#watch-matching .btn, #watch-threads .btn {
+#watch-matching .btn, #watch-threads .btn, .from-sub {
   color: white;
   opacity: .5;
 }
@@ -89,7 +89,7 @@ html, body {
   border-bottom-color: white !important;
 }
 .bookmark a:hover, .links-container a:hover, .vote:hover, .list-group.edit-button-group .btn:hover,
-#watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover {
+#watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover, .from-sub:hover {
   opacity: 1 !important;
 }
 .jumbotron {
@@ -164,6 +164,10 @@ blockquote, blockquote p {
 }
 .media-more li {
   padding: 10px;
+}
+.from-sub {
+  font-size: x-small;
+  padding: 6px 5px 0 0 !important;
 }
 #refreshNumber {
   display: inline;
