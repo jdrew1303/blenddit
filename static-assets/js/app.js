@@ -278,7 +278,8 @@ var util = {
 		am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control post-thread"></select></div>';},
 		an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>' },
 		ao : function(obj, timeElapsed) {
-			return ["<li class='media'>",
+			return ["<li class='media' data-subreddit='"+obj.data.subreddit+"' data-thread='"+obj.data.permalink+"' ",
+							"data-id='"+obj.data.id+"' data-subid='"+obj.data.subreddit_id+"'>",
 	          			"<a class='subreddit-thumb pull-left' href='#'>",
 	            			(obj.data.thumbnail && obj.data.thumbnail != 'self' 
 	            				? "<img class='media-object' height='70' width='70' src='"+obj.data.thumbnail+"' alt='error' onerror='util.fn.brokenImage(this)'>" 
@@ -421,6 +422,7 @@ var app = (function($) {
 		subredditSearch('#subreddit-search-results');
 		columnsOrHomeButton();
 		buildRedditMedia(data, 't3');
+		bindThreadResults()
 	}
 	function buildRedditMedia(data, type) {
 		var $mediaList = $('#subreddit-container .media-results');
@@ -431,6 +433,19 @@ var app = (function($) {
 				fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');
 			})
 		}
+	}
+	function bindThreadResults() {
+		$('.media-results li').unbind('click').bind('click', function() {
+			var threadObj = {}, data = {};
+			data.subreddit_id = $(this).data('subid');
+			data.subreddit = $(this).data('subreddit')
+			data.permalink = $(this).data('thread');
+			data.id = $(this).data('id');
+			data.title = $(this).find('h4').text()
+			threadObj.data = data;
+			addToConfigObj(buildRedditConfigObjByThreads([threadObj]));
+			configObjAction()
+		});
 	}
 	function typeAheadReddit(inputSelector, completeFn) {
 		$(inputSelector).typeahead(null, {
