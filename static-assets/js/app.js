@@ -410,23 +410,36 @@ var app = (function($) {
 			var subreddit = $(parent+' .subreddit-search-input.tt-input').val()
 			if (subreddit) {
 				genericGet(window.location.protocol+'//www.reddit.com/r/'+subreddit+'.json', function(data, textStatus, jqXHR, subreddit) {
-					subredditResults(data, subreddit);
+					subredditResults(data, subreddit, false);
+					bindLoadMore(data.data.after, 'thread', subreddit);
 				}, undefined, undefined, false, '#'+this.form.id, subreddit)
 			}
 		})
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
 	}
-	function subredditResults(data, subreddit) {
+	function bindLoadMore(after, type, subreddit) {
+		var $media_more = $('.media-more li');
+		$media_more.data('after', after); $media_more.data('type', type); $media_more.data('subreddit', subreddit);
+		$('.media-more li').unbind('click').bind('click', function() {
+			genericGet(window.location.protocol+'//www.reddit.com/r/'+$(this).data('subreddit')+'.json?count=25&after='+$(this).data('after'), 
+				function(data, textStatus, jqXHR, obj) {
+					subredditResults(data, subreddit, true);
+					$('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView()
+					bindLoadMore(data.data.after, 'thread', obj.subreddit);
+			}, undefined, undefined, false, this, {subreddit: subreddit, previousAfter: $(this).data('after')})			
+		})
+	}
+	function subredditResults(data, subreddit, loadMore) {
 		showFeature('#subreddit-container');
 		$('#subreddit-result-title').text(subreddit);
 		subredditSearch('#subreddit-search-results');
 		columnsOrHomeButton();
-		buildRedditMedia(data, 't3');
+		buildRedditMedia(data, 't3', loadMore);
 		bindThreadResults()
 	}
-	function buildRedditMedia(data, type) {
+	function buildRedditMedia(data, type, loadMore) {
 		var $mediaList = $('#subreddit-container .media-results');
-		$mediaList.children().remove();
+		if (loadMore==false) $mediaList.children().remove();
 		if (type == 't3') { // we're building a list of threads
 			data.data.children.forEach(function(thread, i) {
 				$mediaList.append(util.html.ao(thread, getTimeElapsed(thread.data.created_utc)));
