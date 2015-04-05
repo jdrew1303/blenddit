@@ -152,6 +152,9 @@ blockquote, blockquote p {
   padding: 2px 2px 2px 0;
   color: white;
 }
+.media-results h4, .media-results p { 
+  word-break: break-word;
+}
 .media-results li, .media-more li {
   border-radius: 4px;
   border: 1px solid rgba(255,255,255,.25) !important;
