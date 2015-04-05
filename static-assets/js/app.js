@@ -301,7 +301,7 @@ var util = {
 			return ["<li class='media' data-id='"+obj.data.id+"'>",
 						"<a class='subreddit-thumb pull-left' href='#'>&nbsp</a>",
 	          			"<div class='media-body'>",
-                			"<h4 class='media-heading'>/r/"+obj.data.display_name+" : "+obj.data.title+"</h4>",
+                			"<h4 class='media-heading'><span class='text-warning'>/r/"+obj.data.display_name+"</span> : "+obj.data.title+"</h4>",
                 			"<p>"+obj.data.public_description+"</p>",
                 			"<p>"+(obj.data.subscribers ? obj.data.subscribers+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
               			"</div>",
