@@ -298,7 +298,7 @@ var util = {
 		},
 		ap : function() { return '<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>'},
 		aq : function(obj, timeElapsed) {
-			return ["<li class='media' data-id='"+obj.data.id+"'>",
+			return ["<li class='media' data-id='"+obj.data.id+"' data-subreddit='"+obj.data.display_name+"'>",
 						"<a class='subreddit-thumb pull-left' href='#'>&nbsp</a>",
 	          			"<div class='media-body'>",
                 			"<h4 class='media-heading'><span class='text-warning'>/r/"+obj.data.display_name+"</span> : "+obj.data.title+"</h4>",
@@ -426,19 +426,28 @@ var app = (function($) {
 				genericGet(window.location.protocol+'//www.reddit.com/r/'+subreddit+'.json', function(data, textStatus, jqXHR, obj) {
 					subredditResults(data, obj.subreddit, false);
 					bindLoadMore(data.data.after, 'thread', obj.subreddit);
+					$('#subreddit-search-results .subreddit-search-input.tt-input, #subreddit-search .subreddit-search-input.tt-input')
+						.typeahead('val', subreddit);
 				}, noResults, undefined, false, undefined, {subreddit: subreddit, errorLoc: this})
 			}
 			util.fn.getBlurred();
-			window.scrollTo(0, 0);
 		})
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
 	}
 	function noResults(jqXHR, textStatus, errorThrown, obj) {
+		if (jqXHR.status==403) {
+			$('#subreddit-container .subreddit-search-input.tt-input').val(obj.subreddit);
+			window.scrollTo(0, 0);
+			$('#subreddit-search-results').launchPopOver(5000,
+						popOverOptions('bottom','','This subreddit is private and you do not have access to view it.')); return;
+		}
 		genericGet(window.location.protocol+'//www.reddit.com/subreddits/search.json?q='+encodeURIComponent(obj.subreddit), 
 			function(data, textStatus, jqXHR, obj) {
 				if (data.data.children.length > 0) {
 					didYouMean(data, obj.subreddit, false);
 					bindLoadMore(data.data.after, 'sub', obj.subreddit);
+					$('#subreddit-search-results .subreddit-search-input.tt-input, #subreddit-search .subreddit-search-input.tt-input')
+						.typeahead('val', obj.subreddit);
 				} else {
 					$(obj.errorLoc.form).launchPopOver(3000,
 						popOverOptions('bottom','','There were no results found for "'+obj.subreddit+'"'));
@@ -477,14 +486,16 @@ var app = (function($) {
 	}
 	function didYouMean(data, query, loadMore) {
 		showFeature('#subreddit-container');
+		window.scrollTo(0, 0);
 		$('#subreddit-result-title').text('Subreddits matching "'+query+'"..');
 		subredditSearch('#subreddit-search-results');
 		columnsOrHomeButton();
 		buildRedditMedia(data, 't5', loadMore);
-		// bindSubList
+		bindSubList()
 	}
 	function subredditResults(data, subreddit, loadMore) {
 		showFeature('#subreddit-container');
+		window.scrollTo(0, 0);
 		$('#subreddit-result-title').text('/r/'+subreddit);
 		subredditSearch('#subreddit-search-results');
 		columnsOrHomeButton();
@@ -506,17 +517,25 @@ var app = (function($) {
 			})
 		}
 	}
+	function bindSubList() {
+		$('.media-results li').unbind('click').bind('click', function() {
+			$('#subreddit-search-results .subreddit-search-input.tt-input, #subreddit-search .subreddit-search-input.tt-input')
+				.typeahead('val', $(this).data('subreddit'));
+			$('#subreddit-container .subreddit-search-submit').trigger('click');
+		});
+	}
 	function bindThreadResults() {
 		$('.media-results li').unbind('click').bind('click', function() {
 			var threadObj = {}, data = {};
 			data.subreddit_id = $(this).data('subid');
-			data.subreddit = $(this).data('subreddit')
+			data.subreddit = $(this).data('subreddit');
 			data.permalink = $(this).data('thread');
 			data.id = $(this).data('id');
-			data.title = $(this).find('h4').text()
+			data.title = $(this).find('h4').text();
 			threadObj.data = data;
 			addToConfigObj(buildRedditConfigObjByThreads([threadObj]));
-			configObjAction()
+			configObjAction();
+			makeItemActive(config.length-1);
 		});
 	}
 	function typeAheadReddit(inputSelector, completeFn) {
@@ -564,7 +583,11 @@ var app = (function($) {
 			threads.push(threadObj);
 		});
 		settings.limitPosts = "50";
-		settings.name = children.length==1 ? children[0].data.title.substring(0,22)+' ...' : "My Column";
+		settings.name = children.length==1 
+			? children[0].data.title.length > 25 
+				? children[0].data.title.substring(0,22)+' ...' 
+				: children[0].data.title
+			: "My Column";
 		settings.refreshRate = "60";
 		settings.sortBy = "new";
 		configObj.type = "reddit";
@@ -664,6 +687,7 @@ var app = (function($) {
 						})
 						addToConfigObj(buildRedditConfigObjByThreads(children));
 						configObjAction()
+						makeItemActive(config.length-1);
 					} else {
 						$('#watch-threads .list-group-item.controls').launchPopOver(3000,
 							popOverOptions('top','Verification', 'Please select at least one thread from the list.'));
