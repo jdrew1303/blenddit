@@ -424,6 +424,7 @@ var app = (function($) {
 					bindLoadMore(data.data.after, 'thread', obj.subreddit);
 				}, noResults, undefined, false, undefined, {subreddit: subreddit, errorLoc: this})
 			}
+			$(this).blur();
 		})
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
 	}
