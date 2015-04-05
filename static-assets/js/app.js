@@ -32,6 +32,10 @@ var util = {
 			}
 			return "";
 		},
+		getBlurred : function() {
+			document.activeElement.blur();
+			$('input').blur();
+		},
 		cookieExists : function(cname) {
 		    return util.fn.getCookie(cname) ? true : false
 		},
@@ -424,7 +428,7 @@ var app = (function($) {
 					bindLoadMore(data.data.after, 'thread', obj.subreddit);
 				}, noResults, undefined, false, undefined, {subreddit: subreddit, errorLoc: this})
 			}
-			$(this).blur();
+			util.fn.getBlurred();
 		})
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
 	}
