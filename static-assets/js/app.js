@@ -429,6 +429,7 @@ var app = (function($) {
 				}, noResults, undefined, false, undefined, {subreddit: subreddit, errorLoc: this})
 			}
 			util.fn.getBlurred();
+			window.scrollTo(0, 0);
 		})
 		if (trigger) $(parent+' .subreddit-search-submit').trigger('click');
 	}
