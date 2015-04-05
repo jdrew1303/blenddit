@@ -302,7 +302,7 @@ var util = {
                 			"<p>"+(obj.data.subscribers ? obj.data.subscribers+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
               			"</div>",
             		"</li>"].join('')
-		},
+		}
 	}
 };
 var app = (function($) {
