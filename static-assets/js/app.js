@@ -449,14 +449,22 @@ var app = (function($) {
 					: window.location.protocol+'//www.reddit.com/subreddits/search.json?q='+encodeURIComponent($(this).data('subreddit'))+'&count=25&after='+$(this).data('after'),
 				fn = type == 'thread'
 					? function(data, textStatus, jqXHR, obj) {
-						subredditResults(data, subreddit, true);
-						$('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView()
-						data.data.after ? bindLoadMore(data.data.after, 'thread', obj.subreddit) : $('.media-more li').unbind('click')
+						if (obj.previousAfter) {
+							subredditResults(data, subreddit, true);
+							$('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
+							bindLoadMore(data.data.after, 'thread', obj.subreddit);
+						} else {
+							$('.media-more li').unbind('click')
+						}
 					}
 					: function(data, textStatus, jqXHR, obj) {
-						didYouMean(data, subreddit, true);
-						$('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView()
-						data.data.after ? bindLoadMore(data.data.after, 'sub', obj.subreddit) : $('.media-more li').unbind('click')
+						if (obj.previousAfter) {
+							didYouMean(data, subreddit, true);
+							$('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
+							bindLoadMore(data.data.after, 'sub', obj.subreddit);
+						} else {
+							$('.media-more li').unbind('click')
+						}
 					};
 			genericGet(url, fn, undefined, undefined, false, this, {subreddit: subreddit, previousAfter: $(this).data('after')})			
 		})
