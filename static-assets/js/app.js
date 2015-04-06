@@ -312,6 +312,7 @@ var util = {
 var app = (function($) {
 	var config = util.fn.cookieExists('config') ? util.fn.getFromCookie('config') : [],
 		watch = util.fn.cookieExists('watch') ? util.fn.getFromCookie('watch') : {},
+		autoRefreshState = true,
 		redditNames = new Bloodhound({
 	  		datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
 	  		queryTokenizer: Bloodhound.tokenizers.whitespace,
@@ -390,6 +391,9 @@ var app = (function($) {
 				util.fn.setInCookie('config', config);
 				buildConfigToUI(true);
 			})
+			$('#carousel').unbind('bind').bind('slid.bs.carousel', function () {
+				autoRefreshOnlyActiveColumn()
+			})
 			visibilityChange();
 			$('[data-toggle="tooltip"]').tooltip();
 			redditNames.initialize();
@@ -418,20 +422,33 @@ var app = (function($) {
 		function onchange(evt) {
 			var v = "visible", h = "hidden",
 			evtMap = {focus:v, focusin:v, pageshow:v, blur:h, focusout:h, pagehide:h};
-		    evt = evt || window.event;
-		    evt.type in evtMap
-		    	? evtMap[evt.type] == "hidden" ? autoRefresh(false) : void 0
-		    	: this[hidden] ? autoRefresh(false) : void 0;
-		  }
+	    	evt = evt || window.event;
+	    	evt.type in evtMap
+	    		? evtMap[evt.type] == "hidden" ? autoRefreshStateSwitch(false) : autoRefreshStateSwitch(true)
+	    		: this[hidden] ? autoRefreshStateSwitch(false) : autoRefreshStateSwitch(true);
+  		}
+  		function autoRefreshStateSwitch(bool) {
+  			autoRefreshState = bool;
+  			autoRefresh(bool);
+  			contentResizeEvent(); 
+  		}
 		if(document[hidden] !== undefined)
 			onchange({type: document[hidden] ? "blur" : "focus"});
 	}
-	function autoRefresh(bool, except) {
+	function autoRefresh(bool, exceptNum) {
 		if (!bool) {
-			for (var i = 0, len = config.length; i < len; i++) {
-				console.log('hi')
-			}
-		}
+			config.forEach(function(obj, i) {
+				var frameContentExists = $('.frame-content[data-column='+i+']').length > 0
+				typeof exceptNum !== 'undefined' && i == exceptNum && frameContentExists
+					? typeof app['r'+i] === 'undefined' ? toggleRefresh(i, true) : void 0 // exceptNum case - allow this column to continue refreshing (if toggled on)
+					: frameContentExists ? toggleRefresh(i, false) : void 0; // turn off this column's autorefresh and clear interval 
+			});
+		} else {
+			config.forEach(function(obj, i) {
+				var frameContentExists = $('.frame-content[data-column='+i+']').length > 0
+				if (frameContentExists && typeof app['r'+i] === 'undefined') toggleRefresh(i, true); 
+			}); // turn on all column auto refresh (if toggled on)
+		};
 	}
 	function columnsOrHomeButton() {
 		function buttonType() {
@@ -760,13 +777,19 @@ var app = (function($) {
 	}
 	function contentResizeEvent() {
 		app.height = window.innerHeight;
+		app.width = window.innerWidth;
 		carousel_inner_height();
 		frame_content_height();
+		autoRefreshOnlyActiveColumn()
 		$(window).unbind('resize').bind('resize', function(){
 			if (app.height != window.innerHeight) {
 				carousel_inner_height();
 				frame_content_height();
 				app.height = window.innerHeight;
+			}
+			if (app.width != window.innerWidth) {
+				autoRefreshOnlyActiveColumn()
+				app.width = window.innerWidth
 			}
 		});
 		function carousel_inner_height() {
@@ -774,6 +797,13 @@ var app = (function($) {
 				? $('.carousel-inner').css('height', window.innerHeight-53)
 				: $('.carousel-inner').removeAttr('style');
 		}
+	}
+	function autoRefreshOnlyActiveColumn() {
+		var $activeItem = $('.item.active'),
+			exceptNum = $activeItem.data('column');
+		if (window.innerWidth <= 640) {
+			if (typeof exceptNum != "undefined") autoRefresh(false, exceptNum);
+		} else { autoRefresh(true); }	
 	}
 	function column_options_height(columnNum, optInt) {
 		var $column_options = $('.column-options[data-column='+columnNum+']');
@@ -979,9 +1009,12 @@ var app = (function($) {
 		clearInterval(app['r'+columnNum]);
 		delete app['r'+columnNum];
 	}
-	function toggleRefresh(columnNum) {
+	function toggleRefresh(columnNum, override) {
+		var condition = typeof override !== 'undefined' 
+			? $(".refreshSwitch[data-column="+columnNum+"] i").hasClass('fa-toggle-on') && override
+			: $(".refreshSwitch[data-column="+columnNum+"] i").hasClass('fa-toggle-on'); 
 		deleteRefresh(columnNum);
-		if ($(".refreshSwitch[data-column="+columnNum+"] i").hasClass('fa-toggle-on')) {
+		if (condition && autoRefreshState) {
 			app['r'+columnNum] = setInterval(function() {
 				config[columnNum] ? getCommentsForColumn(config[columnNum], columnNum) : clearInterval(app['r'+columnNum]);
 			}, parseInt(config[columnNum].settings.refreshRate)*1000)
