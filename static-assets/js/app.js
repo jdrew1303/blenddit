@@ -427,7 +427,11 @@ var app = (function($) {
 			onchange({type: document[hidden] ? "blur" : "focus"});
 	}
 	function autoRefresh(bool, except) {
-
+		if (!bool) {
+			for (var i = 0, len = config.length; i < len; i++) {
+				console.log('hi')
+			}
+		}
 	}
 	function columnsOrHomeButton() {
 		function buttonType() {
