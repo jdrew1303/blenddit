@@ -1195,7 +1195,7 @@ var app = (function($) {
 			if (e.which == 13) { 
 				e.preventDefault();
 				util.fn.getBlurred();
-				$(this).parent().parent().parent().find('select').focus()
+				$(this).parent().parent().parent().find('select').focus();
 			} 
 		})
 	}
