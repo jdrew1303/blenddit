@@ -641,7 +641,8 @@ span.twitter-typeahead {
   overflow-y: auto !important;
 }
 #controlModal .modal-body {
-    padding: 0 2px 0 2px;    
+    max-height: none !important;
+    padding: 0 2px 0 2px;  
 }
 .transparent { 
   background-color: transparent;
