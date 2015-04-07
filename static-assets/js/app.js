@@ -830,6 +830,7 @@ var app = (function($) {
 		$('#save-changes').unbind('click').bind('click',function() {
 			addColumnToConfig();
 			buildConfigToUI(true);
+			makeItemActive(config.length-1);
 		});
 		$('#controlModal').modal();
 	}
