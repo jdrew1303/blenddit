@@ -1534,11 +1534,11 @@ var app = (function($) {
 		var minutes = Math.floor(interval / msecPerMinute );
 		interval = interval - (minutes * msecPerMinute );
 		var seconds = Math.floor(interval / 1000 );
-		if (!days===0 && !(days<=0)) {
+		if (!days==0 && !(days<=0)) {
 			return days+'d';
 		} else if (days==0&&!hours==0) {
 			return hours+'h';
-		} else if (days==0&&hours===0&&!minutes==0) {
+		} else if (days==0&&hours==0&&!minutes==0) {
 			return minutes+'m';
 		} else if (days==0&&hours==0&&minutes==0&&!seconds==0){
 			return seconds+'s';
