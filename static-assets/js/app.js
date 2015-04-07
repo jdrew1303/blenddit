@@ -828,9 +828,10 @@ var app = (function($) {
 		vendorGroupDisplay();
 		bindAccounts();
 		$('#save-changes').unbind('click').bind('click',function() {
-			addColumnToConfig();
-			buildConfigToUI(true);
-			makeItemActive(config.length-1);
+			var newColumnAdded = addColumnToConfig();
+			newColumnAdded 
+				? function() { buildConfigToUI(true); makeItemActive(config.length-1); }()
+				: buildConfigToUI(); 
 		});
 		$('#controlModal').modal();
 	}
@@ -855,12 +856,14 @@ var app = (function($) {
 		})
 	}
 	function addColumnToConfig() {
+		var newColumnAdded = false;
 		if (!$('#reddit').hasClass('hide') && util.fn.any('.thread-controls', function(x){ return !($(x).val()==null)})) {
 			// Validate - Does the user have at least one thread?
 			// Reset add column functionality, take back to "Add Column"
-			updateConfigObjFromDOM('.sub-group-controls', '.subreddit-controls', '.thread-controls', '#reddit .column-settings');
+			newColumnAdded = updateConfigObjFromDOM('.sub-group-controls', '.subreddit-controls', 
+				'.thread-controls', '#reddit .column-settings');
 			$('#cancel-column').trigger('click')
-		}
+		}; return newColumnAdded;
 	}
 	function showColumnOption(option, columnNum) {
 		hideAllColumnOptions(columnNum);
@@ -1125,7 +1128,8 @@ var app = (function($) {
 		}
 	}
 	function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClass, num) {
-		var column = {}, setting = {}, threads = [], $group = $(parentClass), settings = $(settingsClass).find('.form-control'),
+		var column = {}, setting = {}, threads = [], $group = $(parentClass), 
+			settings = $(settingsClass).find('.form-control'), newColumnAdded = false;
 			type = typeof num !== 'undefined' && $(".frame-position[data-column="+num+"]").data('type')=='reddit' || !$('#reddit').hasClass('hide')
 				? 'reddit' : 'twitter';
 		$group.each(function(index, el) {
@@ -1149,8 +1153,9 @@ var app = (function($) {
 			column['type'] = type;
 			typeof num !== 'undefined'
 				? config[num] = column
-				: config = config.concat(column);
+				: function() { config = config.concat(column); newColumnAdded = true; }()
 			util.fn.setInCookie('config', config);
+			return newColumnAdded;
 		}
 	}
 	function addToConfigObj(column) {
@@ -1241,11 +1246,12 @@ var app = (function($) {
 	}
 	function showLoader(columnNum) {
 		$(".frame-overlay[data-column="+columnNum+"]").addClass('half-fade');
-		$(".loading[data-column="+columnNum+"]").addClass('faded')
+		$(".loading[data-column="+columnNum+"]").removeClass('hide').addClass('faded')
 	}
 	function hideLoader(columnNum) {
 		$(".frame-overlay[data-column="+columnNum+"]").removeClass('half-fade');
 		$(".loading[data-column="+columnNum+"]").removeClass('faded')
+		setTimeout(function(){$(".loading[data-column="+columnNum+"]").addClass('hide')}, 500)
 	}
 	function fadeIn(domElement, millsecs, className) {
 		setTimeout(function(){ $(domElement).addClass(className ? className : 'faded')}, millsecs);
