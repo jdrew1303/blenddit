@@ -8,13 +8,14 @@ var util = {
 		takeWhile : function(arr, param, f) {
 			var returnArr = [];
 			for (var i = 0, len = arr.length; i < len; i++) {
-				if (f(arr[i], param)) { returnArr.push(arr[i]) }
-				else { break; }
+				if (f(arr[i], param)) {
+					returnArr.push(arr[i]);
+				} else { break; }
 			}
 			return returnArr;
 		},
 		any : function(cls, f) {
-			var bool = false
+			var bool = false;
 			$(cls).each(function(i,elem) {
 				if (f(elem)) { bool = true; return;}
 			}); return bool;
@@ -28,7 +29,7 @@ var util = {
 			for(var i=0; i<ca.length; i++) {
 				var c = ca[i];
 				while (c.charAt(0)==' ') c = c.substring(1);
-				if (c.indexOf(name) == 0) return c.substring(name.length,c.length);
+				if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
 			}
 			return "";
 		},
@@ -37,13 +38,13 @@ var util = {
 			$('input').blur();
 		},
 		cookieExists : function(cname) {
-		    return util.fn.getCookie(cname) ? true : false
+			return util.fn.getCookie(cname) ? true : false;
 		},
 		brokenImage : function(img) {
 			$(img).parents('.media a').empty().append(util.html.ap());
 		},
-		getFromCookie : function(item) { return JSON.parse(util.fn.getCookie(item)) },
-		setInCookie : function(name, item) { util.fn.setCookie(name, JSON.stringify(item))},
+		getFromCookie : function(item) { return JSON.parse(util.fn.getCookie(item)); },
+		setInCookie : function(name, item) { util.fn.setCookie(name, JSON.stringify(item));},
 		jQueryExtensions : function() {
 			$.fn.launchPopOver = function(closeTime, options) {
 				if (/popover/.test($(this).attr('aria-describedby'))) return;
@@ -52,14 +53,13 @@ var util = {
 				$(this).popover(options);
 				$(this).popover('show');
 				setTimeout(function(){
-					$(that).popover('destroy')
+					$(that).popover('destroy');
 				}, closeTime);
 				return this;
-			}
+			};
 			$.fn.hasOverflowed = function(){
-				return this.length > 0
-					? this[0].scrollHeight > this[0].clientHeight || this[0].scrollWidth > this[0].clientWidth : false
-			}
+				return this.length > 0 ? this[0].scrollHeight > this[0].clientHeight || this[0].scrollWidth > this[0].clientWidth : false;
+			};
 		}()
 	},
 	html : {
@@ -68,7 +68,7 @@ var util = {
 						"<div class='input-group'>",
 							"<input class='form-control' type='text' value='"+thing+"'></input>",
 							"<span class='input-group-addon'><i class='fa fa-close'></i></span>",
-					"</div></li>"].join('')
+					"</div></li>"].join('');
 		},
 		b : function(thing, timeElapsed) {
 			return ["<li data-subid="+thing.subreddit_id+" data-subreddit="+thing.subreddit+" data-thread="+thing.permalink,
@@ -76,39 +76,39 @@ var util = {
 						thing.title,
 						" <span class='text-primary'>in /r/"+thing.subreddit+"</span>",
 						"<span class='badge pull-right'>"+timeElapsed+"</span>",
-					"</li>"].join('')
+					"</li>"].join('');
 		},
 		c : function(ulClass, btnArr) {
 			var buttons = function() {
 				var htmlString = "";
 				btnArr.forEach(function(arr){
-					htmlString += "<a class='btn "+arr[0]+"'><i class='fa fa-"+arr[1]+" fa-2x'></i></a>"
+					htmlString += "<a class='btn "+arr[0]+"'><i class='fa fa-"+arr[1]+" fa-2x'></i></a>";
 				}); return htmlString; }();
 			return ["<ul class='list-group controls "+ulClass+"'>",
 						"<li class='list-group-item controls'>",
 							"<div class='btn-group'>",
 								buttons,
-                  			"</div>",
-                		"</li>",
-              		"</ul>"].join('')
+							"</div>",
+						"</li>",
+					"</ul>"].join('');
 		},
 		d : function(columnNum) {
 			return ["<div class='form-group'>",
 						"<label class='control-label label-width'>Threads <span class='info-edit label label-default pull-right'>Info</span></label>",
 						"<select data-column='"+columnNum+"' class='form-control thread-edit'></select>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
 		e : function() {
 			return ["<div class='form-group'>",
 						"<label class='control-label label-width'>Subreddit <span class='label label-danger delete-edit pull-right'>Delete</span></label>",
 						"<input type='text' class='form-control subreddit-edit' placeholder='Enter a subreddit'>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
-		f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>" },
+		f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>"; },
 		g : function(settings) {
 			return ["<form action='javascript:void(0);' class='edit-column-settings'>"+settings,
 						"<input type='submit' class='hide'>",
-					"</form>"].join('')
+					"</form>"].join('');
 		},
 		h : function(navTabType, addThreadTab, settingsTab, postTab) {
 			return ['<ul class="nav nav-tabs">',
@@ -120,15 +120,15 @@ var util = {
 						'<div class="tab-pane fade active in" id="'+navTabType+'-add">'+addThreadTab+'</div>',
 						'<div class="tab-pane fade" id="'+navTabType+'-settings">'+settingsTab+'</div>',
 						(postTab ? '<div class="tab-pane fade" id="'+navTabType+'-post">'+postTab+'</div>' : ''),
-					'</div>'].join('')
+					'</div>'].join('');
 		},
-		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"},
+		i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"; },
 		j : function(num) {
 			return ["<div data-column='"+num+"' class='btn-group column-bars'>",
 						"<a class='btn'>",
 							"<i data-column='"+num+"' class='fa fa-bars fa-lg'></i>",
 						"</a>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
 		l : function(num, configObj, icons, frameContent) {
 			return ["<i data-column='"+num+"' class='nopacity loading fa fa-refresh fa-spin fa-2x'></i>",
@@ -139,14 +139,14 @@ var util = {
 							"</h6>",
 							icons,
 						"</div>",
-					"</div>"+util.html.p(num)+frameContent].join('')
+					"</div>"+util.html.p(num)+frameContent].join('');
 		},
-		m : function(frame) { return "<div class='frame-container'>"+frame+"</div>" },
+		m : function(frame) { return "<div class='frame-container'>"+frame+"</div>"; },
 		n : function(num, configObj, frameContainer) {
-			return "<div data-column='"+num+"' data-type='"+configObj.type+"' class='frame-position nopacity'>"+frameContainer+"</div>"
+			return "<div data-column='"+num+"' data-type='"+configObj.type+"' class='frame-position nopacity'>"+frameContainer+"</div>";
 		},
 		o : function(num, framePosition) {
-			return "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>"
+			return "<div data-column='"+num+"' class='item "+(num==0?'active':'')+"'>"+framePosition+"</div>";
 		},
 		p : function(columnNum) {
 			return ['<div data-column="'+columnNum+'" class="hide column-options btn-group" style="height:0;">',
@@ -175,61 +175,61 @@ var util = {
 							'<i class="fa fa-trash fa-2x"></i>',
 							'<p>DELETE COLUMN</p>',
 						'</a>',
-					'</div>'].join('')
+					'</div>'].join('');
 		},
 		q : function(i) {
 			return ['<div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'">',
 						'<div class="panel-body"></div>',
-					'</div>'].join('')
+					'</div>'].join('');
 		},
-		r : function(header, body) { return '<div class="panel panel-default nopacity">'+header+body+'</div>' },
+		r : function(header, body) { return '<div class="panel panel-default nopacity">'+header+body+'</div>'; },
 		s : function(infoClass, threadClass) {
 			return ["<div class='form-group'>",
 						"<label class='control-label label-width'>Threads <span class='"+infoClass+" label label-default pull-right'>Info</span></label>",
 						"<select class='form-control "+threadClass+"'></select>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
 		t : function(deleteClass, subClass) {
 			return ["<div class='form-group'>",
 						"<label class='control-label label-width'>Subreddit <span class='"+deleteClass+" label label-danger pull-right'>Delete</span></label>",
 						"<input type='text' class='form-control "+subClass+"' placeholder='Enter a subreddit'>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
-		u : function(groupClass, subreddit, threads) { return "<div class='"+groupClass+" nopacity'>"+subreddit+threads+"</div>" },
+		u : function(groupClass, subreddit, threads) { return "<div class='"+groupClass+" nopacity'>"+subreddit+threads+"</div>"; },
 		v : function(post) {
 			return ["<option data-subid='"+post.data.subreddit_id+"' data-threadtitle='"+post.data.title+"' data-threadid='"+post.data.id+"' value='"+post.data.permalink+"'>",
 						post.data.title,
-					"</option>"].join('')
+					"</option>"].join('');
 		},
 		w : function(threadObj) {
 			return ["<option data-subid='"+threadObj.subid+"' data-threadtitle='"+threadObj.threadtitle+"' data-threadid='"+threadObj.threadid+"' value='"+threadObj.thread+"'>",
 						threadObj.threadtitle,
-					"</option>"].join('')
+					"</option>"].join('');
 		},
 		x : function(isTopLevel) {
 			return ["<div class='reply-buttons'>",
 						"<button class='cancel-reply btn btn-default'>Cancel</button>",
 						"<button type='submit' class='save-reply btn "+(isTopLevel ? 'btn-default' : 'btn-primary')+"'>Save</button>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
-		y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"'>"},
+		y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"'>"; },
 		z : function(author, isTopLevel) {
 			return [(isTopLevel ? "<label>Comment</label>" : ""),
 					"<textarea name='text' class='form-control textarea-reply'",
-						"placeholder='"+(!isTopLevel ? 'Reply to '+author+'..' : 'Write a comment')+"'></textarea>"].join('')
+						"placeholder='"+(!isTopLevel ? 'Reply to '+author+'..' : 'Write a comment')+"'></textarea>"].join('');
 		},
 		aa : function(parentInput, textarea, buttons, topLevel) {
 			return ["<div class='"+(!topLevel ? 'nopacity hide' : 'isTopLevel')+" reply-form'>",
 						"<div class='submitting nopacity hide'>"+(topLevel ? "<b><span class='black'>Submitting...</span></b>" : "Submitting...")+"</div>",
 						"<form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form>",
-					"</div>"].join('')
+					"</div>"].join('');
 		},
-		ab : function(newRepliesNum) { return "<a class='btn new-comment'><span class='text-primary diff'>"+newRepliesNum+" new</span></a>" },
+		ab : function(newRepliesNum) { return "<a class='btn new-comment'><span class='text-primary diff'>"+newRepliesNum+" new</span></a>"; },
 		ac : function(replyLength) {
 			return ["<span class='reply-num text-warning'>"+replyLength+"</span>",
-					"<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>"].join('')
+					"<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>"].join('');
 		},
-		ad : function(name, replyLength) { return "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'></a>"},
+		ad : function(name, replyLength) { return "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'></a>"; },
 		ae : function(comment, replyLength, timeElapsed, permaLink, replyForm) {
 			return ["<footer data-id='"+comment.data.name+"' class='comment-footer'>",
 						"<div class='links-container btn-group'>",
@@ -237,16 +237,16 @@ var util = {
 							"<a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a>",
 							"<a class='btn perma' href='"+permaLink+"' target='_blank'><i class='fa fa-link fa-lg'></i></a>",
 							"<a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.name+"'><i class='fa fa-refresh fa-lg'></i></a>",
-							(replyLength!=0 ? util.html.af(comment, replyLength) : ''),
+							(replyLength!==0 ? util.html.af(comment, replyLength) : ''),
 						"</div>",
 						replyForm,
-					"</footer>"].join('')
+					"</footer>"].join('');
 		},
 		af : function(comment, replyLength) {
 			return ["<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'>",
 						"<span class='reply-num text-warning'>"+replyLength+"</span>",
 						"<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>",
-					"</a>"].join('')
+					"</a>"].join('');
 		},
 		ag : function(comment, text) {
 			return ["<div class='media-heading btn-group'>",
@@ -256,56 +256,56 @@ var util = {
 						"<a class='btn from-sub' target='_blank' href='"+window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit+"'>"+comment.data.subreddit+"</a>",
 						"<a class='btn author' href='"+window.location.protocol+"//www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
 						(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;"),
-					"</div>"+text].join('')
+					"</div>"+text].join('');
 		},
 		ah : function(comment, text) {
 			return ["<div class='load-comments' data-parent='"+comment.data.parent_id+"' class='load-comments'>",
 						"<i class='fa fa-download'></i>&nbsp; load more comments",
-					"</div>"+text].join('')
+					"</div>"+text].join('');
 		},
-		ai : function(heading) { return "<div class='media-body'>"+heading+"</div>" },
-		aj : function(isParent, icon) { return "<div class='thumb pull-left "+(isParent ? icon : '')+"'></div>"},
+		ai : function(heading) { return "<div class='media-body'>"+heading+"</div>"; },
+		aj : function(isParent, icon) { return "<div class='thumb pull-left "+(isParent ? icon : '')+"'></div>";},
 		ak : function(comment, icon, isParent, optionalNopacity, thumbnail, body, hide) {
 			return ["<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' ",
 						"data-icon='"+icon+"' id='"+comment.data.name+"' ",
 						"class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>",
 						thumbnail+body,
-					"</div>"].join('')
+					"</div>"].join('');
 		},
 		al : function() {
 			return ['<li class="list-group-item">',
 						'<div class="input-group">',
 							'<input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span>',
 						'</div>',
-					'</li>'].join('')
+					'</li>'].join('');
 		},
 		am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control post-thread"></select></div>';},
-		an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>' },
+		an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>'; },
 		ao : function(obj, timeElapsed) {
 			return ["<li class='media' data-subreddit='"+obj.data.subreddit+"' data-thread='"+obj.data.permalink+"' ",
 							"data-id='"+obj.data.id+"' data-subid='"+obj.data.subreddit_id+"'>",
-	          			"<a class='subreddit-thumb pull-left' href='#'>",
-	            			(obj.data.thumbnail && obj.data.thumbnail != 'self' 
-	            				? "<img class='media-object' height='70' width='70' src='"+obj.data.thumbnail+"' alt='error' onerror='util.fn.brokenImage(this)'>" 
-	            				: util.html.ap()),
-	          			"</a>",
-	          			"<div class='media-body'>",
-                			"<h4 class='media-heading'>"+obj.data.title+"<span class='badge pull-right'>"+obj.data.score+"</span></h4>",
-                			"<p>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit,
-                			" | <span class='text-warning'>"+obj.data.num_comments+" comments</span></p>",
-              			"</div>",
-            		"</li>"].join('')
+						"<a class='subreddit-thumb pull-left' href='#'>",
+							(obj.data.thumbnail && obj.data.thumbnail != 'self'
+								? "<img class='media-object' height='70' width='70' src='"+obj.data.thumbnail+"' alt='error' onerror='util.fn.brokenImage(this)'>"
+								: util.html.ap()),
+						"</a>",
+						"<div class='media-body'>",
+							"<h4 class='media-heading'>"+obj.data.title+"<span class='badge pull-right'>"+obj.data.score+"</span></h4>",
+							"<p>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit,
+							" | <span class='text-warning'>"+obj.data.num_comments+" comments</span></p>",
+						"</div>",
+					"</li>"].join('');
 		},
-		ap : function() { return '<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>'},
+		ap : function() { return '<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>'; },
 		aq : function(obj, timeElapsed) {
 			return ["<li class='media' data-id='"+obj.data.id+"' data-subreddit='"+obj.data.display_name+"'>",
 						"<a class='subreddit-thumb pull-left' href='#'>&nbsp</a>",
-	          			"<div class='media-body'>",
-                			"<h4 class='media-heading'><span class='text-warning'>/r/"+obj.data.display_name+"</span> : "+obj.data.title+"</h4>",
-                			"<p>"+obj.data.public_description+"</p>",
-                			"<p>"+(obj.data.subscribers ? obj.data.subscribers+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
-              			"</div>",
-            		"</li>"].join('')
+						"<div class='media-body'>",
+							"<h4 class='media-heading'><span class='text-warning'>/r/"+obj.data.display_name+"</span> : "+obj.data.title+"</h4>",
+							"<p>"+obj.data.public_description+"</p>",
+							"<p>"+(obj.data.subscribers ? obj.data.subscribers+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
+						"</div>",
+					"</li>"].join('');
 		}
 	}
 };
@@ -849,7 +849,7 @@ var app = (function($) {
 	function vendorGroup() {
 		$('#reddit-block, #twitter-block').unbind('click').bind('click',function(){
 			if (this.id == 'reddit-block') {
-				bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls');
+				bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
 				bindCancelButton();
 				$('#vendor-group, #reddit').toggleClass('hide');
 			} // else if (twitter block)
@@ -934,7 +934,7 @@ var app = (function($) {
 		$(".write-comment[data-column="+columnNum+"]").append(postTab);
 
 		bindInputLoad(columnNum);
-		bindDeleteThread('delete-edit');
+		bindDeleteThread('delete-edit', 'subreddit-group-edit');
 		bindInfoThread('info-edit');
 		bindAddThreadButton('.edit-form[data-column='+columnNum+']', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit", columnNum);
 		bindCancelEdit(configObj, columnNum);
@@ -942,6 +942,7 @@ var app = (function($) {
 		bindSubmitSave('.edit-form[data-column='+columnNum+']', columnNum);
 		bindSubmitSave('.settings-tab[data-column='+columnNum+']', columnNum);
 		setSettingsFromConfig(columnNum, configObj);
+		preventEnterButton();
 	}
 	function bindSubmitSave(context, columnNum) {
 		$(context).find('input[type=submit]').unbind('click').bind('click', function() {
@@ -1184,9 +1185,19 @@ var app = (function($) {
 			});
 			bindPopulateThreadSelect(context+' .'+subClass+'.tt-input:first', groupClass, threadClass)
 			fadeIn('.'+groupClass, 100);
-			bindDeleteThread(deleteClass);
-			bindInfoThread(infoClass)
+			bindDeleteThread(deleteClass, groupClass);
+			bindInfoThread(infoClass);
+			preventEnterButton()
 		});
+	}
+	function preventEnterButton() {
+		$('input.subreddit-edit, input.subreddit-controls').unbind('keypress').bind('keypress', function(e){ 
+			if (e.which == 13) { 
+				e.preventDefault();
+				util.fn.getBlurred();
+				$(this).parent().parent().parent().find('select').focus()
+			} 
+		})
 	}
 	function bindPopulateThreadSelect(input, groupClass, threadClass) {
 		$(input).unbind('change').bind('change',function(){
@@ -1214,10 +1225,10 @@ var app = (function($) {
 			}
 		})
 	}
-	function bindDeleteThread(deleteClass) {
+	function bindDeleteThread(deleteClass, groupClass) {
 		$('.'+deleteClass).unbind('click').bind('click', function() {
 			var columnNum = $(this).parents('.item').data('column');
-			$(this).parents('.subreddit-group-edit').remove();
+			$(this).parents('.'+groupClass).remove();
 			if (typeof columnNum !== 'undefined') frame_content_height(columnNum);
 		})
 	}

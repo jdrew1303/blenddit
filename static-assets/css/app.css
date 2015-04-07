@@ -319,7 +319,7 @@ blockquote, blockquote p {
   text-align: center;
   padding: 0;
 }
-.fa-bars, .delete-edit, .info-edit, .reply, .open-controls, .reply-switch, 
+.fa-bars, .delete-edit, .info-edit, .delete-controls, .info-controls, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
 #watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more {
   cursor: pointer;
