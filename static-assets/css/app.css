@@ -104,6 +104,7 @@ html, body {
     padding-top: 5px;
 }
 #control-panel-panels #reddit {
+    min-height: 415px;
     max-height: 415px;
     overflow: auto;
 }
