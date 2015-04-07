@@ -118,76 +118,94 @@
           <h6 class="modal-title" id="controlModalTitle">Control Panel</h6>
         </div>
         <div class="modal-body">
-          <button id='add-a-column' type="button" class="btn btn-primary btn-lg btn-block">Add Column<i style='padding: 2px 35px 0 0;' class='fa fa-plus-square fa-lg icon-right'></i></button>
-          <div id='vendor-group' class='hide'>
-            <button id='reddit-block' type="button" class="btn btn-primary btn-lg btn-block"><i class='fa fa-reddit fa-lg'></i> Reddit</button>
-            <button id='twitter-block' type="button" class="btn btn-primary btn-lg btn-block"><i class='fa fa-twitter fa-lg'></i> Twitter</button>
+          <div id='control-panel-buttons' class='col-sm-4'>
+            <div class="list-group">
+              <a href="#" class="list-group-item">
+                 <h4 class="list-group-item-heading">Build Reddit Column</h4>
+                 <p class="list-group-item-text">Add any number of threads.</p>
+              </a>
+              <a href="#" class="list-group-item">
+                 <h4 class="list-group-item-heading">Build Twitter Column</h4>
+                 <p class="list-group-item-text">Add any number of twitter search terms.</p>
+              </a>
+              <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading">Accounts</h4>
+                <p class="list-group-item-text">Your active reddit and twitter accounts while using Blenddit.com</p>
+              </a>
+              <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading">Search</h4>
+                <p class="list-group-item-text">Find subreddits with live threads or twitter searches.</p>
+              </a>
+              <a href="#" class="list-group-item">
+                <h4 class="list-group-item-heading">Delete</h4>
+                <p class="list-group-item-text">Delete all of a specified column type.</p>
+              </a>
+            </div>      
           </div>
-          <div id='reddit' class='hide'>
-            <div class='column-control-buttons'>
-              <button id='cancel-column' type="button" class="btn btn-default">Cancel</button>
-              <button type="button" class="add-thread-button btn btn-primary btn-default">Add Thread</button>
+          <div id='control-panel-panels' class='col-sm-8'>
+            <div id='reddit'>
+              <div class='btn-group column-control-buttons'>
+                <a class="add-thread-button btn btn-lg btn-block btn-primary">Add Thread</a>
+              </div>
+              <form role='form' action='javascript:void(0)'>
+                <div class="column-settings form-group hide">
+                  <div class="form-group">
+                    <label for='column-name'>Column Name</label>
+                    <input id='column-name' class='form-control' maxlength='25' placeholder='Enter column name' value='My Column'>
+                  </div>
+                  <div class="form-group">
+                    <label for='refresh'>Refresh Rate</label>
+                    <select id='refresh' class='form-control'>
+                      <option value='10'>10 seconds</option>
+                      <option value='15'>15 seconds</option>
+                      <option value='20'>20 seconds</option>
+                      <option value='25'>25 seconds</option>
+                      <option value='30'>30 seconds</option>
+                      <option value='35'>35 seconds</option>
+                      <option value='40'>40 seconds</option>
+                      <option value='45'>45 seconds</option>
+                      <option value='50'>50 seconds</option>
+                      <option value='55'>55 seconds</option>
+                      <option selected value='60'>60 seconds</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for='limit'>Limit Posts</label>
+                    <select id='limit' class='form-control'>
+                      <option value='25'>25</option>
+                      <option selected value='50'>50</option>
+                      <option value='100'>100</option>
+                      <option value=''>No Limit</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for='sortBy'>Sort By</label>
+                    <select id='sortBy' class='form-control'>
+                      <option selected value='new'>New</option>
+                      <option disabled value='confidence'>Best</option>
+                      <option disabled value='top'>Top</option>
+                      <option disabled value='controversial'>Controversial</option>
+                      <option disabled value='hot'>Hot</option>
+                      <option disabled value='old'>Old</option>
+                    </select>
+                  </div>
+                </div>
+                <input id='config' type='submit' class='hide'>
+              </form>
             </div>
-            <span id="helpBlock-1" class="help-block">Tap the "Add Thread" button to add a subreddit and associated thread from that subreddit to your column. Save changes when finished.</span>
-            <span id="helpBlock-2" class="help-block hide">Name your column and adjust individual settings including refresh rate, sorting option, and comment limit. Tap "Add" to add your new column to your configuration.</span>
-            <form role='form' action='javascript:void(0)'>
-              <div class="column-settings form-group hide">
-                <div class="form-group">
-                  <label for='column-name'>Column Name</label>
-                  <input id='column-name' class='form-control' maxlength='25' placeholder='Enter column name' value='My Column'>
-                </div>
-                <div class="form-group">
-                  <label for='refresh'>Refresh Rate</label>
-                  <select id='refresh' class='form-control'>
-                    <option value='10'>10 seconds</option>
-                    <option value='15'>15 seconds</option>
-                    <option value='20'>20 seconds</option>
-                    <option value='25'>25 seconds</option>
-                    <option value='30'>30 seconds</option>
-                    <option value='35'>35 seconds</option>
-                    <option value='40'>40 seconds</option>
-                    <option value='45'>45 seconds</option>
-                    <option value='50'>50 seconds</option>
-                    <option value='55'>55 seconds</option>
-                    <option selected value='60'>60 seconds</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for='limit'>Limit Posts</label>
-                  <select id='limit' class='form-control'>
-                    <option value='25'>25</option>
-                    <option selected value='50'>50</option>
-                    <option value='100'>100</option>
-                    <option value=''>No Limit</option>
-                  </select>
-                </div>
-                <div class="form-group">
-                  <label for='sortBy'>Sort By</label>
-                  <select id='sortBy' class='form-control'>
-                    <option selected value='new'>New</option>
-                    <option disabled value='confidence'>Best</option>
-                    <option disabled value='top'>Top</option>
-                    <option disabled value='controversial'>Controversial</option>
-                    <option disabled value='hot'>Hot</option>
-                    <option disabled value='old'>Old</option>
-                  </select>
+            <div id='accounts' class='hide'>
+              <h6>Accounts</h6>
+              <div class='row config-row-container'>
+                <div data-reddituser='{{reddit.redditUser}}' class="col-xs-12 col-md-8 config-panel-column account">
+                  <h6 class='config-account'>
+                  {{#if reddit.redditUserExists}}
+                    <div id='reddit-logout'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign out of <span class='text-warning'>{{reddit.redditUser}}</span></div>
+                  {{else}}
+                    <a class='white nopacity' href='/auth/reddit'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign in to Reddit</a>
+                  {{/if}}</h6>
                 </div>
               </div>
-              <input id='config' type='submit' class='hide'>
-            </form>
-          </div>
-          <div id='accounts'>
-            <h6>Accounts</h6>
-            <div class='row config-row-container'>
-              <div data-reddituser='{{reddit.redditUser}}' class="col-xs-12 col-md-8 config-panel-column account">
-                <h6 class='config-account'>
-                {{#if reddit.redditUserExists}}
-                  <div id='reddit-logout'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign out of <span class='text-warning'>{{reddit.redditUser}}</span></div>
-                {{else}}
-                  <a class='white nopacity' href='/auth/reddit'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign in to Reddit</a>
-                {{/if}}</h6>
-              </div>
-            </div>
+            </div>    
           </div>
         </div>
         <div class="modal-footer">

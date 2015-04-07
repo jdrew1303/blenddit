@@ -21,7 +21,7 @@ var util = {
 			}); return bool;
 		},
 		setCookie : function(cname, cvalue) {
-			document.cookie = cname + "=" + cvalue + ";";
+			document.cookie = cname + "=" + encodeURIComponent(cvalue) + ";";
 		},
 		getCookie : function(cname) {
 			var name = cname + "=";
@@ -29,7 +29,8 @@ var util = {
 			for(var i=0; i<ca.length; i++) {
 				var c = ca[i];
 				while (c.charAt(0)==' ') c = c.substring(1);
-				if (c.indexOf(name) === 0) return c.substring(name.length,c.length);
+				if (c.indexOf(name) === 0) 
+				    return decodeURIComponent(c.substring(name.length,c.length));
 			}
 			return "";
 		},
@@ -801,9 +802,9 @@ var app = (function($) {
 	function autoRefreshOnlyActiveColumn() {
 		var $activeItem = $('.item.active'),
 			exceptNum = $activeItem.data('column');
-		if (window.innerWidth <= 640) {
+		if (window.innerWidth <= 640) { // We're now in single column view.
 			if (typeof exceptNum != "undefined") autoRefresh(false, exceptNum);
-		} else { autoRefresh(true); }	
+		} else { autoRefresh(true); } // We're now in multi-column view
 	}
 	function column_options_height(columnNum, optInt) {
 		var $column_options = $('.column-options[data-column='+columnNum+']');
@@ -825,13 +826,13 @@ var app = (function($) {
 		}
 	}
 	function launchControls() {
-		vendorGroupDisplay();
+	    bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
 		bindAccounts();
 		$('#save-changes').unbind('click').bind('click',function() {
 			var newColumnAdded = addColumnToConfig();
 			newColumnAdded 
 				? function() { buildConfigToUI(true); makeItemActive(config.length-1); }()
-				: buildConfigToUI(); 
+				: buildConfigToUI();
 		});
 		$('#controlModal').modal();
 	}
@@ -844,15 +845,6 @@ var app = (function($) {
 				$('.config-account').append(data);
 				fadeIn($('a.white'),100);
 			});
-		});
-	}
-	function vendorGroup() {
-		$('#reddit-block, #twitter-block').unbind('click').bind('click',function(){
-			if (this.id == 'reddit-block') {
-				bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
-				bindCancelButton();
-				$('#vendor-group, #reddit').toggleClass('hide');
-			} // else if (twitter block)
 		});
 	}
 	function addColumnToConfig() {
@@ -1230,13 +1222,6 @@ var app = (function($) {
 			var columnNum = $(this).parents('.item').data('column');
 			$(this).parents('.'+groupClass).remove();
 			if (typeof columnNum !== 'undefined') frame_content_height(columnNum);
-		});
-	}
-	function vendorGroupDisplay() {
-		$('#add-a-column').unbind('click').bind('click',function() {
-			$(this).removeClass('hide').addClass('hide');
-			$('#vendor-group').removeClass('hide');
-			vendorGroup();
 		});
 	}
 	function setThreads(data, selectTarget) {

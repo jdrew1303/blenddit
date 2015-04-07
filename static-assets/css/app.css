@@ -92,6 +92,21 @@ html, body {
 #watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover, .from-sub:hover {
   opacity: 1 !important;
 }
+#control-panel-buttons {
+    padding: 0;
+}
+#control-panel-buttons .list-group {
+    margin-bottom: 0;
+    max-height: 420px;
+    overflow: auto;
+}
+#control-panel-panels {
+    padding-top: 5px;
+}
+#control-panel-panels #reddit {
+    max-height: 415px;
+    overflow: auto;
+}
 .jumbotron {
   margin-bottom: 10px;
 }
@@ -401,9 +416,10 @@ blockquote, blockquote p {
 }
 .column-control-buttons {
   margin-bottom:10px;
-  text-align: center;  
+  text-align: center;
+  width:100%;
 }
-#add-column, #column-settings, #add-thread-button, #add-button { margin-left:5px;}
+#add-column, #column-settings, #add-button { margin-left:5px;}
 .fifty {width:50%; text-align: center;}
 .faded { opacity: 1; }
 .half-fade { opacity: .5;}
@@ -622,6 +638,9 @@ span.twitter-typeahead {
 .modal .modal-body {
   max-height: 420px !important;
   overflow-y: auto !important;
+}
+#controlModal .modal-body {
+    padding: 0 2px 0 2px;    
 }
 .transparent { 
   background-color: transparent;
