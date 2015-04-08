@@ -287,7 +287,7 @@ var util = {
 							"data-id='"+obj.data.id+"' data-subid='"+obj.data.subreddit_id+"'>",
 						"<a class='subreddit-thumb pull-left' href='#'>",
 							(obj.data.thumbnail && obj.data.thumbnail != 'self'
-								? "<img class='media-object' height='70' width='70' src='"+obj.data.thumbnail+"' alt='error' onerror='util.fn.brokenImage(this)'>"
+								? "<img class='media-object' height='70' width='70' src='"+window.location.protocol+obj.data.thumbnail.substr(5)+"' alt='error' onerror='util.fn.brokenImage(this)'>"
 								: util.html.ap()),
 						"</a>",
 						"<div class='media-body'>",
@@ -843,7 +843,7 @@ var app = (function($, Bloodhound, hljs) {
 	function bindControlPanelButtons() { 
 	    bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
 	    subredditSearch('#search-control-panel', false, function(){ $('#controlModal').modal('hide'); });
-	    bindDeleteColumns()
+	    bindDeleteColumns();
 	    var $allButtons = $('#control-panel-buttons .list-group a');
 	    $('#back-button').unbind('click').bind('click', function() {
 	        $('#control-panel-buttons .list-group a').removeClass('active').addClass('non-active');
@@ -874,14 +874,14 @@ var app = (function($, Bloodhound, hljs) {
 					return obj.type != 'reddit';
 				});
 				util.fn.setInCookie('config',config);
-				buildConfigToUI(true)
+				buildConfigToUI(true);
 			} else if (this.id=='delete-all-columns') {
 				config = [];
 				util.fn.setInCookie('config',[]);
 				buildConfigToUI(true);
 			}
 			$('#controlModal').modal('hide');
-		})
+		});
 	}
 	function bindAccounts() {
 		$('#reddit-logout').unbind('click').bind('click', function() {
