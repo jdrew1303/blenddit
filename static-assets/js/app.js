@@ -802,9 +802,11 @@ var app = (function($) {
 	function autoRefreshOnlyActiveColumn() {
 		var $activeItem = $('.item.active'),
 			exceptNum = $activeItem.data('column');
-		if (window.innerWidth <= 640) { // We're now in single column view.
-			if (typeof exceptNum != "undefined") autoRefresh(false, exceptNum);
-		} else { autoRefresh(true); } // We're now in multi-column view
+	    if (!$('#content-container').hasClass('hide')) { // we're viewing the columns 
+    	    if (window.innerWidth <= 640) { // We're now in single column view.
+                if (typeof exceptNum != "undefined") autoRefresh(false, exceptNum);
+            } else { autoRefresh(true); } // We're now in multi-column view    
+	    } else { autoRefresh(false); }
 	}
 	function column_options_height(columnNum, optInt) {
 		var $column_options = $('.column-options[data-column='+columnNum+']');
@@ -878,12 +880,16 @@ var app = (function($) {
 	}
 	function showFeature(feature) {
 		hideAllFeatures();
-		feature == '#content-container' ? $('html, body').addClass('noverflow') : $('html, body').removeClass('noverflow');
 		fadeIn($(feature).removeClass('hide'),100);
+		if (feature == '#content-container') {
+		    $('html, body').addClass('noverflow');
+		    autoRefreshOnlyActiveColumn();
+		} else { $('html, body').removeClass('noverflow'); }
 	}
 	function hideAllFeatures() {
+	    autoRefresh(false);
 		$('#main-loader-container, #content-container, #greeting, #subreddit-container')
-		.removeClass('faded').addClass('hide');
+		    .removeClass('faded').addClass('hide');
 	}
 	function buildConfigToUI(deleteFlag) {
 		if (config.length===0) {
