@@ -1646,4 +1646,6 @@ var app = (function($, Bloodhound, hljs) {
 		}
 	};
 })(jQuery, Bloodhound, hljs);
-$(window).load(function(){ app.init; });
+$(document).ready(function(){ 
+	try { app.init(); } catch(e) { console.log(e);}
+});
