@@ -1646,4 +1646,4 @@ var app = (function($, Bloodhound, hljs) {
 		}
 	};
 })(jQuery, Bloodhound, hljs);
-document.addEventListener('DOMContentLoaded', app.init);
+$(document).ready(function(){ app.init });
