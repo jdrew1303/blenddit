@@ -864,13 +864,10 @@ var app = (function($, Bloodhound, hljs) {
 	    });
 	}
 	function bindAccounts() {
-		fadeIn($('a.white'),100);
 		$('#reddit-logout').unbind('click').bind('click', function() {
-			genericGet('/reddit-logout', function(data) {
+			genericGet('/reddit-logout', function(html) {
 				$('[data-reddituser]').data('reddituser',null);
-				$('.config-account').children().remove();
-				$('.config-account').append(data);
-				fadeIn($('a.white'),100);
+				$('#reddit-logout').replaceWith(html);
 			});
 		});
 	}

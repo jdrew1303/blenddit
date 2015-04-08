@@ -72,7 +72,10 @@ module.exports = function(app, globalware, elseware, kutil) {
 	
 	app.get('/reddit-logout', function(req, res, next) {
 		req.logout();
-		res.send("<a class='white nopacity' href='/auth/reddit'><i class='fa fa-reddit fa-lg'></i>&nbsp;Sign in to Reddit</a>");
+		res.send(['<a href="/auth/reddit" class="list-group-item">',
+					'<h5 class="list-group-item-heading"><i class="fa fa-reddit"></i>&nbsp;Sign in to Reddit</h5>',
+					'<p class="list-group-item-text">Follow this link to connect your Reddit account to Blenddit.</p>',
+				'</a>'].join(''));
 	});
 
 	app.post('/save-reddit-reply', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
