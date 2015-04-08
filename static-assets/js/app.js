@@ -310,7 +310,7 @@ var util = {
 		}
 	}
 };
-var app = (function($) {
+var app = (function($, Bloodhound, hljs) {
 	var config = util.fn.cookieExists('config') ? util.fn.getFromCookie('config') : [],
 		watch = util.fn.cookieExists('watch') ? util.fn.getFromCookie('watch') : {},
 		autoRefreshState = true,
@@ -828,7 +828,7 @@ var app = (function($) {
 		}
 	}
 	function launchControls() {
-	    bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
+	    bindControlPanelButtons();
 		bindAccounts();
 		$('#save-changes').unbind('click').bind('click',function() {
 			var newColumnAdded = addColumnToConfig();
@@ -837,6 +837,31 @@ var app = (function($) {
 				: buildConfigToUI();
 		});
 		$('#controlModal').modal();
+	}
+	function bindControlPanelButtons() { 
+	    var $allButtons = $('#control-panel-buttons .list-group a');
+	    bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
+	    $('#back-button').unbind('click').bind('click', function() {
+	        $('#control-panel-buttons .list-group a').removeClass('active').addClass('non-active');
+	        $('#reddit, #accounts').removeClass('active');
+	        $('#panel-help').addClass('active');
+	        $(this).addClass('hide');
+	    });
+	    $allButtons.unbind('click').bind('click', function() {
+	        var $allButtons = $('#control-panel-buttons .list-group a'),
+	            $allPanels = $('#accounts, #reddit'),
+	            id = this.id;
+	        $allButtons.removeClass('active non-active'); 
+	        $allPanels.removeClass('active');
+	        $('#back-button').removeClass('hide');
+	        $('#panel-help').removeClass('active');
+	        $(this).addClass('active');
+	        if (id=='reddit-button') { $('#reddit').addClass('active');
+	        } else if (id=='twitter-button') { void 0;
+	        } else if (id=='accounts-button') { $('#accounts').addClass('active');
+	        } else if (id=='search-button') { void 0;
+	        } else if (id=='remove-button') { void 0; }
+	    });
 	}
 	function bindAccounts() {
 		fadeIn($('a.white'),100);
@@ -1623,7 +1648,5 @@ var app = (function($) {
 			blenddit();
 		}
 	};
-})(jQuery);
-$(document).ready(function() {
-	app.init();
-});
+})(jQuery, Bloodhound, hljs);
+document.addEventListener('DOMContentLoaded', app.init);

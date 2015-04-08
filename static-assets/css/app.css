@@ -100,13 +100,25 @@ html, body {
     max-height: 420px;
     overflow: auto;
 }
+#control-panel-buttons .active {
+    background-color: #484848;
+}
+#control-panel-panels > div:not(.active) {
+    display: none;
+}
 #control-panel-panels {
-    padding-top: 5px;
+    padding: 0;
 }
 #control-panel-panels #reddit {
-    min-height: 415px;
+    padding: 5px;
+}
+#control-panel-panels {
     max-height: 415px;
     overflow: auto;
+}
+#panel-help {
+    text-align: center;
+    margin-top: 50%;
 }
 .jumbotron {
   margin-bottom: 10px;
@@ -397,7 +409,7 @@ blockquote, blockquote p {
   padding: 15px 5px 15px 5px;
   margin: 0;
 }
-.config-panel-column, .frame {
+.frame {
   width: 100%;
   border-radius: 6px;
   background-color: rgb(32,32,32) !important;
@@ -704,7 +716,23 @@ span.twitter-typeahead {
 ::-webkit-scrollbar-thumb {
     min-height: 100px
 }
-
+#back-button {
+    display: none;
+    float: left;
+}
+@media screen and (max-width: 767px) {
+    #back-button { display: block; }
+    #control-panel-buttons .list-group-item:not(.active) {
+        display: none;
+    }
+    #control-panel-buttons .list-group-item.non-active { display: block; }
+    #controlModal .modal-body { overflow: auto; }
+    #control-panel-panels #reddit {
+        min-height: initial !important;
+        overflow: hidden !important;
+    }
+    #panel-help { display: none; }
+}
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {
     content: ' ';
