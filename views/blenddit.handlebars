@@ -120,23 +120,23 @@
         <div class="modal-body">
           <div id='control-panel-buttons' class='col-sm-4'>
             <div class="list-group">
-              <a href="#" class="list-group-item non-active" id='reddit-button'>
+              <a href="javascript:void(0);" class="list-group-item non-active" id='reddit-button'>
                  <h4 class="list-group-item-heading">Build Reddit Column</h4>
                  <p class="list-group-item-text">Add any number of threads.</p>
               </a>
-              <a href="#" class="list-group-item non-active" id='twitter-button'>
+              <a disabled href="javascript:void(0);" class="list-group-item non-active" id='twitter-button'>
                  <h4 class="list-group-item-heading">Build Twitter Column</h4>
                  <p class="list-group-item-text">Add any number of twitter search terms.</p>
               </a>
-              <a href="#" class="list-group-item non-active" id='accounts-button'>
+              <a href="javascript:void(0);" class="list-group-item non-active" id='accounts-button'>
                 <h4 class="list-group-item-heading">Accounts</h4>
                 <p class="list-group-item-text">Your active reddit and twitter accounts while using Blenddit.com</p>
               </a>
-              <a href="#" class="list-group-item non-active" id='search-button'>
+              <a href="javascript:void(0);" class="list-group-item non-active" id='search-button'>
                 <h4 class="list-group-item-heading">Search</h4>
                 <p class="list-group-item-text">Find subreddits with live threads or twitter searches.</p>
               </a>
-              <a href="#" class="list-group-item non-active" id='remove-button'>
+              <a href="javascript:void(0);" class="list-group-item non-active" id='remove-button'>
                 <h4 class="list-group-item-heading">Delete</h4>
                 <p class="list-group-item-text">Delete all of a specified column type.</p>
               </a>
@@ -221,7 +221,39 @@
                     </a>
                   {{/if}}
                 </div>
-            </div>    
+            </div>
+            <div id='delete-columns'>
+                <div class='list-group'>
+                    <a href="javascript:void(0)" class="list-group-item" id='delete-reddit-columns'>
+                        <h5 class="list-group-item-heading">Delete Reddit Columns</h5>
+                        <p class="list-group-item-text">Delete your saved Reddit columns.</p>
+                    </a>
+                    <a href="javascript:void(0)" class="list-group-item" id='delete-twitter-columns'>
+                        <h5 class="list-group-item-heading">Delete Twitter Columns</h5>
+                        <p class="list-group-item-text">Delete your saved Twitter columns.</p>
+                    </a>
+                    <a href="javascript:void(0)" class="list-group-item" id='delete-all-columns'>
+                        <h5 class="list-group-item-heading">Delete All Columns</h5>
+                        <p class="list-group-item-text">Delete all of your saved Reddit and Twitter Columns</p>
+                    </a>
+                </div>
+            </div>
+            <div id='search-control-panel'>
+              <form id='subreddit-search-control' role='form' action='javascript:void(0)'>
+                <label>Reddit</label>
+                <div class="input-group form-group">
+                  <input class="form-control subreddit-search-input" type="text" placeholder='Enter a subreddit...'>
+                    <span class="input-group-addon"><i class="fa fa-reddit"></i></span>
+                  <input class='subreddit-search-submit hide' type='submit'>
+                </div>
+              </form>
+              <form>
+                <label>Twitter</label>
+                <div class="input-group form-group">
+                  <input disabled class="form-control" type="text" placeholder='Search twitter...'><span class="input-group-addon"><i class="fa fa-twitter"></i></span>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
