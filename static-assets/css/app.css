@@ -112,6 +112,10 @@ html, body {
 #control-panel-panels #reddit, #control-panel-panels #search-control-panel {
     padding: 5px;
 }
+#search-control-panel .tt-dropdown-menu{ 
+  position: inherit !important;
+  top: 0 !important;
+}
 #control-panel-panels {
     max-height: 415px;
     overflow: auto;
