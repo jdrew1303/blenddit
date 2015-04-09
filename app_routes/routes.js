@@ -79,14 +79,8 @@ module.exports = function(app, globalware, elseware, kutil) {
 	});
 
 	app.post('/save-reddit-reply', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
-	  var options = {
-	    url: 'https://oauth.reddit.com/api/comment',
-	    headers: {
-	        'User-Agent': 'request',
-	        'Authorization':'bearer '+req.session.passport.user.redditAccessToken,
-	        'Content-Type':'application/x-www-form-urlencoded'
-	    }
-	  };
+	  var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/comment', req);
+	  
 	  require('request').post(options, function callback(error, response, body) {
 	    res.setHeader('Content-Type', 'application/json');
 	    !error && response.statusCode == 200 
