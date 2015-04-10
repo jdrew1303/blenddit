@@ -168,7 +168,7 @@ blockquote, blockquote p {
   font-size: x-small;
   padding: 0 !important;
 }
-.vote-last { margin-right: 5px; }
+.vote.down { margin-right: 5px; }
 .vote .btn { 
   padding: 0 2px 0 2px !important;
   font-size: small;
@@ -438,7 +438,7 @@ blockquote, blockquote p {
 }
 #add-column, #column-settings, #add-button { margin-left:5px;}
 .fifty {width:50%; text-align: center;}
-.faded { opacity: 1; }
+.faded, .vote.active { opacity: 1; }
 .half-fade { opacity: .5;}
 .hide { display: none;}
 #wrapper {

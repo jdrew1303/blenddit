@@ -90,6 +90,18 @@ module.exports = function(app, globalware, elseware, kutil) {
 	  }).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
 	});
 
+	app.post('/vote', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
+	  var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/vote', req);
+	  
+	  require('request').post(options, function callback(error, response, body) {
+	    res.setHeader('Content-Type', 'application/json');
+	    !error && response.statusCode == 200 
+	      ? res.send(body)
+	      : error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
+	        : res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
+	  }).form({'id':req.body.id, 'dir':req.body.dir});
+	});
+
 	app.get('/search-reddit-names', function(req, res, next) {
 		var options = {
 		    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',

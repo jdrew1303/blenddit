@@ -251,9 +251,9 @@ var util = {
 		},
 		ag : function(comment, text) {
 			return ["<div class='media-heading btn-group'>",
-						"<a class='btn vote'><i class='fa fa-arrow-up'></i></a>",
+						"<a data-id='"+comment.data.name+"' class='btn vote up'><i class='fa fa-arrow-up'></i></a>",
 						"<a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a>",
-						"<a class='btn vote vote-last'><i class='fa fa-arrow-down'></i></a>",
+						"<a data-id='"+comment.data.name+"' class='btn vote down'><i class='fa fa-arrow-down'></i></a>",
 						"<a class='btn from-sub' target='_blank' href='"+window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit+"'>"+comment.data.subreddit+"</a>",
 						"<a class='btn author' href='"+window.location.protocol+"//www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
 						(comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;"),
@@ -1310,6 +1310,38 @@ var app = (function($, Bloodhound, hljs) {
 			form = util.html.aa(parentInput, textarea, buttons, isTopLevel);
 		return form;
 	}
+	function bindVoteCast() {
+	    $('.vote.up, .vote.down').unbind('click').bind('click', function() {
+	        if (isRedditUserLoggedIn()) {
+    	        var id = $(this).data('id').split('-')[0],
+    	            vote_state = $('.score[data-id='+$(this).data('id')+']').data('vote-state'),
+    	            vote_action = $(this).hasClass('up') ? 1 : -1,
+    	            dir = vote_action == vote_state ? 0 : vote_action == 1 ? 1 : -1,
+    	            formData = {id: id, dir: dir},
+    	            done = function(data, textStatus, jqXHR, obj) {
+    	                data && data.needsLogin ? $('#login-reddit-modal').modal()
+                        : data.statusCode ? console.log(data.statusCode)
+                            : data.json && data.json.errors.length > 0 
+                                ? alert(data.json.errors[0][1])
+                                : updateVoteState(data,obj);
+    	            },
+    	            fail = function(jqXHR, textStatus, errorThrown, obj) {
+    	                console.log(textStatus+': Couldn\'t cast vote to '+obj.id)
+    	            };
+                genericPost('/vote', formData, done, fail, undefined, {id:id,dir:dir});
+	        } else { $('#login-reddit-modal').modal() }
+	    });
+	}
+	function updateVoteState(data, obj) {
+	    var $voteUp = $('.vote.up[data-id^='+obj.id+']'),
+	        $voteDown = $('.vote.down[data-id^='+obj.id+']');
+	    $('.score[data-id^='+obj.id+']').data('vote-state', obj.dir);
+	    if (obj.dir==1) {
+	        $voteUp.addClass('active'); $voteDown.removeClass('active');
+	    } else if (obj.dir==-1) {
+	        $voteDown.addClass('active'); $voteUp.removeClass('active');
+	    } else { $voteUp.removeClass('active'); $voteDown.removeClass('active'); }
+	}
 	function bindReplySwitch() {
 		$('.reply-switch').unbind('click').bind('click',function() {
 			var $replyForm = $(this).parent().parent().find('.reply-form');
@@ -1362,13 +1394,7 @@ var app = (function($, Bloodhound, hljs) {
 			genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
 		});
 		$('.textarea-reply').unbind('focus').bind('focus', function() {
-			if (!$('[data-reddituser]').data('reddituser')) {
-				genericPost('/check-login', {}, function(data) {
-					if (data && data.needsLogin) {
-						$('#login-reddit-modal').modal();
-					}
-				});
-			}
+			!isRedditUserLoggedIn() ? $('#login-reddit-modal').modal() : void 0;
 		});
 		$('.cancel-reply').unbind('click').click(function() {
 			var $comment_footer = $(this).parents('.comment-footer');
@@ -1376,6 +1402,9 @@ var app = (function($, Bloodhound, hljs) {
 				? $comment_footer.find('.reply-switch').trigger('click')
 				: showAllColumnOptions($(this).parents('.column-options').data('column'));
 		});
+	}
+	function isRedditUserLoggedIn() {
+	    return $('[data-reddituser]').data('reddituser') ? true : false;
 	}
 	function replyLevelCommentFail(additionalData) {
 		var $form = $(additionalData.postPane).find('form'),
@@ -1411,6 +1440,7 @@ var app = (function($, Bloodhound, hljs) {
 	function commentBindings() {
 		externalLinks('.md a');
 		bindReplySwitch();
+		bindVoteCast();
 		bindRefreshComment();
 		bindShowReply();
 	}

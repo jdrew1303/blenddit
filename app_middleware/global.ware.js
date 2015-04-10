@@ -12,7 +12,7 @@ module.exports = function(module) {
 		}, 
 		ensureAuthenticated : function(req,res,next) {
 			if (req.isAuthenticated()) { return next(); }
-  			else if (req.url=='/save-reddit-reply' || req.url=='/check-login') { 
+  			else if (req.url=='/save-reddit-reply' || req.url=='/check-login' || req.url=='/vote') { 
   				res.redirect('/reddit-login')
   			} else {
   				res.redirect('/'); //res.redirect('/login');
