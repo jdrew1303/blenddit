@@ -10,7 +10,6 @@ var express = require('express'),
     compression = require('compression'),
     bodyParser = require('body-parser'),
     session = require('express-session'),
-    methodOverride = require('method-override'),
     cookieParser = require('cookie-parser'),
     fs = require('fs'),
     http = require('http'),
@@ -36,8 +35,7 @@ app.set('view engine', 'handlebars');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
-app.use(methodOverride());
-app.use(session({ secret: 'dat-ass', resave: false, saveUninitialized: true}));
+app.use(session({ secret: 'dat-ass', resave: false, saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(globalware.requireHTTPS)

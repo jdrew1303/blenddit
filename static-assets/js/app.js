@@ -1093,6 +1093,7 @@ var app = (function($, Bloodhound, hljs) {
 			if ($columnOptions.hasClass('hide')) {
 				$columnOptions.removeClass('hide');
 				column_options_height(columnNum);
+				frame_content_height();
 				$(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index) {
 					var inputVal = $(this).find('.subreddit-edit.tt-input').val(),
 						$thread = $(this).find('.thread-edit'),
