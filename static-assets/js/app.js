@@ -791,6 +791,8 @@ var app = (function($, Bloodhound, hljs) {
 				app.height = window.innerHeight;
 			}
 			if (app.width != window.innerWidth) {
+			    carousel_inner_height();
+                frame_content_height();
 				autoRefreshOnlyActiveColumn();
 				app.width = window.innerWidth;
 			}
@@ -816,17 +818,18 @@ var app = (function($, Bloodhound, hljs) {
 		frame_content_height(columnNum, optInt);
 	}
 	function frame_content_height(columnNum, optInt) {
-		var $frame_content = typeof columnNum !== 'undefined' ? $('.frame-content[data-column='+columnNum+']') : $('.frame-content');
+		var $frame_content = typeof columnNum !== 'undefined' ? $('.frame-content[data-column='+columnNum+']') : $('.frame-content'),
+		    overFlowed = $('.carousel-inner').hasOverflowed() ? 10 : 0;
 		if (typeof columnNum === 'undefined') {
 			$frame_content.each(function(i, frameContent) {
 				var columnOptionsHeight = $('.column-options[data-column='+i+']').hasClass('hide') ? 0 : $('.column-options[data-column='+i+']').height(),
 					localOffset = typeof optInt !== 'undefined' ? optInt : columnOptionsHeight;
-				$(frameContent).removeAttr('style').css('height', window.innerHeight-(107+localOffset));
+				$(frameContent).removeAttr('style').css('height', window.innerHeight-(107+localOffset+overFlowed));
 			});
 		} else {
 			var columnOptionsHeight = $('.column-options[data-column='+columnNum+']').hasClass('hide') ? 0 : $('.column-options[data-column='+columnNum+']').height(),
 				localOffset = typeof optInt !== 'undefined' ? optInt : columnOptionsHeight;
-			$frame_content.removeAttr('style').css('height', window.innerHeight-(107+localOffset));
+			$frame_content.removeAttr('style').css('height', window.innerHeight-(107+localOffset+overFlowed));
 		}
 	}
 	function launchControls() {

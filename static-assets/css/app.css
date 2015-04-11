@@ -55,6 +55,9 @@ html, body {
 .icon-Redskins {background-position: -212px -184px;}
 /*-end team styles-*/
 .md {word-break: break-word;}
+.md h1 { font-size: 20px; }
+.md h2 { font-size: 18px; }
+.md h3 { font-size: 15px; }
 .reply-form {margin-top: 5px;}
 .reply-form.isTopLevel textarea {
   min-height: 150px;
@@ -364,7 +367,6 @@ blockquote, blockquote p {
   right:0;
 }
 .frame-container {
-  padding-right: 5px;
   min-width: 315px;
 }
 .frame-position {
@@ -385,9 +387,6 @@ blockquote, blockquote p {
   border-left: 1px solid rgba(255,255,255,.25);
   border-right: 1px solid rgba(255,255,255,.25);
   border-top: 1px solid rgba(255,255,255,.25);
-}
-.frame-content::-webkit-scrollbar { 
-    display: none; 
 }
 .bookmark {
   position: absolute;
@@ -569,6 +568,9 @@ blockquote, blockquote p {
 .carousel-inner > .item {
   display: inline-block;
 }
+.carousel-inner > .item:not(:last-child) {
+    padding-right:5px;
+}
 .carousel-inner {
   overflow-y: hidden;
   overflow-x: auto;
@@ -708,7 +710,10 @@ span.twitter-typeahead {
     height: 11px;
 }
 ::-webkit-scrollbar-track {
-    border-left: 1px solid #3c3c3c
+    background-color: rgb(32,32,32);
+}
+.carousel-inner::-webkit-scrollbar-track {
+    background-color: transparent;
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 5px;
