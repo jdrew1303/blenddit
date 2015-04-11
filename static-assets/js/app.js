@@ -234,7 +234,7 @@ var util = {
 		ae : function(comment, replyLength, timeElapsed, permaLink, replyForm) {
 			return ["<footer data-id='"+comment.data.name+"' class='comment-footer'>",
 						"<div class='links-container btn-group'>",
-							"<a class='btn time-elapsed white'>"+timeElapsed+"</a>",
+							"<a data-created-utc='"+comment.data.created_utc+"' class='btn time-elapsed white'>"+timeElapsed+"</a>",
 							"<a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a>",
 							"<a class='btn perma' href='"+permaLink+"' target='_blank'><i class='fa fa-link fa-lg'></i></a>",
 							"<a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.name+"'><i class='fa fa-refresh fa-lg'></i></a>",
@@ -1469,15 +1469,14 @@ var app = (function($, Bloodhound, hljs) {
 				markFirstComment(data[1].data.children[0].data.name, columnNum);
 			}
 			updateCommentStats(data[1].data.children);
-			markOldComments(data[1].data.children[data[1].data.children.length-1].data.name, columnNum);
+			updateCreatedUTC(columnNum);
 		}
 		commentBindings();
 	}
-	function markOldComments(lastCommentId, columnNum) {
-		var idArray = $.map($('.frame-content[data-column='+columnNum+'] .media'), function(comment){return comment.id});
-		idArray.slice(idArray.indexOf(lastCommentId)+1).forEach(function(id) {
-			$('#'+id+' .comment-footer[data-id='+id+'] .time-elapsed').text('old');
-		});
+	function updateCreatedUTC(columnNum) {
+	    $('.frame-content[data-column='+columnNum+'] .media .time-elapsed').each(function(i, time) {
+            $(time).text(getTimeElapsed($(time).data('created-utc')));
+	    });
 	}
 	function updateCommentStats(comments) {
 		comments.forEach(function(comment){
@@ -1485,8 +1484,7 @@ var app = (function($, Bloodhound, hljs) {
 				? comment.data.replies.data.children : [], replyLength = replies.length,
 				commentId = '#'+comment.data.name,
 				commentFooter = commentId+' .comment-footer[data-id='+comment.data.name+']';
-			typeof comment.data.created_utc !== 'undefined' ? $(commentFooter+' .time-elapsed').text(getTimeElapsed(comment.data.created_utc)) : '';
-			typeof comment.data.score !== 'undefined' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : '';
+			typeof comment.data.score !== 'undefined' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : void 0;
 			newCommentsOnRefresh(replyLength, comment.data.name, commentFooter);
 			updateCommentStats(replies);
 		});
