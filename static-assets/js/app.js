@@ -1326,10 +1326,11 @@ var app = (function($, Bloodhound, hljs) {
                                 : updateVoteState(data,obj);
     	            },
     	            fail = function(jqXHR, textStatus, errorThrown, obj) {
-    	                console.log(textStatus+': Couldn\'t cast vote to '+obj.id)
+    	                alert(textStatus+': Couldn\'t cast vote to '+obj.id);
     	            };
                 genericPost('/vote', formData, done, fail, undefined, {id:id,dir:dir});
 	        } else { $('#login-reddit-modal').modal() }
+	        util.fn.getBlurred();
 	    });
 	}
 	function updateVoteState(data, obj) {
