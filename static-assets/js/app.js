@@ -58,8 +58,11 @@ var util = {
 				}, closeTime);
 				return this;
 			};
-			$.fn.hasOverflowed = function(){
-				return this.length > 0 ? this[0].scrollHeight > this[0].clientHeight || this[0].scrollWidth > this[0].clientWidth : false;
+			$.fn.hasWidthOverflowed = function(){
+				return this.length > 0 ? this[0].scrollWidth > this[0].clientWidth : false;
+			};
+			$.fn.hasHeightOverflowed = function() {
+			    return this.length > 0 ? this[0].scrollHeight > this[0].clientHeight : false;
 			};
 		}()
 	},
@@ -845,7 +848,7 @@ var app = (function($, Bloodhound, hljs) {
 	}
 	function frame_content_height(columnNum, optInt) {
 		var $frame_content = typeof columnNum !== 'undefined' ? $('.frame-content[data-column='+columnNum+']') : $('.frame-content'),
-		    overFlowed = $('.carousel-inner').hasOverflowed() ? 10 : 0;
+		    overFlowed = $('.carousel-inner').hasWidthOverflowed() ? 10 : 0;
 		if (typeof columnNum === 'undefined') {
 			$frame_content.each(function(i, frameContent) {
 				var columnOptionsHeight = $('.column-options[data-column='+i+']').hasClass('hide') ? 0 : $('.column-options[data-column='+i+']').height(),
