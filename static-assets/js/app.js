@@ -604,7 +604,8 @@ var app = (function($, Bloodhound, hljs) {
 	}
 	function startBlending() {
 		var subredditURI = $('#reddit-uri').data('subreddituri'),
-			threadIdURI = $('#reddit-uri').data('threadiduri');
+			threadIdURI = $('#reddit-uri').data('threadiduri'),
+			threadIdsURI = $('#reddit-uri').data('threadidsuri');
 		if (subredditURI && threadIdURI) { // user arrived from /r/subreddit/comments/linkid*
 			getThreadById(threadIdURI, function(data) {
 				if (typeof data.data.children !== 'undefined') {
@@ -613,6 +614,31 @@ var app = (function($, Bloodhound, hljs) {
 			}, undefined, configObjAction);
 		} else if (subredditURI) { // user arrived from /r/subreddit
 			$('#subreddit-search .subreddit-search-input').val(subredditURI);
+		} else if (threadIdsURI) { // user arrived from /comments/threadids
+		    var threadIds = threadIdsURI.toString().split('-'),
+		        children = [];
+		    threadIds.forEach(function(threadId, i) {
+		        getThreadById(threadId, 
+		            function(data) {
+		                children = children.concat(data.data.children);
+		                threadIds.length == children.length 
+                            ? children.length!==0
+                                ? addToConfigObj(buildRedditConfigObjByThreads(children))
+                                : void 0
+                            : void 0;
+                    },
+                    function(a,b,c,threadId){
+                        util.fn.remove(threadIds, threadIds.indexOf(threadId));
+                        threadIds.length == children.length
+                            ? children.length!==0
+                                ? addToConfigObj(buildRedditConfigObjByThreads(children))
+                                : void 0
+                            : void 0;
+                    }, 
+                    function(){
+                        if (threadIds.length == children.length) configObjAction();
+                    }, false, undefined, threadId);
+		    });
 		} else {
 			configObjAction();
 		}
@@ -1587,8 +1613,8 @@ var app = (function($, Bloodhound, hljs) {
 			});
 		});
 	}
-	function getThreadById(id, done, fail, always, cacheBool, errorMsgLoc) {
-		genericGet(window.location.protocol+"//www.reddit.com/by_id/t3_"+id+'.json', done, fail, always, cacheBool, errorMsgLoc);
+	function getThreadById(id, done, fail, always, cacheBool, errorMsgLoc, additionalData) {
+		genericGet(window.location.protocol+"//www.reddit.com/by_id/t3_"+id+'.json', done, fail, always, cacheBool, errorMsgLoc, additionalData);
 	}
 	function getCommentsByLink(linkid, done, fail, always) { // get the whole payload of comments from the specific linkid
 		genericGet(window.location.protocol+"//www.reddit.com/comments/"+linkid+'.json?sort=new', done, fail, always);
@@ -1700,5 +1726,5 @@ var app = (function($, Bloodhound, hljs) {
 	};
 })(jQuery, Bloodhound, hljs);
 $(document).ready(function(){ 
-	try { app.init(); } catch(e) { console.log(e);}
+    app.init();
 });

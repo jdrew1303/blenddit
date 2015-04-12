@@ -14,12 +14,18 @@ module.exports = function(app, globalware, elseware, kutil) {
 			redditUserExists : req.user ? true : false, 
 			redditUser : req.user ? req.user.name : '',
 			subredditURI : req.session.subreddit,
-			threadidURI : req.session.threadid
+			threadidURI : req.session.threadid,
+			threadidsURI : req.session.threadids
 		};
 		res.renderPjax('blenddit', json);	
-		req.session.subreddit = req.session.threadid = null;
+		req.session.subreddit = req.session.threadid = req.session.threadids = null;
 	});
-
+	
+    app.get('/comments/:threadids*', gware.nowww, function(req, res) {
+        req.session.threadids = req.params.threadids;
+        res.redirect('/');
+    })
+    
 	app.get('/r/:subreddit/comments/:threadid*', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		req.session.threadid = req.params.threadid;
