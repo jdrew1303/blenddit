@@ -356,7 +356,8 @@ blockquote, blockquote p {
 }
 .fa-bars, .delete-edit, .info-edit, .delete-controls, .info-controls, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
-#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more {
+#watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more,
+.panel-heading {
   cursor: pointer;
 }
 .load-comments {
@@ -666,6 +667,9 @@ span.twitter-typeahead {
   background-color: transparent;
   border-color: transparent;
 }
+.subreddit-search-submit.btn {
+    float: right;
+} 
 .subreddit-search-input {
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
