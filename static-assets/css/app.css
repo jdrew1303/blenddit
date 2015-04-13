@@ -667,14 +667,14 @@ span.twitter-typeahead {
   background-color: transparent;
   border-color: transparent;
 }
-.subreddit-search-submit.btn {
+.reddit-search-submit.btn {
     float: right;
 } 
-.subreddit-search-input {
+.reddit-search-input {
   border-top-left-radius: 4px !important;
   border-bottom-left-radius: 4px !important;
 }
-#subreddit-search .input-group-addon, #subreddit-search-results .input-group-addon, #search-control-panel .input-group-addon {
+#reddit-search .input-group-addon, #reddit-search-results .input-group-addon, #search-control-panel .input-group-addon {
   border-top-right-radius: 4px !important;
   border-bottom-right-radius: 4px !important; 
 }
