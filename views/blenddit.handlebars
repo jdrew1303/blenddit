@@ -12,14 +12,14 @@
         </div>
         <div class='row'>
           <div class='col-sm-6'>
-            <div class="panel-group" id="reddit-accordion" role="tablist" aria-multiselectable="true">
+            <div class="panel-group" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
-                    <div data-toggle="collapse" data-parent="#reddit-accordion" href="#reddit-collapseOne" class="panel-heading text-center" role="tab" id="headingOne">
+                    <div data-toggle="collapse" href="#reddit-greeting-collapse" class="panel-heading text-center" role="tab" id="headingOne">
                         <h4 class="panel-title"><i class='fa fa-search'></i>&nbsp;Search Reddit</h4>
                     </div>
-                    <div id="reddit-collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true">
+                    <div id="reddit-greeting-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true">
                         <div class="panel-body">
-                            <form id='reddit-search' role='form' action='javascript:void(0)'>
+                            <form class='reddit-search' role='form' action='javascript:void(0)'>
                                 <div class="form-group">
                                     <label>Search</label>
                                     <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Sorted By</label>
-                                    <select class="form-control sorted-by">
+                                    <select disabled class="form-control sorted-by">
                                         <option value='relevance'>Relevance</option>
                                         <option value='new'>New</option>
                                         <option value='hot'>Hot</option>
@@ -44,7 +44,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Links From</label>
-                                    <select class="form-control links-from">
+                                    <select disabled class="form-control links-from">
                                         <option value='all'>All Time</option>
                                         <option value='hour'>Past Hour</option>
                                         <option value='day'>Past 24 Hours</option>
@@ -131,17 +131,57 @@
     </div>
     <div id='subreddit-container' class='container content-padding nopacity hide'>
       <div class='row'>
-        <div class='col-sm-6'>
+        <div class='col-sm-12 text-center'>
           <h3><span class='text-warning'><span id='subreddit-result-title'></span></span></h3>
         </div>
-        <div class='col-sm-6'>
-          <form id='reddit-search-results' role='form' action='javascript:void(0)'>
-            <label>Reddit</label>
-            <div class="input-group form-group">
-              <input class="form-control reddit-search-input" type="text" placeholder='Enter a subreddit...'><span class="input-group-addon"><i class="fa fa-reddit"></i></span>
-              <input class='reddit-search-submit hide' type='submit'>
+        <div class='col-sm-12'>
+            <div class="panel-group" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div data-toggle="collapse" href="#reddit-results-collapse" class="panel-heading text-center" role="tab">
+                        <h4 class="panel-title white"><i class='fa fa-search'></i>&nbsp;Search Reddit</h4>
+                    </div>
+                    <div id="reddit-results-collapse" class="panel-collapse collapse" role="tabpanel" aria-expanded="true">
+                        <div class="panel-body">
+                            <form class='reddit-search' role='form' action='javascript:void(0)'>
+                                <div class="form-group">
+                                    <label>Search</label>
+                                    <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
+                                </div>
+                                <div class="form-group">
+                                    <label class="radio-inline">
+                                        <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits">Subreddits
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input class='radio-submissions' name='search-type' type="radio" value="submissions">Submissions
+                                    </label>  
+                                </div>
+                                <div class="form-group">
+                                    <label>Sorted By</label>
+                                    <select disabled class="form-control sorted-by">
+                                        <option value='relevance'>Relevance</option>
+                                        <option value='new'>New</option>
+                                        <option value='hot'>Hot</option>
+                                        <option value='top'>Top</option>
+                                        <option value='comments'>Comments</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Links From</label>
+                                    <select disabled class="form-control links-from">
+                                        <option value='all'>All Time</option>
+                                        <option value='hour'>Past Hour</option>
+                                        <option value='day'>Past 24 Hours</option>
+                                        <option value='week'>Past Week</option>
+                                        <option value='year'>Past Year</option>    
+                                    </select>
+                                </div>
+                                <button type="submit" class="reddit-search-submit btn btn-default">Submit</button>
+                                <input class='reddit-search-submit hide' type='submit'>                          
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </form>
         </div>
       </div>
       <div class='row'>
@@ -285,20 +325,62 @@
                 </div>
             </div>
             <div id='search-control-panel'>
-              <form id='reddit-search-control' role='form' action='javascript:void(0)'>
-                <label>Reddit</label>
-                <div class="input-group form-group">
-                  <input class="form-control reddit-search-input" type="text" placeholder='Enter a subreddit...'>
-                    <span class="input-group-addon"><i class="fa fa-reddit"></i></span>
-                  <input class='reddit-search-submit hide' type='submit'>
+                <div class="panel-group" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div data-toggle="collapse" href="#reddit-modal-collapse" class="panel-heading text-center" role="tab">
+                            <h4 class="panel-title white"><i class='fa fa-search'></i>&nbsp;Search Reddit</h4>
+                        </div>
+                        <div id="reddit-modal-collapse" class="panel-collapse collapse" role="tabpanel" aria-expanded="true">
+                            <div class="panel-body">
+                                <form class='reddit-search' role='form' action='javascript:void(0)'>
+                                    <div class="form-group">
+                                        <label>Search</label>
+                                        <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="radio-inline">
+                                            <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits">Subreddits
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input class='radio-submissions' name='search-type' type="radio" value="submissions">Submissions
+                                        </label>  
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Sorted By</label>
+                                        <select disabled class="form-control sorted-by">
+                                            <option value='relevance'>Relevance</option>
+                                            <option value='new'>New</option>
+                                            <option value='hot'>Hot</option>
+                                            <option value='top'>Top</option>
+                                            <option value='comments'>Comments</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Links From</label>
+                                        <select disabled class="form-control links-from">
+                                            <option value='all'>All Time</option>
+                                            <option value='hour'>Past Hour</option>
+                                            <option value='day'>Past 24 Hours</option>
+                                            <option value='week'>Past Week</option>
+                                            <option value='year'>Past Year</option>    
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="reddit-search-submit btn btn-default">Submit</button>
+                                    <input class='reddit-search-submit hide' type='submit'>                          
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </form>
-              <form>
-                <label>Twitter</label>
-                <div class="input-group form-group">
-                  <input disabled class="form-control" type="text" placeholder='Search twitter...'><span class="input-group-addon"><i class="fa fa-twitter"></i></span>
+                <div class="panel-group" role="tablist" aria-multiselectable="true">
+                    <div class="panel panel-default">
+                        <div data-toggle="collapse" href="#twitter-modal-collapse" class="panel-heading text-center" role="tab">
+                            <h4 class="panel-title"><i class='fa fa-search'></i>&nbsp;Search Twitter</h4>
+                        </div>
+                        <div id="twitter-modal-collapse" class="panel-collapse collapse" role="tabpanel" aria-expanded="true">
+                        </div>
+                    </div>
                 </div>
-              </form>
             </div>
           </div>
         </div>

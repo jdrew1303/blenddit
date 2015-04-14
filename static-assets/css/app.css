@@ -112,12 +112,18 @@ html, body {
 #control-panel-panels {
     padding: 0;
 }
-#control-panel-panels #reddit, #control-panel-panels #search-control-panel {
+#control-panel-panels #reddit {
     padding: 5px;
+}
+#control-panel-panels #search-control-panel .panel-group {
+    margin-bottom: 0;
 }
 #search-control-panel .tt-dropdown-menu{ 
   position: inherit !important;
   top: 0 !important;
+}
+#search-control-panel .col-sm-12 {
+    padding: 0;
 }
 #control-panel-panels {
     max-height: 415px;
