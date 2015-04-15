@@ -505,7 +505,7 @@ var app = (function($, Bloodhound, hljs) {
 	    genericGet(obj.url, function(data, textStatus, jqXHR, obj) {
             if (data.data.children.length > 0) {
 	            threadResults(data, obj, false, 'submissions');
-                bindLoadMore(data.data.after, 'submissions', obj);
+                bindLoadMore(data.data.after, 'submissions', obj, true);
                 $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
                     .typeahead('val', obj.query);
                 if (obj.callback) obj.callback();
@@ -527,7 +527,7 @@ var app = (function($, Bloodhound, hljs) {
     	genericGet(obj.url, function(data, textStatus, jqXHR, obj) {
             if (data.data.children.length > 0) {
                 subredditsMatching(data, obj.query, false);
-                bindLoadMore(data.data.after, 'subreddit', obj);
+                bindLoadMore(data.data.after, 'subreddit', obj, true);
                 $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
                     .typeahead('val', obj.query);
                 if (obj.callback) obj.callback();
@@ -548,7 +548,7 @@ var app = (function($, Bloodhound, hljs) {
 	    var url = window.location.protocol+'//www.reddit.com/r/'+query+'.json';
 	    genericGet(url, function(data, textStatus, jqXHR, obj) {
             threadResults(data, obj, false);
-            bindLoadMore(data.data.after, 'thread', obj);
+            bindLoadMore(data.data.after, 'thread', obj, true);
             $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
                 .typeahead('val', query);
             if (obj.callback) obj.callback();
@@ -563,14 +563,15 @@ var app = (function($, Bloodhound, hljs) {
         }
         subredditsSearchAPI(obj);
     }
-	function bindLoadMore(after, type, objParam) {
+	function bindLoadMore(after, type, objParam, resetCount) {
 		var $media_more = $('.media-more li');
-		$media_more.data('after', after); $media_more.data('type', type); $media_more.data('query', objParam.query);
+		$media_more.data('after', after); $media_more.data('type', type); $media_more.data('query', objParam.query); 
+		resetCount ? $media_more.data('count',25) : $media_more.data('count',$media_more.data('count')+25);
 		$('.media-more li').unbind('click').bind('click', function() {
 			var type = $(this).data('type'),
 				url = type == 'thread' 
-					? objParam.url+'?count=25&after='+$(this).data('after')
-					: objParam.url+'&count=25&after='+$(this).data('after'),
+					? objParam.url+'?count='+$(this).data('count')+'&after='+$(this).data('after')
+					: objParam.url+'&count='+$(this).data('count')+'&after='+$(this).data('after'),
 				fn = type == 'thread' || type == 'submissions'
 					? function(data, textStatus, jqXHR, obj) {
 						if (obj.previousAfter) {
