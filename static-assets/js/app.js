@@ -307,7 +307,7 @@ var util = {
 						"<div class='media-body'>",
 							"<h4 class='media-heading'><span class='text-warning'>/r/"+obj.data.display_name+"</span> : "+obj.data.title+"</h4>",
 							"<p>"+obj.data.public_description+"</p>",
-							"<p>"+(obj.data.subscribers ? obj.data.subscribers+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
+							"<p>"+(obj.data.subscribers ? parseInt(obj.data.subscribers).toLocaleString()+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
 						"</div>",
 					"</li>"].join('');
 		}
@@ -400,11 +400,13 @@ var app = (function($, Bloodhound, hljs) {
 			});
 			visibilityChange();
 			$('[data-toggle="tooltip"]').tooltip();
+			$('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse({'toggle': false});
 			redditNames.initialize();
 			startBlending();
 			contentResizeEvent();
 			redditSearch('#reddit-greeting-collapse', true);
 			redditSearch('#reddit-results-collapse');
+			redditSearch('#search-control-panel', false, function(){ $('#controlModal').modal('hide'); });
 			redditSearchRadio();
 			columnsOrHomeButton();
 		}
@@ -506,20 +508,20 @@ var app = (function($, Bloodhound, hljs) {
             if (data.data.children.length > 0) {
 	            threadResults(data, obj, false, 'submissions');
                 bindLoadMore(data.data.after, 'submissions', obj, true);
-                $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
-                    .typeahead('val', obj.query);
-                if (obj.callback) obj.callback();
+                copyToAllRedditSearches(obj.query, obj);
             } else {
                 if (typeof obj.errorLoc === "object" && obj.errorLoc !== null) {
                     showFeature("#greeting");
+                    copyToAllRedditSearches(obj.query, obj);
                     $('#watch-threads .list-group.contain').children().length === 0 ? watchList() : void 0;
-                    $('#reddit-accordion').launchPopOver(3000,
+                    $('#headingOne').launchPopOver(3000,
                         popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));
                 } else {
                     $(obj.errorLoc).launchPopOver(3000,
                         popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));    
                 }
             }
+            if (obj.callback) obj.callback();
         }, undefined, undefined, false, obj.errorLoc, obj);
 	}
 	function subredditsSearchAPI(obj) {
@@ -528,20 +530,20 @@ var app = (function($, Bloodhound, hljs) {
             if (data.data.children.length > 0) {
                 subredditsMatching(data, obj.query, false);
                 bindLoadMore(data.data.after, 'subreddit', obj, true);
-                $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
-                    .typeahead('val', obj.query);
-                if (obj.callback) obj.callback();
+                copyToAllRedditSearches(obj.query, obj);
             } else {
                 if (typeof obj.errorLoc === "object" && obj.errorLoc !== null) {
                     showFeature("#greeting");
+                    copyToAllRedditSearches(obj.query, obj);
                     $('#watch-threads .list-group.contain').children().length === 0 ? watchList() : void 0;
-                    $('#reddit-accordion').launchPopOver(3000,
+                    $('#headingOne').launchPopOver(3000,
                         popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));    
                 } else {
                     $(obj.errorLoc).launchPopOver(3000,
                         popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));    
                 }
             }
+            if (obj.callback) obj.callback();
         }, undefined, undefined, false, obj.errorLoc, obj);
 	}
 	function threadsOfSubreddit(query, callback) {
@@ -549,10 +551,25 @@ var app = (function($, Bloodhound, hljs) {
 	    genericGet(url, function(data, textStatus, jqXHR, obj) {
             threadResults(data, obj, false);
             bindLoadMore(data.data.after, 'thread', obj, true);
-            $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
-                .typeahead('val', query);
+            copyToAllRedditSearches(query, obj);
             if (obj.callback) obj.callback();
         }, noResults, undefined, false, undefined, {query: query, errorLoc: this, callback: callback, url: url});
+	}
+	function copyToAllRedditSearches(query, obj) {
+	    $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
+            .typeahead('val', query);
+        if (obj && obj.errorLoc !== window && obj.errorLoc !== null) {
+            var $form = obj.errorLoc.parents('form'),
+                radioType = $form.find('input[type=radio]:checked').val(),
+                sortedBy = $form.find('select.sorted-by').val(),
+                linksFrom = $form.find('select.links-from').val();
+            $('form.reddit-search').each(function(i, form) {
+                $(form).find('input[type=radio][value='+radioType+']').prop('checked',true).trigger('click');
+                $(form).find('select.sorted-by option[value='+sortedBy+']').prop('selected',true);
+                $(form).find('select.links-from option[value='+linksFrom+']').prop('selected',true);
+            });
+        }
+        $('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse('hide');
 	}
 	function noResults(jqXHR, textStatus, errorThrown, obj) {
         if (jqXHR.status==403) {
@@ -629,8 +646,7 @@ var app = (function($, Bloodhound, hljs) {
 	}
 	function bindSubList() {
 		$('.media-results li').unbind('click').bind('click', function() {
-			$('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
-				.typeahead('val', $(this).data('subreddit'));
+		    copyToAllRedditSearches($(this).data('subreddit'));
 			threadsOfSubreddit($(this).data('subreddit'));
 		});
 	}
@@ -738,7 +754,9 @@ var app = (function($, Bloodhound, hljs) {
 		var localWatch;
 		Object.keys(watch).length
 			? localWatch = watch
-			: localWatch = {subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey', 'soccer','collegebasketball'], match:['Game Thread','Match Thread','Live Thread']};
+			: localWatch = {
+			    subs:['nfl','nba', 'mlb', 'nhl', 'mls', 'hockey', 'soccer','collegebasketball'], 
+			    match:['Game Thread','Match Thread','Live Thread']};
 		buildWatchList(localWatch);
 		fetchWatchThreads(localWatch.match);
 		bindDeleteWatchButtons();
@@ -926,7 +944,6 @@ var app = (function($, Bloodhound, hljs) {
 	}
 	function bindControlPanelButtons() { 
 	    bindAddThreadButton('#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls');
-	    redditSearch('#search-control-panel', false, function(){ $('#controlModal').modal('hide'); });
 	    bindDeleteColumns();
 	    var $allButtons = $('#control-panel-buttons .list-group a');
 	    $('#back-button').unbind('click').bind('click', function() {
@@ -1697,13 +1714,13 @@ var app = (function($, Bloodhound, hljs) {
 		interval = interval - (minutes * msecPerMinute );
 		var seconds = Math.floor(interval / 1000 );
 		if (!days==0 && !(days<=0)) {
-			return days+'d';
+			return days.toLocaleString()+'d';
 		} else if (days==0&&!hours==0) {
-			return hours+'h';
+			return hours.toLocaleString()+'h';
 		} else if (days==0&&hours==0&&!minutes==0) {
-			return minutes+'m';
+			return minutes.toLocaleString()+'m';
 		} else if (days==0&&hours==0&&minutes==0&&!seconds==0){
-			return seconds+'s';
+			return seconds.toLocaleString()+'s';
 		} else if ((nowMsec-(then*1000))<1000){
 			return '1s';
 		}else{ return date.toLocaleTimeString(); }
