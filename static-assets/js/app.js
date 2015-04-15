@@ -505,7 +505,7 @@ var app = (function($, Bloodhound, hljs) {
 	    genericGet(obj.url, function(data, textStatus, jqXHR, obj) {
             if (data.data.children.length > 0) {
 	            threadResults(data, obj, false, 'submissions');
-                bindLoadMore(data.data.after, 'thread', obj);
+                bindLoadMore(data.data.after, 'submissions', obj);
                 $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
                     .typeahead('val', obj.query);
                 if (obj.callback) obj.callback();
@@ -574,7 +574,7 @@ var app = (function($, Bloodhound, hljs) {
 				fn = type == 'thread' || type == 'submissions'
 					? function(data, textStatus, jqXHR, obj) {
 						if (obj.previousAfter) {
-							threadResults(data, objParam, true);
+							threadResults(data, objParam, true, type);
 							$('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
 							bindLoadMore(data.data.after, type, objParam);
 						} else {
