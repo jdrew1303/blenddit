@@ -569,7 +569,7 @@ var app = (function($, Bloodhound, hljs) {
                 $(form).find('select.links-from option[value='+linksFrom+']').prop('selected',true);
             });
         }
-        $('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse('hide');
+        $('#reddit-results-collapse').collapse('hide');
 	}
 	function noResults(jqXHR, textStatus, errorThrown, obj) {
         if (jqXHR.status==403) {
