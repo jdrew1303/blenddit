@@ -295,6 +295,9 @@ blockquote, blockquote p {
 .subreddit-group {
   padding: 5px 0 5px 0;
 }
+#subreddit-container .panel-group {
+    margin-bottom: 0;   
+}
 .column-settings {
   padding-top:5px;
 }
