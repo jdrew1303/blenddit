@@ -12,6 +12,6 @@
 		"REDDIT_CONSUMER_KEY_LIVE" : "QHHs17DAGyhlUg",
 		"REDDIT_CONSUMER_SECRET_LIVE" : "nME1dKnhpIQye_UB9-KNzN9uahQ"
 	},
-	"jsFiles" : ["jquery.pjax.js","highlight.pack.js","app.js","ga.js"],
+	"jsFiles" : ["highlight.pack.js","app.js","ga.js"],
 	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]
 }
