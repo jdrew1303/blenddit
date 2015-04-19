@@ -1345,8 +1345,10 @@ function initialize() {
             commentBindings();
         }
         function updateCreatedUTC(columnNum) {
-            $('.frame-content[data-column='+columnNum+'] .media .time-elapsed').each(function(i, time) {
-                $(time).text(getTimeElapsed($(time).data('created-utc')));
+            var frameContent = document.getElementsByDataAttribute('.frame-content', 'data-column', columnNum)[0],
+                collection = frameContent.getElementsByClassName('time-elapsed');
+            collection.forEach(function(node) {
+               node.text = getTimeElapsed(node.getAttribute('data-created-utc'));
             });
         }
         function updateCommentStats(comments) {
@@ -1634,6 +1636,20 @@ function initialize() {
                     $.fn.hasHeightOverflowed = function() {
                         return this.length > 0 ? this[0].scrollHeight > this[0].clientHeight : false;
                     };
+                }(),
+                vanillaExtensions : function() {
+                    document.getElementsByDataAttribute = function(className, dataAttr, dataValue) {
+                        var nodeList = document.querySelectorAll(className), nodeArray = [];
+                        nodeList.forEach(function(node) {
+                            if (node.getAttribute(dataAttr)==dataValue) nodeArray.push(node);    
+                        })
+                        return nodeArray;
+                    }
+                    NodeList.prototype.forEach = HTMLCollection.prototype.forEach = function(callback) {
+                        for (var i = 0, len = this.length; i < len; i++) {
+                            if (callback) callback(this[i], i);
+                        }
+                    }
                 }()
             },
             html : {
@@ -1887,4 +1903,5 @@ function initialize() {
     })(jQuery);
     
     window.app.init();
+    window.l = null;
 }
