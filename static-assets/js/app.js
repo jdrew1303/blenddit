@@ -1,19 +1,88 @@
-requirejs.config({
-    appDir: ".",
-    baseUrl: "static-assets/js",
-    paths: { 
-        'jquery': ['//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min', 'jquery-2.1.3.min'],
-        'bootstrap': ['//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min', 'bootstrap.min'],
-        'pjax' : ['//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min', 'jquery.pjax.min'],
-        'typeahead' : ['//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min', 'typeahead.bundle.min']
+/*
+    Fetch vendor scripts asynchronously from CDN, use local if not available.
+*/
+var Loader = function() { };
+Loader.prototype = {
+    firstTime : true,
+    scripts: {
+        'jqueryCDN' : window.location.protocol+'//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js',
+        'bootstrapCDN' : window.location.protocol+'//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
+        'pjaxCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js',
+        'typeaheadCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js',
+        'jqueryLocal' : 'static-assets/js/jquery-2.1.3.min.js',
+        'bootstrapLocal' : 'static-assets/js/bootstrap.min.js',
+        'pjaxLocal' : 'static-assets/js/jquery.pjax.min.js',
+        'typeaheadLocal' : 'static-assets/js/typeahead.bundle.min.js' 
     },
-    shim: {
-        'bootstrap' : ['jquery'], 'pjax' : ['jquery'], 'typeahead' : ['jquery']
+    require: function (scripts, callback, errorFn) {
+        this.callback       = callback;
+        this.errorFn        = errorFn;
+        for (var i = 0; i < scripts.length; i++) {
+            this.writeScript(scripts[i]);
+        }
+    },
+    loaded: function(evt) {
+        if (typeof this.callback == 'function') this.callback(this, evt);
+    },
+    error: function(evt) {
+        if (typeof this.errorFn == 'function') this.errorFn(this, evt);
+    },
+    removeBroken: function(paramSrc) {
+        var scripts = document.getElementsByTagName('script');
+        for (var i = 0, len = scripts.length; i < len; i++) {
+            if (paramSrc == scripts[i].src) {
+                scripts[i].parentNode.removeChild(scripts[i]); break;
+            }
+        }
+    },
+    writeScript: function(src) {
+        var self = this;
+        var s = document.createElement('script');
+        s.type = "text/javascript";
+        s.async = true;
+        s.addEventListener('error', function(e) { self.error(e);}, false);
+        s.src = src;
+        s.addEventListener('load', function (e) { self.loaded(e); }, false);
+        var head = document.getElementsByTagName('head')[0];
+        head.appendChild(s);
     }
-});
+};
+function successLoading(l) {
+    if (jQuery && l.firstTime) {
+        l.firstTime = false;
+        l.require([
+            l.scripts.bootstrapCDN,
+            l.scripts.pjaxCDN,
+            l.scripts.typeaheadCDN
+        ], successLoading, errorLoading);
+    }
+    var ready = typeof jQuery !== 'undefined' && // jQuery
+                typeof jQuery.pjax !== 'undefined' && // pjax
+                typeof jQuery.fn.emulateTransitionEnd !== 'undefined' && // Bootstrap
+                typeof Bloodhound !== 'undefined'; // typeahead
+    if (ready) initialize();
+}
+function errorLoading(loader, evt) { // CDN broke, use local
+    var brokenScript = evt.srcElement.src, localScript;
+    console.warn('Error loading CDN resource: '+brokenScript+'. Loading local resource.');
+    loader.removeBroken(brokenScript);
+    switch (brokenScript) {
+        case loader.scripts.jqueryCDN:
+            localScript = loader.scripts.jqueryLocal; break;
+        case loader.scripts.bootstrapCDN:
+            localScript = loader.scripts.bootstrapLocal; break;
+        case loader.scripts.pjaxCDN:
+            localScript = loader.scripts.pjaxLocal; break;
+        case loader.scripts.typeaheadCDN:
+            localScript = loader.scripts.typeaheadLocal; break;
+    }
+    loader.require([localScript], successLoading, errorLoading);
+}
+var l = new Loader();
+l.require([l.scripts.jqueryCDN], successLoading, errorLoading);
 
-require(['jquery', 'bootstrap', 'pjax', 'typeahead'], function() {
-    var app = (function($, Bloodhound, hljs) {
+function initialize() {
+    app = (function($, Bloodhound, hljs) {
         var config, watch, autoRefreshState = true,
             redditNames = new Bloodhound({
                   datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -1817,5 +1886,5 @@ require(['jquery', 'bootstrap', 'pjax', 'typeahead'], function() {
         return util;
     })(jQuery);
     
-    app.init();
-});
+    window.app.init();
+}
