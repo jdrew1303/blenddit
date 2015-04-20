@@ -2,17 +2,20 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
-<link href="https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css" rel="stylesheet">
+<meta name="version" content="{{version}}">
+<meta name="debug" content="{{debug}}">
 <link rel="icon" type="image/png" href="static-assets/imgs/tab.png" sizes="16x16">
 <link rel="icon" type="image/png" href="static-assets/imgs/tab.png" sizes="32x32">
+<style>
+    body { background: #060606;}
+    body * { opacity: 0; }
+</style>
 {{#if debug}}
 	<link rel="stylesheet" type="text/css" href="static-assets/css/bootstrap.min.css?v={{version}}">
 	<link rel="stylesheet" type="text/css" href="static-assets/css/ir_black.css?v={{version}}">
-	<link rel="stylesheet" type="text/css" href="static-assets/css/app.css?v={{version}}">
-	<script type="text/javascript" src="static-assets/js/app.js?v={{version}}" async></script>
 	<script type="text/javascript" src="static-assets/js/highlight.pack.js?v={{version}}"></script>
-	<script type="text/javascript" src="static-assets/js/ga.js?v={{version}}" async></script>
+	<script type="text/javascript" src="static-assets/js/ga.js?v={{version}}"></script>
+	<script type="text/javascript" src="static-assets/js/app.js?v={{version}}"></script>
 {{else}}
-	<link rel="stylesheet" type="text/css" href="static-assets/css/all.css?v={{version}}">
 	<script type="text/javascript" src="static-assets/js/all.js?v={{version}}" async></script>
 {{/if}}

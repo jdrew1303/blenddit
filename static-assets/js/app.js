@@ -14,18 +14,17 @@ Loader.prototype = {
         'pjaxLocal' : 'static-assets/js/jquery.pjax.min.js',
         'typeaheadLocal' : 'static-assets/js/typeahead.bundle.min.js' 
     },
-    require: function (scripts, callback, errorFn) {
-        this.callback       = callback;
-        this.errorFn        = errorFn;
-        for (var i = 0; i < scripts.length; i++) {
-            this.writeScript(scripts[i]);
+    styles: {
+        'app' : 'static-assets/css/'+(getMetaValue('debug')=='true' ? 'app.css' : 'all.css')+'?v='+getMetaValue('version'),
+        'fontawesomeCDN' : window.location.protocol+'//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css',
+        'googleFont' : window.location.protocol+'//fonts.googleapis.com/css?family=Roboto:400,700'
+    },
+    require: function(files, callback, errorFn, type) {
+        for (var i = 0; i < files.length; i++) {
+            type == 'script' 
+                ? this.writeScript(files[i], callback, errorFn) 
+                : this.writeLink(files[i], callback, errorFn);
         }
-    },
-    loaded: function(evt) {
-        if (typeof this.callback == 'function') this.callback(this, evt);
-    },
-    error: function(evt) {
-        if (typeof this.errorFn == 'function') this.errorFn(this, evt);
     },
     removeBroken: function(paramSrc) {
         var scripts = document.getElementsByTagName('script');
@@ -35,26 +34,42 @@ Loader.prototype = {
             }
         }
     },
-    writeScript: function(src) {
-        var self = this;
-        var s = document.createElement('script');
+    writeLink : function(href, success, fail) {
+        var self = this, l = document.createElement('link');
+        var head = document.getElementsByTagName('head')[0]; 
+        l.type = 'text/css';
+        l.rel = 'stylesheet';
+        l.addEventListener('load', function(e) { if (success) success(self, e) }, false);
+        l.addEventListener('error', function(e) { if (fail) fail(self, e) }, false);
+        l.href = href;
+        head.appendChild(l);
+    },
+    writeScript: function(src, success, fail) {
+        var self = this, s = document.createElement('script');
+        var head = document.getElementsByTagName('head')[0];
         s.type = "text/javascript";
         s.async = true;
-        s.addEventListener('error', function(e) { self.error(e);}, false);
+        s.addEventListener('load', function(e) { success(self, e) }, false);
+        s.addEventListener('error', function(e) { fail(self, e) }, false);
         s.src = src;
-        s.addEventListener('load', function (e) { self.loaded(e); }, false);
-        var head = document.getElementsByTagName('head')[0];
         head.appendChild(s);
     }
 };
-function successLoading(l) {
+function getMetaValue(name) {
+    var nodeList = document.getElementsByTagName('meta');
+    for (var i = 0, len = nodeList.length; i < len; i++) {
+        if (nodeList[i].getAttribute('name') == name) 
+            return nodeList[i].getAttribute('content');
+    } return "";
+}
+function scriptSuccessEvent(l) {
     if (jQuery && l.firstTime) {
         l.firstTime = false;
         l.require([
             l.scripts.bootstrapCDN,
             l.scripts.pjaxCDN,
             l.scripts.typeaheadCDN
-        ], successLoading, errorLoading);
+        ], scriptSuccessEvent, scriptErrorEvent, 'script');
     }
     var ready = typeof jQuery !== 'undefined' && // jQuery
                 typeof jQuery.pjax !== 'undefined' && // pjax
@@ -62,24 +77,28 @@ function successLoading(l) {
                 typeof Bloodhound !== 'undefined'; // typeahead
     if (ready) initialize();
 }
-function errorLoading(loader, evt) { // CDN broke, use local
+function scriptErrorEvent(l, evt) { // CDN broke, use local
     var brokenScript = evt.srcElement.src, localScript;
     console.warn('Error loading CDN resource: '+brokenScript+'. Loading local resource.');
-    loader.removeBroken(brokenScript);
+    l.removeBroken(brokenScript);
     switch (brokenScript) {
-        case loader.scripts.jqueryCDN:
-            localScript = loader.scripts.jqueryLocal; break;
-        case loader.scripts.bootstrapCDN:
-            localScript = loader.scripts.bootstrapLocal; break;
-        case loader.scripts.pjaxCDN:
-            localScript = loader.scripts.pjaxLocal; break;
-        case loader.scripts.typeaheadCDN:
-            localScript = loader.scripts.typeaheadLocal; break;
+        case l.scripts.jqueryCDN:
+            localScript = l.scripts.jqueryLocal; break;
+        case l.scripts.bootstrapCDN:
+            localScript = l.scripts.bootstrapLocal; break;
+        case l.scripts.pjaxCDN:
+            localScript = l.scripts.pjaxLocal; break;
+        case l.scripts.typeaheadCDN:
+            localScript = l.scripts.typeaheadLocal; break;
     }
-    loader.require([localScript], successLoading, errorLoading);
+    l.require([localScript], scriptSuccessEvent, scriptErrorEvent);
+}
+function cssErrorEvent(l, evt) {
+    console.error('Error loading resource: '+evt.srcElement.href);
 }
 var l = new Loader();
-l.require([l.scripts.jqueryCDN], successLoading, errorLoading);
+l.require([l.scripts.jqueryCDN], scriptSuccessEvent, scriptErrorEvent, 'script');
+l.require([l.styles.googleFont, l.styles.fontawesomeCDN, l.styles.app], undefined, cssErrorEvent, 'link');
 
 function initialize() {
     app = (function($, Bloodhound, hljs) {
