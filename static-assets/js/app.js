@@ -1,10 +1,98 @@
-/*
-    Fetch vendor scripts asynchronously from CDN, use local if not available.
-*/
-var Loader = function() { };
-Loader.prototype = {
-    firstTime : true,
-    scripts: {
+(function() {
+    // Fetch vendor scripts asynchronously from CDN, use local if not available.
+    // Wrapped in anonymous function to descope Loader object after initial init.
+    var
+    require = function(files, callback, errorFn, type) {
+        for (var i = 0; i < files.length; i++) {
+            type == 'script' 
+                ? writeScript(files[i], callback, errorFn) 
+                : writeLink(files[i], callback, errorFn);
+        }
+    },
+    removeBroken = function(type, paramSrc) {
+        var files = document.getElementsByTagName(type=='script'?'script':'link');
+        for (var i = 0, len = files.length; i < len; i++) {
+            if (paramSrc == (type == 'script' ? files[i].src : files[i].href)) {
+                files[i].parentNode.removeChild(files[i]); break;
+            }
+        }
+    },
+    successEvent = function(elem, successFn) {
+        elem.addEventListener('load', function successEvent(e) { 
+            if (successFn) successFn(e);
+            elem.removeEventListener('load', successEvent, 'false');
+        }, false);
+    },
+    failEvent  = function(elem, failFn) {
+        elem.addEventListener('error', function failEvent(e) { 
+            if (failFn) failFn(e);
+            elem.removeEventListener('error', failEvent, 'false');
+        }, false);
+    },
+    writeLink = function(href, success, fail) {
+        var l = document.createElement('link'),
+            head = document.getElementsByTagName('head')[0]; 
+        l.type = 'text/css';
+        l.rel = 'stylesheet';
+        successEvent(l, success);
+        failEvent(l, fail);
+        l.href = href;
+        head.appendChild(l);
+    },
+    writeScript = function(src, success, fail) {
+        var s = document.createElement('script'),
+            head = document.getElementsByTagName('head')[0];
+        s.type = "text/javascript";
+        s.async = true;
+        successEvent(s, success);
+        failEvent(s, fail);
+        s.src = src;
+        head.appendChild(s);
+    },
+    getMetaValue = function(name) {
+        var nodeList = document.getElementsByTagName('meta');
+        for (var i = 0, len = nodeList.length; i < len; i++) {
+            if (nodeList[i].getAttribute('name') == name) 
+                return nodeList[i].getAttribute('content');
+        } return "";
+    },
+    scriptSuccessEvent = function() {
+        if (jQuery && firstTime) {
+            firstTime = false;
+            require([
+                scripts.bootstrapCDN,
+                scripts.pjaxCDN,
+                scripts.typeaheadCDN
+            ], scriptSuccessEvent, scriptErrorEvent, 'script');
+        }
+        var ready = typeof jQuery !== 'undefined' && // jQuery
+                    typeof jQuery.pjax !== 'undefined' && // pjax
+                    typeof jQuery.fn.emulateTransitionEnd !== 'undefined' && // Bootstrap
+                    typeof Bloodhound !== 'undefined'; // typeahead
+        if (ready) initialize();
+    },
+    scriptErrorEvent = function(evt) { // CDN broke, use local
+        var brokenScript = evt.srcElement.src, localScript;
+        console.warn('Error loading CDN resource: '+brokenScript+'. Loading local resource.');
+        removeBroken('script', brokenScript);
+        switch (brokenScript) {
+            case scripts.jqueryCDN:
+                localScript = scripts.jqueryLocal; break;
+            case scripts.bootstrapCDN:
+                localScript = scripts.bootstrapLocal; break;
+            case scripts.pjaxCDN:
+                localScript = scripts.pjaxLocal; break;
+            case scripts.typeaheadCDN:
+                localScript = scripts.typeaheadLocal; break;
+        }
+        require([localScript], scriptSuccessEvent, scriptErrorEvent, 'script');
+    },
+    cssErrorEvent = function(evt) {
+        console.error('Error loading resource: '+evt.srcElement.href);
+        removeBroken('link', evt.srcElement.href);
+    },
+    firstTime = true,
+    scripts = {
         'jqueryCDN' : window.location.protocol+'//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js',
         'bootstrapCDN' : window.location.protocol+'//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
         'pjaxCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js',
@@ -14,91 +102,14 @@ Loader.prototype = {
         'pjaxLocal' : 'static-assets/js/jquery.pjax.min.js',
         'typeaheadLocal' : 'static-assets/js/typeahead.bundle.min.js' 
     },
-    styles: {
+    styles = {
         'app' : 'static-assets/css/'+(getMetaValue('debug')=='true' ? 'app.css' : 'all.css')+'?v='+getMetaValue('version'),
         'fontawesomeCDN' : window.location.protocol+'//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css',
         'googleFont' : window.location.protocol+'//fonts.googleapis.com/css?family=Roboto:400,700'
-    },
-    require: function(files, callback, errorFn, type) {
-        for (var i = 0; i < files.length; i++) {
-            type == 'script' 
-                ? this.writeScript(files[i], callback, errorFn) 
-                : this.writeLink(files[i], callback, errorFn);
-        }
-    },
-    removeBroken: function(paramSrc) {
-        var scripts = document.getElementsByTagName('script');
-        for (var i = 0, len = scripts.length; i < len; i++) {
-            if (paramSrc == scripts[i].src) {
-                scripts[i].parentNode.removeChild(scripts[i]); break;
-            }
-        }
-    },
-    writeLink : function(href, success, fail) {
-        var self = this, l = document.createElement('link');
-        var head = document.getElementsByTagName('head')[0]; 
-        l.type = 'text/css';
-        l.rel = 'stylesheet';
-        l.addEventListener('load', function(e) { if (success) success(self, e) }, false);
-        l.addEventListener('error', function(e) { if (fail) fail(self, e) }, false);
-        l.href = href;
-        head.appendChild(l);
-    },
-    writeScript: function(src, success, fail) {
-        var self = this, s = document.createElement('script');
-        var head = document.getElementsByTagName('head')[0];
-        s.type = "text/javascript";
-        s.async = true;
-        s.addEventListener('load', function(e) { success(self, e) }, false);
-        s.addEventListener('error', function(e) { fail(self, e) }, false);
-        s.src = src;
-        head.appendChild(s);
-    }
-};
-function getMetaValue(name) {
-    var nodeList = document.getElementsByTagName('meta');
-    for (var i = 0, len = nodeList.length; i < len; i++) {
-        if (nodeList[i].getAttribute('name') == name) 
-            return nodeList[i].getAttribute('content');
-    } return "";
-}
-function scriptSuccessEvent(l) {
-    if (jQuery && l.firstTime) {
-        l.firstTime = false;
-        l.require([
-            l.scripts.bootstrapCDN,
-            l.scripts.pjaxCDN,
-            l.scripts.typeaheadCDN
-        ], scriptSuccessEvent, scriptErrorEvent, 'script');
-    }
-    var ready = typeof jQuery !== 'undefined' && // jQuery
-                typeof jQuery.pjax !== 'undefined' && // pjax
-                typeof jQuery.fn.emulateTransitionEnd !== 'undefined' && // Bootstrap
-                typeof Bloodhound !== 'undefined'; // typeahead
-    if (ready) initialize();
-}
-function scriptErrorEvent(l, evt) { // CDN broke, use local
-    var brokenScript = evt.srcElement.src, localScript;
-    console.warn('Error loading CDN resource: '+brokenScript+'. Loading local resource.');
-    l.removeBroken(brokenScript);
-    switch (brokenScript) {
-        case l.scripts.jqueryCDN:
-            localScript = l.scripts.jqueryLocal; break;
-        case l.scripts.bootstrapCDN:
-            localScript = l.scripts.bootstrapLocal; break;
-        case l.scripts.pjaxCDN:
-            localScript = l.scripts.pjaxLocal; break;
-        case l.scripts.typeaheadCDN:
-            localScript = l.scripts.typeaheadLocal; break;
-    }
-    l.require([localScript], scriptSuccessEvent, scriptErrorEvent);
-}
-function cssErrorEvent(l, evt) {
-    console.error('Error loading resource: '+evt.srcElement.href);
-}
-var l = new Loader();
-l.require([l.scripts.jqueryCDN], scriptSuccessEvent, scriptErrorEvent, 'script');
-l.require([l.styles.googleFont, l.styles.fontawesomeCDN, l.styles.app], undefined, cssErrorEvent, 'link');
+    };
+    require([scripts.jqueryCDN], scriptSuccessEvent, scriptErrorEvent, 'script');
+    require([styles.googleFont, styles.fontawesomeCDN, styles.app], undefined, cssErrorEvent, 'link');
+})();
 
 function initialize() {
     app = (function($, Bloodhound, hljs) {
@@ -181,7 +192,7 @@ function initialize() {
                     app.util.fn.setInCookie('config', config);
                     buildConfigToUI(true);
                 });
-                $('#carousel').unbind('bind').bind('slid.bs.carousel', function () {
+                $('#carousel').unbind('slid.bs.carousel').bind('slid.bs.carousel', function () {
                     autoRefreshOnlyActiveColumn();
                 });
                 config = app.util.fn.cookieExists('config') ? app.util.fn.getFromCookie('config') : [];
@@ -1639,15 +1650,20 @@ function initialize() {
                 setInCookie : function(name, item) { util.fn.setCookie(name, JSON.stringify(item));},
                 jQueryExtensions : function() {
                     $.fn.launchPopOver = function(closeTime, options) {
-                        if (/popover/.test($(this).attr('aria-describedby'))) return;
-                        var that = this;
-                        $(this).popover('destroy');
-                        $(this).popover(options);
+                        var that = this, popoverState = $(this).data('bs.popover');
+                        if (typeof popoverState === 'undefined' || !popoverState.enabled) {
+                            $(this).popover(options);
+                        } else {
+                            popoverState.options.placement = options.placement;
+                            popoverState.options.title = options.title;
+                            popoverState.options.content = options.content;
+                        }
+                        popoverState = $(this).data('bs.popover');
+                        clearTimeout(popoverState.timeoutId);
                         $(this).popover('show');
-                        setTimeout(function(){
-                            $(that).popover('destroy');
+                        popoverState.timeoutId = setTimeout(function(){
+                            $(that).popover('hide');
                         }, closeTime);
-                        return this;
                     };
                     $.fn.hasWidthOverflowed = function(){
                         return this.length > 0 ? this[0].scrollWidth > this[0].clientWidth : false;
@@ -1922,5 +1938,4 @@ function initialize() {
     })(jQuery);
     
     window.app.init();
-    window.l = null;
 }
