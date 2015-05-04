@@ -1955,14 +1955,6 @@ function init() {
     listsjs();
     blenddit();
 }
-function deleteFive(columnNum) {
-    $('.frame-content[data-column='+columnNum+']').children().each(function(i, elem){
-        if (i < 5) {
-            $(elem).remove();
-        }
-        return;
-    })
-}
 
 // init();
 // }
