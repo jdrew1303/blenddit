@@ -1,4 +1,4 @@
-kurtlocker.org
+blenddit.com
 ==========
 
-root site to host personal projects
+web application
