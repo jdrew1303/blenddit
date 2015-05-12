@@ -454,7 +454,6 @@ Tmpl.prototype = {
 }
 function init() {
     pjx();
-    listsjs();
     blenddit();
 }
 function pjx() {
