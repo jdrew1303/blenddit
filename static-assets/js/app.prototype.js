@@ -1000,12 +1000,13 @@ function makeItemActive(columnNum) {
 }
 function getCommentsForColumn(configObj, columnNum) {
     showLoader(columnNum);
-    var dataArray = [], config = new Fn().getFromCookie('config');
+    var dataArray = [];
     for (var i = 0, len = configObj.threads.length; i < len; i++) {
         var path = configObj.threads[i].thread,
             sort = configObj.settings.sortBy,
             limit = configObj.settings.limitPosts;
         getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
+            var config = new Fn().getFromCookie('config');
             dataArray = dataArray.concat([data.concat(target.columnNum).concat(target.threadNum)]);
             if (typeof config[target.columnNum].threads !== 'undefined' && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
                 var mergedData = getMergedData(dataArray);
