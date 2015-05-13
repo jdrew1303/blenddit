@@ -507,9 +507,9 @@ function blenddit() {
         });
         $('#delete-column').unbind('click').on('click',function() {
             var config = fn.getFromCookie('config');
+            config.forEach(function(obj, i){ deleteRefresh(i); });
             fn.remove(config, $(this).data('column'));
             fn.setInCookie('config', config);
-            deleteRefresh($(this).data('column'));
             buildConfigToUI(true);
         });
         $('#carousel').unbind('slid.bs.carousel').on('slid.bs.carousel', function () {
@@ -1007,7 +1007,7 @@ function getCommentsForColumn(configObj, columnNum) {
         getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
             var config = new Fn().getFromCookie('config');
             dataArray = dataArray.concat([data.concat(target.columnNum).concat(target.threadNum)]);
-            if (typeof config[target.columnNum].threads !== 'undefined' && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
+            if (typeof config[target.columnNum] !== 'undefined' && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
                 var mergedData = getMergedData(dataArray);
                 if ($(".frame-content[data-column="+columnNum+"]").children().length===0 && mergedData[1].data.children.length>0) {
                     markFirstComment(mergedData[1].data.children[0].data.name, target.columnNum);
