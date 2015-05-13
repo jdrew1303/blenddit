@@ -54,6 +54,12 @@ http.createServer(app).listen(nconf.get('port_http'));
 https.createServer({key:fs.readFileSync('key.pem'), cert:fs.readFileSync('cert.pem')}, app).listen(nconf.get('port_https'));
 kutil.serverOut();
 
+// Generating a self signed certificate that works.
+// openssl genrsa -out key.pem
+// openssl req -new -key key.pem -out csr.pem
+// openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
+// rm csr.pem
+
 // iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080 (used this in live)
 // iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
 // iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 443 -j REDIRECT --to-port 3000
