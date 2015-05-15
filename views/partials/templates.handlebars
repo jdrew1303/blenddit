@@ -1,0 +1,115 @@
+<script type="text/html" id="tmpl_a">
+	<li class="list-group-item">
+        <div class="input-group">
+        	<input class="form-control" type="text" value="<%=thing%>"></input>
+        	<span class="input-group-addon"><i class="fa fa-close"></i></span>
+    	</div>
+    </li>
+</script>
+<script type="text/html" id="tmpl_b">
+	<li data-subid="<%=thing.subreddit_id%>" data-subreddit="<%=thing.subreddit%>" data-thread="<%=thing.permalink%>" data-threadid="<%=thing.id%>" class="list-group-item nopacity">
+		<%=thing.title%>
+		<span class="text-primary">in /r/<%=thing.subreddit%></span>
+        <span class="badge pull-right"><%=thing.timeElapsed%></span>
+    </li>
+</script>
+<script type="text/html" id="tmpl_c0">
+	<a class="btn <%=arrPos0%>"><i class="fa fa-<%=arrPos1%> fa-2x"></i></a>
+</script>
+<script type="text/html" id="tmpl_c">
+	<ul class="list-group controls <%=ulClass%>">
+		<li class="list-group-item controls">
+			<div class="btn-group">
+				<%=buttons%>
+            </div>
+        </li>
+    </ul>
+</script>
+<script type="text/html" id="tmpl_d">
+	<div class="form-group">
+		<label class="control-label label-width">Threads 
+			<span class="info-edit label label-default pull-right">Info</span>
+		</label>
+		<select data-column="<%=columnNum%>" class="form-control thread-edit"></select>
+	</div>
+</script>
+<script type="text/html" id="tmpl_e">
+	<div class="form-group">
+		<label class="control-label label-width">Subreddit 
+			<span class="label label-danger delete-edit pull-right">Delete</span>
+		</label>
+		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit">
+	</div>
+</script>
+<script type="text/html" id="tmpl_f">
+	<div class="subreddit-group-edit"><%=subreddit%><%=threads%></div>
+</script>
+<script type="text/html" id="tmpl_g">
+	<form action="javascript:void(0);" class="edit-column-settings">
+		<%=settings%>
+		<input type="submit" class="hide">
+	</form>
+</script>
+<script type="text/html" id="tmpl_am">
+	<div class="form-group">
+		<label>Thread</label>
+		<select class="form-control post-thread"></select>
+	</div>
+</script>
+<script type="text/html" id="tmpl_i">
+	<div data-column="<%=num%>" class="frame-content nopacity"></div>
+</script>
+<script type="text/html" id="tmpl_j">
+	<div data-column="<%=num%>" class="btn-group column-bars">
+		<a class="btn">
+			<i data-column="<%=num%>" class="fa fa-bars fa-lg"></i>
+		</a>
+	</div>
+</script>
+<script type="text/html" id="tmpl_l">
+	<i data-column="<%=num%>" class="nopacity loading fa fa-refresh fa-spin fa-2x"></i>
+	<div class="frame-overlay" data-column="<%=num%>">
+		<div data-column="<%=num%>" class="frame">
+			<h6 class="frame-header">
+				<%=type%> <%=configObj.settings.name%>
+			</h6>
+			<%=icons%>
+		</div>
+	</div>
+	<%=bigButtons%><%=frameContent%>
+</script>
+<script type="text/html" id="tmpl_p">
+	<div data-column="<%=columnNum%>" class="hide column-options btn-group" style="height:0;">
+		<a data-column="<%=columnNum%>" class="btn column-option teal manage-threads">
+			<i class="fa fa-newspaper-o fa-2x"></i>
+			<p>THREADS</p>
+		</a>
+		<form action="javascript:void(0);" data-column="<%=columnNum%>" class="hide edit-form teal">
+			<input data-column="<%=columnNum%>" type="submit" class="hide">
+		</form>
+		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch">
+			<i class="fa fa-cog fa-2x"></i>
+			<p>SETTINGS</p>
+		</a>
+		<div data-column="<%=columnNum%>" class="hide settings-tab darkgoldenrod"></div>
+		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue">
+			<i class="fa fa-pencil fa-2x"></i>
+			<p>WRITE COMMENT</p>
+		</a>
+		<div data-column="<%=columnNum%>" class="hide write-comment cornflowerblue"></div>
+		<a data-column="<%=columnNum%>" class="refreshSwitch btn column-option slateblue">
+			<i class="fa fa-toggle-on fa-2x"></i>
+			<p>AUTO REFRESH</p>
+		</a>
+		<a data-column="<%=columnNum%>" class="trash btn column-option darkred">
+			<i class="fa fa-trash fa-2x"></i>
+			<p>DELETE COLUMN</p>
+		</a>
+	</div>
+</script>
+<script type="text/html" id="tmpl_ired">
+	<i class="fa fa-reddit fa-lg"></i>
+</script>
+<script type="text/html" id="tmpl_itwt">
+	<i class="fa fa-twitter"></i>
+</script>

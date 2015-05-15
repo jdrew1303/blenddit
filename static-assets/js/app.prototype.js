@@ -207,119 +207,12 @@ Fn.prototype = {
 // Tmpl (Template) utility object
 var Tmpl = function() {};
 Tmpl.prototype = {
-    a : function(thing) {
-        return ["<li class='list-group-item'>",
-                    "<div class='input-group'>",
-                        "<input class='form-control' type='text' value='"+thing+"'></input>",
-                        "<span class='input-group-addon'><i class='fa fa-close'></i></span>",
-                "</div></li>"].join('');
-    },
-    b : function(thing, timeElapsed) {
-        return ["<li data-subid="+thing.subreddit_id+" data-subreddit="+thing.subreddit+" data-thread="+thing.permalink,
-                    " data-threadid="+thing.id+" class='list-group-item nopacity'>",
-                    thing.title,
-                    " <span class='text-primary'>in /r/"+thing.subreddit+"</span>",
-                    "<span class='badge pull-right'>"+timeElapsed+"</span>",
-                "</li>"].join('');
-    },
-    c : function(ulClass, btnArr) {
-        var buttons = function() {
-            var htmlString = "";
-            btnArr.forEach(function(arr){
-                htmlString += "<a class='btn "+arr[0]+"'><i class='fa fa-"+arr[1]+" fa-2x'></i></a>";
-            }); return htmlString; }();
-        return ["<ul class='list-group controls "+ulClass+"'>",
-                    "<li class='list-group-item controls'>",
-                        "<div class='btn-group'>",
-                            buttons,
-                        "</div>",
-                    "</li>",
-                "</ul>"].join('');
-    },
-    d : function(columnNum) {
-        return ["<div class='form-group'>",
-                    "<label class='control-label label-width'>Threads <span class='info-edit label label-default pull-right'>Info</span></label>",
-                    "<select data-column='"+columnNum+"' class='form-control thread-edit'></select>",
-                "</div>"].join('');
-    },
-    e : function() {
-        return ["<div class='form-group'>",
-                    "<label class='control-label label-width'>Subreddit <span class='label label-danger delete-edit pull-right'>Delete</span></label>",
-                    "<input type='text' class='form-control subreddit-edit' placeholder='Enter a subreddit'>",
-                "</div>"].join('');
-    },
-    f : function(subreddit, threads) { return "<div class='subreddit-group-edit'>"+subreddit+threads+"</div>"; },
-    g : function(settings) {
-        return ["<form action='javascript:void(0);' class='edit-column-settings'>"+settings,
-                    "<input type='submit' class='hide'>",
-                "</form>"].join('');
-    },
-    h : function(navTabType, addThreadTab, settingsTab, postTab) {
-        return ['<ul class="nav nav-tabs">',
-                    '<li class="active"><a href="#'+navTabType+'-add" data-toggle="tab">Add</a></li>',
-                    '<li><a data-toggle="tab" href="#'+navTabType+'-settings">Settings</a></li>',
-                    (postTab ? '<li class="post-tab"><a data-toggle="tab" href="#'+navTabType+'-post">Post</a></li>' : ''),
-                '</ul>',
-                '<div class="tab-content">',
-                    '<div class="tab-pane fade active in" id="'+navTabType+'-add">'+addThreadTab+'</div>',
-                    '<div class="tab-pane fade" id="'+navTabType+'-settings">'+settingsTab+'</div>',
-                    (postTab ? '<div class="tab-pane fade" id="'+navTabType+'-post">'+postTab+'</div>' : ''),
-                '</div>'].join('');
-    },
-    i : function(num) { return "<div data-column='"+num+"' class='frame-content nopacity'></div>"; },
-    j : function(num) {
-        return ["<div data-column='"+num+"' class='btn-group column-bars'>",
-                    "<a class='btn'>",
-                        "<i data-column='"+num+"' class='fa fa-bars fa-lg'></i>",
-                    "</a>",
-                "</div>"].join('');
-    },
-    l : function(num, configObj, icons, frameContent) {
-        return ["<i data-column='"+num+"' class='nopacity loading fa fa-refresh fa-spin fa-2x'></i>",
-                "<div class='frame-overlay' data-column='"+num+"'>",
-                    "<div data-column='"+num+"' class='frame'>",
-                        "<h6 class='frame-header'>"+(configObj.type=='reddit'
-                            ?"<i class='fa fa-reddit fa-lg'></i> ":"<i class='fa fa-twitter'></i> ")+configObj.settings.name,
-                        "</h6>",
-                        icons,
-                    "</div>",
-                "</div>"+this.p(num)+frameContent].join('');
-    },
     m : function(frame) { return "<div class='frame-container'>"+frame+"</div>"; },
     n : function(num, configObj, frameContainer) {
         return "<div data-column='"+num+"' data-type='"+configObj.type+"' class='frame-position nopacity'>"+frameContainer+"</div>";
     },
     o : function(num, framePosition) {
         return "<div data-column='"+num+"' class='item "+(num===0?'active':'')+"'>"+framePosition+"</div>";
-    },
-    p : function(columnNum) {
-        return ['<div data-column="'+columnNum+'" class="hide column-options btn-group" style="height:0;">',
-                    '<a data-column="'+columnNum+'" class="btn column-option teal manage-threads">',
-                        '<i class="fa fa-newspaper-o fa-2x"></i>',
-                        '<p>THREADS</p>',
-                    '</a>',
-                    '<form action="javascript:void(0);" data-column="'+columnNum+'" class="hide edit-form teal">',
-                        '<input data-column="'+columnNum+'" type="submit" class="hide">',
-                    '</form>',
-                    '<a data-column="'+columnNum+'" class="btn column-option darkgoldenrod settings-switch">',
-                        '<i class="fa fa-cog fa-2x"></i>',
-                        '<p>SETTINGS</p>',
-                    '</a>',
-                    '<div data-column="'+columnNum+'" class="hide settings-tab darkgoldenrod"></div>',
-                    '<a data-column="'+columnNum+'" class="btn column-option write-comment-switch cornflowerblue">',
-                        '<i class="fa fa-pencil fa-2x"></i>',
-                        '<p>WRITE COMMENT</p>',
-                    '</a>',
-                    '<div data-column="'+columnNum+'" class="hide write-comment cornflowerblue"></div>',
-                    '<a data-column="'+columnNum+'" class="refreshSwitch btn column-option slateblue">',
-                        '<i class="fa fa-toggle-on fa-2x"></i>',
-                        '<p>AUTO REFRESH</p>',
-                    '</a>',
-                    '<a data-column="'+columnNum+'" class="trash btn column-option darkred">',
-                        '<i class="fa fa-trash fa-2x"></i>',
-                        '<p>DELETE COLUMN</p>',
-                    '</a>',
-                '</div>'].join('');
     },
     q : function(i) {
         return ['<div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'">',
@@ -423,7 +316,6 @@ Tmpl.prototype = {
                     '</div>',
                 '</li>'].join('');
     },
-    am : function() { return '<div class="form-group"><label>Thread</label><select class="form-control post-thread"></select></div>';},
     an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>'; },
     ao : function(obj, timeElapsed) {
         return ["<li class='media' data-subreddit='"+obj.data.subreddit+"' data-thread='"+obj.data.permalink+"' ",
@@ -451,6 +343,23 @@ Tmpl.prototype = {
                     "</div>",
                 "</li>"].join('');
     }
+}
+function tmpl(str, data){
+    var fn = !/\W/.test(str) ?
+    tmpl(document.getElementById(str).innerHTML) :
+      new Function("obj",
+        "var p=[],print=function(){p.push.apply(p,arguments);};" +
+        "with(obj){p.push('" +
+        str
+          .replace(/[\r\t\n]/g, " ")
+          .split("<%").join("\t")
+          .replace(/((^|%>)[^\t]*)'/g, "$1\r")
+          .replace(/\t=(.*?)%>/g, "',$1,'")
+          .split("\t").join("');")
+          .split("%>").join("p.push('")
+          .split("\r").join("\\'")
+      + "');}return p.join('');");
+    return data ? fn(data) : fn;
 }
 function init() {
     pjx();
@@ -1393,9 +1302,16 @@ function buildRedditConfigObjByThreads(children) {
 function buildColumn(configObj, num) {
     $(".item[data-column="+num+"]").remove();
     var html = new Tmpl(),
-        frameContent = html.i(num),
-        icons = html.j(num),
-        frame = html.l(num, configObj, icons, frameContent),
+        frameContent = tmpl('tmpl_i', {num:num}),
+        icons = tmpl('tmpl_j', {num:num}),
+        frame = tmpl('tmpl_l', {
+            bigButtons: tmpl('tmpl_p',{columnNum:num}), 
+            type: configObj.type == 'reddit' ? tmpl('tmpl_ired', {}) : tmpl('tmpl_itwt',{}),
+            num:num, 
+            configObj:configObj, 
+            icons:icons, 
+            frameContent:frameContent
+        }),
         frameContainer = html.m(frame),
         framePosition = html.n(num, configObj, frameContainer),
         item = html.o(num, framePosition);
@@ -1430,10 +1346,10 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
     return htmlString;
 }
 function buildWatchInputOrThreadHtmlString(thing, type) {
-    var html = new Tmpl();
+    thing.timeElapsed = getTimeElapsed(thing.created_utc);
     return  type == 'input'
-        ? html.a(thing)
-        : html.b(thing, getTimeElapsed(thing.created_utc));
+        ? tmpl('tmpl_a',{thing:thing})
+        : tmpl('tmpl_b', {thing:thing});
 }
 function buildColumnToUI(frameHTML, num) {
     var $carousel_inner = $('.carousel-inner');
@@ -1467,26 +1383,37 @@ function buildConfigToUI(deleteFlag) {
     columnsOrHomeButton();
     contentResizeEvent();
 }
+function buildButtons(arr) {
+    var buttonsHTML = "";
+    arr.forEach(function(arr){ 
+        buttonsHTML += tmpl('tmpl_c0', {arrPos0: arr[0], arrPos1: arr[1]});
+    });
+    return buttonsHTML;
+}
 function buildColumnOptions(configObj, columnNum) {
     var html = new Tmpl();
     var addThreadTab = function() {
-        var addThread = html.c('edit-button-group', [['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']]);
+        var addThread = tmpl('tmpl_c', {ulClass:"edit-button-group", 
+            buttons: buildButtons([['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']])
+        });
         for (var i = 0, len = configObj.threads.length; i < len; i++) {
-            var threads = html.d(columnNum),
-                subreddit = html.e(),
-                subreddit_group = html.f(subreddit, threads);
+            var threads = tmpl('tmpl_d', {columnNum:columnNum}),
+                subreddit = tmpl('tmpl_e', {}),
+                subreddit_group = tmpl('tmpl_f', {subreddit:subreddit, threads:threads});
             addThread += subreddit_group;
         } return addThread;
     }();
     var settingsTab = function() {
-        var settingsButtons = html.c('edit-button-group', [['cancel-edit-button','close'],['save-edit-button','save']]),
+        var settingsButtons = tmpl('tmpl_c', {ulClass:"edit-button-group", 
+                buttons: buildButtons([['cancel-edit-button','close'],['save-edit-button','save']])
+            }),
             settingSelects = $('<div>').append($('.column-settings').children().clone().each(function() {
             var $label = $(this).find('label'); var $input = $(this).find('*[id]');
             $label.each(function(i, lab){ $(lab).attr('for', $(lab).attr('for')+'-column-'+columnNum)});
             $input.each(function(i, inp){ $(inp).attr('id', $(inp).attr('id')+'-column-'+columnNum)});
-        })).html(); return html.g(settingsButtons+settingSelects);
+        })).html(); return tmpl('tmpl_g', {settings:settingsButtons+settingSelects});
     }();
-    var postTab = html.am()+buildReplyForm("","",true);
+    var postTab = tmpl('tmpl_am',{})+buildReplyForm("","",true);
 
     $(".edit-form[data-column="+columnNum+"]").append(addThreadTab);
     $(".settings-tab[data-column="+columnNum+"]").append(settingsTab);
@@ -1691,19 +1618,19 @@ function bindColumnControls(columnNum) {
     });
     $(".manage-threads[data-column="+columnNum+"]").unbind('click').on('click', function() {
         var columnNum = $(this).data('column'), $edit_form = $('.edit-form[data-column='+columnNum+']');
-        !$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($edit_form, columnNum);
+        !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($edit_form, columnNum);
         frame_content_height(columnNum);
     });
     $(".settings-switch[data-column="+columnNum+"]").unbind('click').on('click', function() {
         var columnNum = $(this).data('column'), $settings_form = $('.settings-tab[data-column='+columnNum+']');
-        !$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($settings_form, columnNum);
+        !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($settings_form, columnNum);
     });
     $(".write-comment-switch[data-column="+columnNum+"]").unbind('click').on('click', function() {
         var columnNum = $(this).data('column'),
             $write_comment = $('.write-comment[data-column='+columnNum+']'),
             targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
         setPostThreads(targetContext, fromContext);
-        !$(this.nextSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($write_comment, columnNum);
+        !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($write_comment, columnNum);
         frame_content_height(columnNum);
     });
     $(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').on('click',function(){
