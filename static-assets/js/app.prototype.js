@@ -841,7 +841,7 @@ function addColumnToConfig() {
 function showColumnOption(option, columnNum) {
     hideAllColumnOptions(columnNum);
     $(option).removeClass('hide');
-    $(option[0].previousSibling).removeClass('hide');
+    $(option[0].previousElementSibling).removeClass('hide');
 }
 function showAllColumnOptions(columnNum) {
     $(['.settings-switch[data-column='+columnNum+']', '.manage-threads[data-column='+columnNum+']',
