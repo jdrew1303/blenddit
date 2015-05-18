@@ -173,7 +173,10 @@ Fn.prototype = {
         }); return bool;
     },
     setCookie : function(cname, cvalue) {
-        document.cookie = cname + "=" + encodeURIComponent(cvalue) + ";";
+        var d = new Date();
+        d.setTime(d.getTime() + (3650*24*60*60*1000));
+        var expires = "expires="+d.toUTCString();
+        document.cookie = cname + "=" + encodeURIComponent(cvalue) + "; "+expires;
     },
     getCookie : function(cname) {
         var name = cname + "=";
@@ -207,84 +210,6 @@ Fn.prototype = {
 // Tmpl (Template) utility object
 var Tmpl = function() {};
 Tmpl.prototype = {
-    m : function(frame) { return "<div class='frame-container'>"+frame+"</div>"; },
-    n : function(num, configObj, frameContainer) {
-        return "<div data-column='"+num+"' data-type='"+configObj.type+"' class='frame-position nopacity'>"+frameContainer+"</div>";
-    },
-    o : function(num, framePosition) {
-        return "<div data-column='"+num+"' class='item "+(num===0?'active':'')+"'>"+framePosition+"</div>";
-    },
-    q : function(i) {
-        return ['<div id="collapse'+i+'" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading'+i+'">',
-                    '<div class="panel-body"></div>',
-                '</div>'].join('');
-    },
-    r : function(header, body) { return '<div class="panel panel-default nopacity">'+header+body+'</div>'; },
-    s : function(infoClass, threadClass) {
-        return ["<div class='form-group'>",
-                    "<label class='control-label label-width'>Threads <span class='"+infoClass+" label label-default pull-right'>Info</span></label>",
-                    "<select class='form-control "+threadClass+"'></select>",
-                "</div>"].join('');
-    },
-    t : function(deleteClass, subClass) {
-        return ["<div class='form-group'>",
-                    "<label class='control-label label-width'>Subreddit <span class='"+deleteClass+" label label-danger pull-right'>Delete</span></label>",
-                    "<input type='text' class='form-control "+subClass+"' placeholder='Enter a subreddit'>",
-                "</div>"].join('');
-    },
-    u : function(groupClass, subreddit, threads) { return "<div class='"+groupClass+" nopacity'>"+subreddit+threads+"</div>"; },
-    v : function(post) {
-        return ["<option data-subid='"+post.data.subreddit_id+"' data-threadtitle='"+post.data.title+"' data-threadid='"+post.data.id+"' value='"+post.data.permalink+"'>",
-                    post.data.title,
-                "</option>"].join('');
-    },
-    w : function(threadObj) {
-        return ["<option data-subid='"+threadObj.subid+"' data-threadtitle='"+threadObj.threadtitle+"' data-threadid='"+threadObj.threadid+"' value='"+threadObj.thread+"'>",
-                    threadObj.threadtitle,
-                "</option>"].join('');
-    },
-    x : function(isTopLevel) {
-        return ["<div class='reply-buttons'>",
-                    "<button class='cancel-reply btn btn-default'>Cancel</button>",
-                    "<button type='submit' class='save-reply btn "+(isTopLevel ? 'btn-default' : 'btn-primary')+"'>Save</button>",
-                "</div>"].join('');
-    },
-    y : function(thing_id) { return "<input type='hidden' name='thing_id' value='"+thing_id+"'>"; },
-    z : function(author, isTopLevel) {
-        return [(isTopLevel ? "<label>Comment</label>" : ""),
-                "<textarea name='text' class='form-control textarea-reply'",
-                    "placeholder='"+(!isTopLevel ? 'Reply to '+author+'..' : 'Write a comment')+"'></textarea>"].join('');
-    },
-    aa : function(parentInput, textarea, buttons, topLevel) {
-        return ["<div class='"+(!topLevel ? 'nopacity hide' : 'isTopLevel')+" reply-form'>",
-                    "<div class='submitting nopacity hide'>"+(topLevel ? "<b><span class='black'>Submitting...</span></b>" : "Submitting...")+"</div>",
-                    "<form action='javascript:void(0)'>"+parentInput+textarea+buttons+"</form>",
-                "</div>"].join('');
-    },
-    ab : function(newRepliesNum) { return "<a class='btn new-comment'><span class='text-primary diff'>"+newRepliesNum+" new</span></a>"; },
-    ac : function(replyLength) {
-        return ["<span class='reply-num text-warning'>"+replyLength+"</span>",
-                "<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>"].join('');
-    },
-    ad : function(name, replyLength) { return "<a data-name='"+name+"' data-replylength='"+replyLength+"' class='btn reply'></a>"; },
-    ae : function(comment, replyLength, timeElapsed, permaLink, replyForm) {
-        return ["<footer data-id='"+comment.data.name+"' class='comment-footer'>",
-                    "<div class='links-container btn-group'>",
-                        "<a data-created-utc='"+comment.data.created_utc+"' class='btn time-elapsed white'>"+timeElapsed+"</a>",
-                        "<a class='btn reply-switch'><i class='fa fa-reply fa-lg'></i></a>",
-                        "<a class='btn perma' href='"+permaLink+"' target='_blank'><i class='fa fa-link fa-lg'></i></a>",
-                        "<a class='btn refresh-comment' data-linkid='"+comment.data.link_id+"' data-id='"+comment.data.name+"'><i class='fa fa-refresh fa-lg'></i></a>",
-                        (replyLength!==0 ? this.af(comment, replyLength) : ''),
-                    "</div>",
-                    replyForm,
-                "</footer>"].join('');
-    },
-    af : function(comment, replyLength) {
-        return ["<a data-name='"+comment.data.name+"' data-replylength='"+replyLength+"' class='btn reply'>",
-                    "<span class='reply-num text-warning'>"+replyLength+"</span>",
-                    "<span class='text-warning'>&nbsp;<i class='fa expand fa-plus-square'></i>&nbsp;</span>",
-                "</a>"].join('');
-    },
     ag : function(comment, text) {
         return ["<div class='media-heading btn-group'>",
                     "<a data-id='"+comment.data.name+"' class='btn vote up'><i class='fa fa-arrow-up'></i></a>",
@@ -996,12 +921,12 @@ function setThreads(data, selectTarget) {
         config = new Fn().getFromCookie('config');
     $select.children().remove();
     data.data.children.forEach(function(post) {
-        $select.append(html.v(post));
+        $select.append(tmpl('tmpl_v', {post:post}));
     });
     if (config.length > 0 && typeof selectTarget[2] !== 'undefined') {
         var threadObj = config[selectTarget[2]].threads[selectTarget[1]];
         if ($select.find("option[data-threadid="+threadObj.threadid+"]").length===0 && threadObj.subid==$select.find('option:selected').data('subid')) {
-            $select.append(html.w(threadObj));
+            $select.append(tmpl('tmpl_w', {threadObj:threadObj}));
         }
         $select.find("option[data-threadid="+threadObj.threadid+"]").prop('selected',true);
     }
@@ -1117,8 +1042,8 @@ function newCommentsOnRefresh(replyLength, name, commentFooter) {
         $replySwitch = $(commentFooter+' .reply'),
         $replyNum = $(commentFooter+' .reply .reply-num'),
         newRepliesNum = replyLength - $preloadedReplies.length,
-        newButton = html.ab(newRepliesNum),
-        optionalExpander = html.ac(replyLength);
+        newButton = tmpl('tmpl_ab', {newRepliesNum:newRepliesNum}),
+        optionalExpander = tmpl('tmpl_ac', {replyLength:replyLength});
     if (replyLength > 0 && $replySwitch.length>0 && replyLength > $replySwitch.data('replylength')) { // replies exist already
         $replySwitch.data('replylength', replyLength);
         $replyNum.text(replyLength);
@@ -1134,7 +1059,7 @@ function newCommentsOnRefresh(replyLength, name, commentFooter) {
             bindNewComment(commentFooter+' .new-comment');
         }
     } else if (replyLength > 0 && $replySwitch.length===0) { // replies don't exist until now
-        var existingRepls = html.ad(name, replyLength);
+        var existingRepls = tmpl('tmpl_ad', {name:name, replyLength:replyLength});
         $(existingRepls).insertAfter(commentFooter+' .refresh-comment');
         if (newRepliesNum > 0) {
             $(newButton).insertAfter(commentFooter+' .reply');
@@ -1312,9 +1237,9 @@ function buildColumn(configObj, num) {
             icons:icons, 
             frameContent:frameContent
         }),
-        frameContainer = html.m(frame),
-        framePosition = html.n(num, configObj, frameContainer),
-        item = html.o(num, framePosition);
+        frameContainer = tmpl('tmpl_m', {frame:frame}),
+        framePosition = tmpl('tmpl_n', {num:num, configObj:configObj, frameContainer:frameContainer}),
+        item = tmpl('tmpl_o', {num:num, active: num===0?'active':'', framePosition:framePosition});
     buildColumnToUI(item, num);
     bindColumnControls(num);
     buildColumnOptions(configObj, num, 'column');
@@ -1331,9 +1256,14 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
         var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data')
                 ? comment.data.replies.data.children:[], replyLength = replies.length;
         var footer = comment.kind!='more'
-                ? html.ae(comment, replyLength, getTimeElapsed(comment.data.created_utc),
-                    getPermalink(comment.data.link_id,comment.data.id),
-                    buildReplyForm(comment.data.name, comment.data.author)) : "",
+                ? tmpl('tmpl_ae', {
+                    comment:comment, 
+                    replyLength:replyLength,
+                    timeElapsed:getTimeElapsed(comment.data.created_utc),
+                    permalink:getPermalink(comment.data.link_id,comment.data.id),
+                    replyForm:buildReplyForm(comment.data.name, comment.data.author),
+                    expander: replyLength!==0?tmpl('tmpl_af',{comment:comment,replyLength:replyLength}):""
+                }) : "",
             text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
             heading = comment.kind!='more'
                 ? html.ag(comment, text)
@@ -1348,7 +1278,7 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
 function buildWatchInputOrThreadHtmlString(thing, type) {
     thing.timeElapsed = getTimeElapsed(thing.created_utc);
     return  type == 'input'
-        ? tmpl('tmpl_a',{thing:thing})
+        ? tmpl('tmpl_a', {thing:thing})
         : tmpl('tmpl_b', {thing:thing});
 }
 function buildColumnToUI(frameHTML, num) {
@@ -1360,10 +1290,18 @@ function buildColumnToUI(frameHTML, num) {
 }
 function buildReplyForm(thing_id, author, isTopLevel) {
     var html = new Tmpl(),
-        buttons = html.x(isTopLevel),
-        parentInput = html.y(thing_id),
-        textarea = html.z(author, isTopLevel),
-        form = html.aa(parentInput, textarea, buttons, isTopLevel);
+        buttons = tmpl('tmpl_x', {buttonClass:isTopLevel?'btn-default':'btn-primary'}),
+        parentInput = tmpl('tmpl_y', {thing_id:thing_id}),
+        textarea = tmpl('tmpl_z', {
+            label:isTopLevel?"<label>Comment</label>":"",
+            placeholder:isTopLevel?"Write a comment":"Reply to "+author}),
+        form = tmpl('tmpl_aa', {
+            className:isTopLevel?'isTopLevel':'nopacity hide',
+            submitting:isTopLevel?'<b><span class="black">Submitting...</span></b>' : "Submitting...",
+            parentInput:parentInput, 
+            textarea:textarea, 
+            buttons:buttons
+        })
     return form;
 }
 function buildConfigToUI(deleteFlag) {
@@ -1652,9 +1590,9 @@ function bindCancelButton() {
 function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass, optionalColumnNum) {
     $(context+" .add-thread-button").unbind('click').on('click',function(){
         var html = new Tmpl(),
-            threads = html.s(infoClass, threadClass),
-            subreddit = html.t(deleteClass, subClass),
-            subreddit_group = html.u(groupClass, subreddit, threads);
+            threads = tmpl('tmpl_s', {infoClass:infoClass, threadClass:threadClass}),
+            subreddit = tmpl('tmpl_t', {deleteClass:deleteClass, subClass:subClass}),
+            subreddit_group = tmpl('tmpl_u', {groupClass:groupClass, subreddit:subreddit, threads:threads});
         $(subreddit_group).insertAfter(context+' .'+target);
         typeof optionalColumnNum !== 'undefined' ? frame_content_height(optionalColumnNum) : void 0;
         typeAheadReddit(context+' .'+subClass+':first', function(element) {

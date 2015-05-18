@@ -113,3 +113,90 @@
 <script type="text/html" id="tmpl_itwt">
 	<i class="fa fa-twitter"></i>
 </script>
+<script type="text/html" id="tmpl_m">
+	<div class="frame-container"><%=frame%></div>
+</script>
+<script type="text/html" id="tmpl_n">
+	<div data-column="<%=num%>" data-type="<%=configObj.type%>" class="frame-position nopacity">
+		<%=frameContainer%>
+	</div>
+</script>
+<script type="text/html" id="tmpl_o">
+	<div data-column="<%=num%>" class="item <%=active%>"><%=framePosition%></div>
+</script>
+<script type="text/html" id="tmpl_s">
+	<div class="form-group">
+		<label class="control-label label-width">
+			Threads <span class="<%=infoClass%> label label-default pull-right">Info</span>
+		</label>
+		<select class="form-control <%=threadClass%>"></select>
+	</div>
+</script>
+<script type="text/html" id="tmpl_t">
+	<div class="form-group">
+		<label class="control-label label-width">Subreddit 
+			<span class="<%=deleteClass%> label label-danger pull-right">Delete</span>
+		</label>
+		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit">
+	</div>
+</script>
+<script type="text/html" id="tmpl_u">
+	<div class="<%=groupClass%> nopacity"><%=subreddit%><%=threads%></div>
+</script>
+<script type="text/html" id="tmpl_v">
+	<option data-subid="<%=post.data.subreddit_id%>" data-threadtitle="<%=post.data.title%>" data-threadid="<%=post.data.id%>" value="<%=post.data.permalink%>">
+		<%=post.data.title%>
+	</option>
+</script>
+<script type="text/html" id="tmpl_w">
+	<option data-subid="<%=threadObj.subid%>" data-threadtitle="<%=threadObj.threadtitle%>" data-threadid="<%=threadObj.threadid%>" value="<%=threadObj.thread%>">
+		<%=threadObj.threadtitle%>
+	</option>
+</script>
+<script type="text/html" id="tmpl_x">
+	<div class="reply-buttons">
+		<button class="cancel-reply btn btn-default">Cancel</button>
+		<button type="submit" class="save-reply btn <%=buttonClass%>">Save</button>
+	</div>
+</script>
+<script type="text/html" id="tmpl_y">
+	<input type="hidden" name="thing_id" value="<%=thing_id%>">
+</script>
+<script type="text/html" id="tmpl_z">
+	<%=label%>
+	<textarea name="text" class="form-control textarea-reply" placeholder="<%=placeholder%>"></textarea>
+</script>
+<script type="text/html" id="tmpl_aa">
+	<div class="<%=className%> reply-form">
+		<div class="submitting nopacity hide"><%=submitting%></div>
+		<form action="javascript:void(0)"><%=parentInput%><%=textarea%><%=buttons%></form>
+	</div>
+</script>
+<script type="text/html" id="tmpl_ab">
+	<a class="btn new-comment"><span class="text-primary diff"><%=newRepliesNum%> new</span></a>
+</script>
+<script type="text/html" id="tmpl_ac">
+	<span class="reply-num text-warning"><%=replyLength%></span>
+	<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
+</script>
+<script type="text/html" id="tmpl_ad">
+	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="btn reply"></a>
+</script>
+<script type="text/html" id="tmpl_ae">
+	<footer data-id="<%=comment.data.name%>" class="comment-footer">
+	<div class="links-container btn-group">
+		<a data-created-utc="<%=comment.data.created_utc%>" class="btn time-elapsed white"><%=timeElapsed%></a>
+		<a class="btn reply-switch"><i class="fa fa-reply fa-lg"></i></a>
+		<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
+		<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>"><i class="fa fa-refresh fa-lg"></i></a>
+		<%=expander%>
+	</div>
+	<%=replyForm%>
+	</footer>
+</script>
+<script type="text/html" id="tmpl_af">
+	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="btn reply">
+		<span class="reply-num text-warning"><%=replyLength%></span>
+		<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
+	</a>
+</script>
