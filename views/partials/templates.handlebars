@@ -200,3 +200,66 @@
 		<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
 	</a>
 </script>
+<script type="text/html" id="tmpl_ag">
+	<div class="media-heading btn-group">
+		<a data-id="<%=comment.data.name%>" class="btn vote up"><i class="fa fa-arrow-up"></i></a>
+		<a data-id="<%=comment.data.name%>" class="score btn"><%=comment.data.score%></a>
+		<a data-id="<%=comment.data.name%>" class="btn vote down"><i class="fa fa-arrow-down"></i></a>
+		<a class="btn from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>
+		<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
+		<%=flair%>
+	</div><%=text%>
+</script>
+<script type="text/html" id="tmpl_ah">
+	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments">
+		<i class="fa fa-download"></i>&nbsp; load more comments
+	</div><%=text%>
+</script>
+<script type="text/html" id="tmpl_ai">
+	<div class="media-body"><%=heading%></div>
+</script>
+<script type="text/html" id="tmpl_aj">
+	<div class="thumb pull-left <%=icon%>"></div>
+</script>
+<script type="text/html" id="tmpl_ak">
+	<div data-parentid="<%=comment.data.parent_id%>" data-linkid="<%=comment.data.link_id%>" data-icon="<%=icon%>" id="<%=comment.data.name%>" class="media <%=parent%> <%=opacity%>">
+		<%=thumbnail%><%=body%>
+	</div>
+</script>
+<script type="text/html" id="tmpl_al">
+	<li class="list-group-item">
+		<div class="input-group">
+			<input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span>
+		</div>
+	</li>
+</script>
+<script type="text/html" id="tmpl_an">
+	<a target="_blank" href="<%=url%>"><%=title%></a>
+</script>
+<script type="text/html" id="tmpl_ao">
+	<li class="media" data-subreddit="<%=obj.data.subreddit%>" data-thread="<%=permalink%>" data-id="<%=obj.data.id%>" data-subid="<%=obj.data.subreddit_id%>">
+		<a class="subreddit-thumb pull-left" href="#">
+	        <%=thumbnail%>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><%=obj.data.title%><span class="badge pull-right"><%=obj.data.score%></span></h4>
+			<p>Submitted <%=timeElapsed%> ago by <%=obj.data.author%> to /r/<%=obj.data.subreddit%> | <span class="text-warning"><%=obj.data.num_comments%> comments</span></p>
+		</div>
+	</li>
+</script>
+<script type="text/html" id="tmpl_ao0">
+	<img class="media-object" height="70" width="70" src="<%=src%>" alt="error" onerror="(function(ctx){ new Fn().brokenImage(ctx);})(this)">
+</script>
+<script type="text/html" id="tmpl_ap">
+	<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>
+</script>
+<script type="text/html" id="tmpl_aq">
+	<li class="media" data-id="<%=obj.data.id%>" data-subreddit="<%=obj.data.display_name%>">
+		<a class="subreddit-thumb pull-left" href="#">&nbsp</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-warning">/r/<%=obj.data.display_name%></span> : <%=obj.data.title%></h4>
+			<p><%=obj.data.public_description%></p>
+			<p><%=subscribers%></p>
+		</div>
+	</li>
+</script>

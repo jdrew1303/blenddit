@@ -197,7 +197,7 @@ Fn.prototype = {
         return this.getCookie(cname) ? true : false;
     },
     brokenImage : function(img) {
-        $(img).parents('.media a').empty().append(new Tmpl().ap());
+        $(img).parents('.media a').empty().append(tmpl('tmpl_ap',{}));
     },
     getFromCookie : function(item) { 
         return item == 'config' 
@@ -207,68 +207,8 @@ Fn.prototype = {
     setInCookie : function(name, item) { this.setCookie(name, JSON.stringify(item));}
 }
 
-// Tmpl (Template) utility object
-var Tmpl = function() {};
-Tmpl.prototype = {
-    ag : function(comment, text) {
-        return ["<div class='media-heading btn-group'>",
-                    "<a data-id='"+comment.data.name+"' class='btn vote up'><i class='fa fa-arrow-up'></i></a>",
-                    "<a data-id='"+comment.data.name+"' class='score btn'>"+comment.data.score+"</a>",
-                    "<a data-id='"+comment.data.name+"' class='btn vote down'><i class='fa fa-arrow-down'></i></a>",
-                    "<a class='btn from-sub' target='_blank' href='"+window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit+"'>"+comment.data.subreddit+"</a>",
-                    "<a class='btn author' href='"+window.location.protocol+"//www.reddit.com/u/"+comment.data.author+"' target='_blank'>"+comment.data.author+"</a>",
-                    (comment.data.author_flair_css_class ? "<a class='flair btn'>"+comment.data.author_flair_css_class+"</a>" : "&nbsp;"),
-                "</div>"+text].join('');
-    },
-    ah : function(comment, text) {
-        return ["<div class='load-comments' data-parent='"+comment.data.parent_id+"' class='load-comments'>",
-                    "<i class='fa fa-download'></i>&nbsp; load more comments",
-                "</div>"+text].join('');
-    },
-    ai : function(heading) { return "<div class='media-body'>"+heading+"</div>"; },
-    aj : function(isParent, icon) { return "<div class='thumb pull-left "+(isParent ? icon : '')+"'></div>";},
-    ak : function(comment, icon, isParent, optionalNopacity, thumbnail, body, hide) {
-        return ["<div data-parentid='"+comment.data.parent_id+"' data-linkid='"+comment.data.link_id+"' ",
-                    "data-icon='"+icon+"' id='"+comment.data.name+"' ",
-                    "class='media"+(isParent ? ' parent ' : hide ? ' hide' : '')+""+(optionalNopacity ? ' nopacity' : '')+"'>",
-                    thumbnail+body,
-                "</div>"].join('');
-    },
-    al : function() {
-        return ['<li class="list-group-item">',
-                    '<div class="input-group">',
-                        '<input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span>',
-                    '</div>',
-                '</li>'].join('');
-    },
-    an : function(url, title) { return '<a target="_blank" href="'+url+'">'+title+'</a>'; },
-    ao : function(obj, timeElapsed) {
-        return ["<li class='media' data-subreddit='"+obj.data.subreddit+"' data-thread='"+obj.data.permalink+"' ",
-                        "data-id='"+obj.data.id+"' data-subid='"+obj.data.subreddit_id+"'>",
-                    "<a class='subreddit-thumb pull-left' href='#'>",
-                        (obj.data.thumbnail && obj.data.thumbnail != 'self'
-                            ? "<img class='media-object' height='70' width='70' src='"+window.location.protocol+obj.data.thumbnail.substr(5)+"' alt='error' onerror='(function(ctx){ new Fn().brokenImage(ctx);})(this)'>"
-                            : this.ap()),
-                    "</a>",
-                    "<div class='media-body'>",
-                        "<h4 class='media-heading'>"+obj.data.title+"<span class='badge pull-right'>"+obj.data.score+"</span></h4>",
-                        "<p>Submitted "+timeElapsed+" ago by "+obj.data.author+" to /r/"+obj.data.subreddit,
-                        " | <span class='text-warning'>"+obj.data.num_comments+" comments</span></p>",
-                    "</div>",
-                "</li>"].join('');
-    },
-    ap : function() { return '<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>'; },
-    aq : function(obj, timeElapsed) {
-        return ["<li class='media' data-id='"+obj.data.id+"' data-subreddit='"+obj.data.display_name+"'>",
-                    "<a class='subreddit-thumb pull-left' href='#'>&nbsp</a>",
-                    "<div class='media-body'>",
-                        "<h4 class='media-heading'><span class='text-warning'>/r/"+obj.data.display_name+"</span> : "+obj.data.title+"</h4>",
-                        "<p>"+obj.data.public_description+"</p>",
-                        "<p>"+(obj.data.subscribers ? parseInt(obj.data.subscribers).toLocaleString()+' subscribers, a community for '+timeElapsed : "A community for "+timeElapsed)+"</p>",
-                    "</div>",
-                "</li>"].join('');
-    }
-}
+// tmpl loads templates from the templates.handlebars script tags and pushes
+// data into them using the <%=%> syntax
 function tmpl(str, data){
     var fn = !/\W/.test(str) ?
     tmpl(document.getElementById(str).innerHTML) :
@@ -874,7 +814,9 @@ function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClas
             ? 'reddit' : 'twitter',
         fn = new Fn(), config = fn.getFromCookie('config');
     $group.each(function(index, el) {
-        if ($(el).find(threadClass).val()) {
+        var threadVal = $(el).find(threadClass).val(), 
+            subVal = $(el).find(subClass+'.tt-input').val();
+        if (threadVal && subVal) {
             var thread = {}, $option = $(el).find(threadClass+' option:selected');
             thread.subreddit = $(el).find(subClass+'.tt-input').val();
             thread.thread = $(el).find(threadClass).val();
@@ -884,7 +826,9 @@ function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClas
             threads.push(thread);
         }
     });
-    if ($group.length>0 && fn.any($group.find(threadClass), function(x){ return $(x).val()!==null})) {
+    if ($group.length>0 && 
+        fn.any($group.find(threadClass), function(x){ return $(x).val()!==null}) &&
+        fn.any($group.find(subClass+'.tt-input'), function(x){ return $(x).val()!==""})) {
         column.threads = threads;
         setting.name = settings[0].value;
         setting.refreshRate = settings[1].value;
@@ -896,8 +840,8 @@ function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClas
             ? config[num] = column
             : function() { config = config.concat(column); newColumnAdded = true; }();
         fn.setInCookie('config', config);
-        return newColumnAdded;
     }
+    return newColumnAdded;
 }
 function addToConfigObj(column) {
     var fn = new Fn();
@@ -914,8 +858,7 @@ function preventEnterButton() {
     });
 }
 function setThreads(data, selectTarget) {
-    var html = new Tmpl(),
-        $select = typeof selectTarget[2] !== 'undefined' // columnNum was passed
+    var $select = typeof selectTarget[2] !== 'undefined' // columnNum was passed
             ? $($(selectTarget[0]+"[data-column="+selectTarget[2]+"]")[selectTarget[1]])
             : $($(selectTarget[0])[selectTarget[1]]),
         config = new Fn().getFromCookie('config');
@@ -1037,8 +980,7 @@ function updateCommentStats(comments) {
     });
 }
 function newCommentsOnRefresh(replyLength, name, commentFooter) {
-    var html = new Tmpl(),
-        $preloadedReplies = $('#'+name+' .media[data-parentid='+name+']'),
+    var $preloadedReplies = $('#'+name+' .media[data-parentid='+name+']'),
         $replySwitch = $(commentFooter+' .reply'),
         $replyNum = $(commentFooter+' .reply .reply-num'),
         newRepliesNum = replyLength - $preloadedReplies.length,
@@ -1176,17 +1118,30 @@ function getPosts(path, sort, limit, obj){
     });
 }
 function buildRedditMedia(data, type, loadMore) {
-    var html = new Tmpl(),
-        $mediaList = $('#subreddit-container .media-results');
+    var $mediaList = $('#subreddit-container .media-results');
     if (loadMore===false) $mediaList.children().remove();
     if (type == 't3') { // we're building a list of threads
         data.data.children.forEach(function(thread, i) {
-            $mediaList.append(html.ao(thread, getTimeElapsed(thread.data.created_utc)));
+            $mediaList.append(tmpl('tmpl_ao', {
+                obj: thread,
+                permalink: thread.data.permalink.split('?')[0],
+                timeElapsed: getTimeElapsed(thread.data.created_utc),
+                thumbnail: thread.data.thumbnail && thread.data.thumbnail != 'self'
+                    ? tmpl('tmpl_ao0', {src: window.location.protocol+thread.data.thumbnail.substr(5)}) 
+                    : tmpl('tmpl_ap', {})
+            }));
             fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');
         });
     } else if (type == 't5') {
         data.data.children.forEach(function(sub, i) {
-            $mediaList.append(html.aq(sub, getTimeElapsed(sub.data.created_utc)));
+            var timeElapsed = getTimeElapsed(sub.data.created_utc); 
+            $mediaList.append(tmpl('tmpl_aq', {
+                obj:sub, 
+                timeElapsed: timeElapsed,
+                subscribers: sub.data.subscribers 
+                    ? parseInt(obj.data.subscribers).toLocaleString()+' subscribers, a community for '+timeElapsed 
+                    : "A community for "+timeElapsed
+            }));
             fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');    
         });
     }
@@ -1226,8 +1181,7 @@ function buildRedditConfigObjByThreads(children) {
 }
 function buildColumn(configObj, num) {
     $(".item[data-column="+num+"]").remove();
-    var html = new Tmpl(),
-        frameContent = tmpl('tmpl_i', {num:num}),
+    var frameContent = tmpl('tmpl_i', {num:num}),
         icons = tmpl('tmpl_j', {num:num}),
         frame = tmpl('tmpl_l', {
             bigButtons: tmpl('tmpl_p',{columnNum:num}), 
@@ -1251,7 +1205,7 @@ function buildColumn(configObj, num) {
     fadeIn(".frame-position[data-column="+num+"]", 100);
 }
 function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide) {
-    var commentsArray = commentsArray || []; var htmlString = ''; var html = new Tmpl();
+    var commentsArray = commentsArray || []; var htmlString = '';
     commentsArray.forEach(function(comment) {
         var replies = comment.kind!='more'&&comment.data.replies.hasOwnProperty('data')
                 ? comment.data.replies.data.children:[], replyLength = replies.length;
@@ -1266,11 +1220,24 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
                 }) : "",
             text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
             heading = comment.kind!='more'
-                ? html.ag(comment, text)
-                : html.ah(comment, text),
-            body = html.ai(heading),
-            thumbnail = comment.kind!='more' ? html.aj(isParent, getIcon(comment.data.subreddit)) : "",
-            media = html.ak(comment, getIcon(comment.data.subreddit), isParent, optionalNopacity, thumbnail, body, hide);
+                ? tmpl('tmpl_ag', {
+                    comment: comment,
+                    text: text,
+                    href: window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit,
+                    author: window.location.protocol+"//www.reddit.com/u/"+comment.data.author,
+                    flair: comment.data.author_flair_css_class ? '<a class="flair btn">'+comment.data.author_flair_css_class+"</a>" : "&nbsp;"
+                })
+                : tmpl('tmpl_ah', {comment:comment, text:text}),
+            body = tmpl('tmpl_ai', {heading:heading}),
+            thumbnail = comment.kind!='more' ? tmpl('tmpl_aj', {icon: isParent?getIcon(comment.data.subreddit):''}) : "",
+            media = tmpl('tmpl_ak', {
+                comment:comment, 
+                icon:getIcon(comment.data.subreddit),
+                parent: isParent?'parent':hide?'hide':'', 
+                opacity: optionalNopacity?'nopacity':'',
+                thumbnail: thumbnail, 
+                body: body
+            })
         htmlString += media;
     });
     return htmlString;
@@ -1289,8 +1256,7 @@ function buildColumnToUI(frameHTML, num) {
             : $(frameHTML).insertAfter($(".item[data-column="+(num-1)+"]"));
 }
 function buildReplyForm(thing_id, author, isTopLevel) {
-    var html = new Tmpl(),
-        buttons = tmpl('tmpl_x', {buttonClass:isTopLevel?'btn-default':'btn-primary'}),
+    var buttons = tmpl('tmpl_x', {buttonClass:isTopLevel?'btn-default':'btn-primary'}),
         parentInput = tmpl('tmpl_y', {thing_id:thing_id}),
         textarea = tmpl('tmpl_z', {
             label:isTopLevel?"<label>Comment</label>":"",
@@ -1329,7 +1295,6 @@ function buildButtons(arr) {
     return buttonsHTML;
 }
 function buildColumnOptions(configObj, columnNum) {
-    var html = new Tmpl();
     var addThreadTab = function() {
         var addThread = tmpl('tmpl_c', {ulClass:"edit-button-group", 
             buttons: buildButtons([['add-thread-button','plus-circle'],['cancel-edit-button','close'],['save-edit-button','save']])
@@ -1496,9 +1461,11 @@ function bindInputLoad(columnNum) {
             getPosts('/r/'+element.value, '', '', {target: ['.edit-form[data-column='+columnNum+'] .thread-edit',index], errorMsgLoc: element, callback: setThreads});
         });
         $(this).unbind('change').on('change',function(){
-            var group = ".edit-form[data-column="+columnNum+"] .subreddit-edit",
-                index = $(group).parent().parent().parent().index($(this).parent().parent().parent());
-            getPosts('/r/'+this.value, '', '', {target: ['.edit-form[data-column='+columnNum+'] .thread-edit',index], errorMsgLoc: this, callback: setThreads});
+            if (this.value) {
+                var group = ".edit-form[data-column="+columnNum+"] .subreddit-edit",
+                    index = $(group).parent().parent().parent().index($(this).parent().parent().parent());
+                getPosts('/r/'+this.value, '', '', {target: ['.edit-form[data-column='+columnNum+'] .thread-edit',index], errorMsgLoc: this, callback: setThreads});    
+            }
         });
     });
 }
@@ -1589,8 +1556,7 @@ function bindCancelButton() {
 }
 function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass, optionalColumnNum) {
     $(context+" .add-thread-button").unbind('click').on('click',function(){
-        var html = new Tmpl(),
-            threads = tmpl('tmpl_s', {infoClass:infoClass, threadClass:threadClass}),
+        var threads = tmpl('tmpl_s', {infoClass:infoClass, threadClass:threadClass}),
             subreddit = tmpl('tmpl_t', {deleteClass:deleteClass, subClass:subClass}),
             subreddit_group = tmpl('tmpl_u', {groupClass:groupClass, subreddit:subreddit, threads:threads});
         $(subreddit_group).insertAfter(context+' .'+target);
@@ -1619,7 +1585,7 @@ function bindInfoThread(infoClass) {
             getThreadById(threadid, function(data) {
                 if (data.data.children[0].data.selftext_html) {
                     $('#info-title, #info-content').children().remove();
-                    $('#info-title').html(new Tmpl().an(data.data.children[0].data.url, data.data.children[0].data.title));
+                    $('#info-title').html(tmpl('tmpl_an', {url:data.data.children[0].data.url, title: data.data.children[0].data.title}));
                     $('#info-content').append($("<div/>").html(data.data.children[0].data.selftext_html).text());
                     $('#author-button').text('/u/'+data.data.children[0].data.author).attr("onclick", "window.open('"+window.location.protocol+"//www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');");
                     $('#time-button').text(getTimeElapsed(data.data.children[0].data.created_utc));
@@ -1765,11 +1731,11 @@ function bindDeleteWatchButtons() {
 }
 function bindWatchAdd() {
     $('#watch-subreddits .btn.add').unbind('click').on('click', function() {
-        $('#watch-subreddits .list-group.contain').append(new Tmpl().al);
+        $('#watch-subreddits .list-group.contain').append(tmpl('tmpl_al',{}));
         bindDeleteWatchButtons();
     });
     $('#watch-matching .btn.add').unbind('click').on('click', function() {
-        $('#watch-matching .list-group.contain').append(new Tmpl().al);
+        $('#watch-matching .list-group.contain').append(tmpl('tmpl_al',{}));
         bindDeleteWatchButtons();
     });
 }
