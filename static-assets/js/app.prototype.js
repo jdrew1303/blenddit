@@ -255,44 +255,34 @@ function listsjs() {
             $(block).text($(block).text().trim());
              hljs.highlightBlock(block);
         });
-          $('.sidebarFunc').unbind('click').on('click',function() {
-              $('.sidebarFunc').removeClass('blue-dotted');
-              $(this).addClass('blue-dotted');
-              $('.nav-tabs').removeClass('blue-dotted');
-              $('#function-'+$(this).attr('num')).addClass('blue-dotted');
-              $("html, body").animate({ scrollTop: $('#function-'+$(this).attr('num')).offset().top-60 }, 500);
-              if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
-          });
-          $('#page-content-wrapper').unbind('click').on('click',function() {
-              if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
-          });
-          $('.navbar-fixed-top, .navbar-fixed-bottom').removeClass('hide');
+        $('.sidebarFunc').unbind('click').on('click',function() {
+            $('.sidebarFunc').removeClass('blue-dotted');
+            $(this).addClass('blue-dotted');
+            $('.nav-tabs').removeClass('blue-dotted');
+            $('#function-'+$(this).attr('num')).addClass('blue-dotted');
+            $("html, body").animate({ scrollTop: $('#function-'+$(this).attr('num')).offset().top-60 }, 500);
+            if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
+        });
+        $('#page-content-wrapper').unbind('click').on('click',function() {
+            if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
+        });
+        $('.navbar-fixed-top, .navbar-fixed-bottom').removeClass('hide');
     }
 }
 function blenddit() {
     if ($('#blenddit').length>0) {
-        var fn = new Fn();
         $('.teams').show(); $('.social').hide();
         $('.navbar-fixed-bottom').removeClass('hide');
         !$('.navbar-fixed-top').hasClass('hide') ? $('.navbar-fixed-top').addClass('hide'):void 0;
-        $('.open-controls').unbind('click').on('click',function() {launchControls();});
-        $('.help').unbind('click').on('click', function() {
-            console.log('help modal');
-        });
-        $('#delete-column').unbind('click').on('click',function() {
-            var config = fn.getFromCookie('config');
-            config.forEach(function(obj, i){ deleteRefresh(i); });
-            fn.remove(config, $(this).data('column'));
-            fn.setInCookie('config', config);
-            buildConfigToUI(true);
-        });
-        $('#carousel').unbind('slid.bs.carousel').on('slid.bs.carousel', function () {
-            autoRefreshOnlyActiveColumn();
-        });
-        window.autoRefreshState = true;
-        visibilityChange();
         $('[data-toggle="tooltip"]').tooltip();
         $('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse({'toggle': false});
+        window.autoRefreshState = true;
+        bindOpenControls();
+        bindHelpModal();
+        bindDeleteColumn();
+        bindAutoRefreshActive();
+        bindColumnsOrHomeButton();
+        visibilityChange();
         redditNames = redditNamesFn();
         redditNames.initialize();
         startBlending();
@@ -301,7 +291,6 @@ function blenddit() {
         redditSearch('#reddit-results-collapse');
         redditSearch('#search-control-panel', false, function(){ $('#controlModal').modal('hide'); });
         redditSearchRadio();
-        columnsOrHomeButton();
     }
 }
 function startBlending() {
@@ -418,25 +407,12 @@ function autoRefresh(bool, exceptNum) {
         }); // turn on all column auto refresh (if toggled on)
     }
 }
-function columnsOrHomeButton() {
-    function buttonType() {
-        var type;
-        if ($('#greeting').hasClass('hide')) { $('.columns-or-home i').removeClass('fa-columns').addClass('fa-home'); type = 'home';
-        } else { $('.columns-or-home i').removeClass('fa-home').addClass('fa-columns'); type = 'columns'; }
-        return type;
-    } buttonType();
-    $('.columns-or-home').unbind('click').on('click', function() {
-        var type = buttonType();
-        if (type=='columns') {
-            new Fn().getFromCookie('config').length > 0
-                ? buildConfigToUI() : $(this).parent().launchPopOver(3000,
-                popOverOptions('top','No columns','Build at least one column to view columns.'));
-        } else { // type home
-            $('#watch-threads .list-group.contain').children().length===0 ? watchList() : '';
-            showFeature('#greeting');
-            buttonType();
-        }
-    });
+function buttonType() {
+    if ($('#greeting').hasClass('hide')) { 
+        $('.columns-or-home i').removeClass('fa-columns').addClass('fa-home'); return 'home';
+    } else if (new Fn().getFromCookie('config').length > 0) { 
+        $('.columns-or-home i').removeClass('fa-home').addClass('fa-columns'); return 'columns'; 
+    } else { return 'home'; }
 }
 function redditSearchRadio() {
     $('form.reddit-search input[type=radio]').unbind('click').on('click', function() {
@@ -544,7 +520,7 @@ function subredditsMatching(data, query, loadMore) {
     showFeature('#subreddit-container');
     window.scrollTo(0, 0);
     $('#subreddit-result-title').text('Subreddits matching "'+query+'"..');
-    columnsOrHomeButton();
+    buttonType();
     buildRedditMedia(data, 't5', loadMore);
     bindSubList();
 }
@@ -554,7 +530,7 @@ function threadResults(data, obj, loadMore, type) {
     type == 'submissions'
         ? $('#subreddit-result-title').text('Submissions matching "'+obj.query+'"..') 
         : $('#subreddit-result-title').text('/r/'+obj.query);
-    columnsOrHomeButton();
+    buttonType();
     buildRedditMedia(data, 't3', loadMore);
     bindThreadResults();
 }
@@ -1139,7 +1115,7 @@ function buildRedditMedia(data, type, loadMore) {
                 obj:sub, 
                 timeElapsed: timeElapsed,
                 subscribers: sub.data.subscribers 
-                    ? parseInt(obj.data.subscribers).toLocaleString()+' subscribers, a community for '+timeElapsed 
+                    ? parseInt(sub.data.subscribers).toLocaleString()+' subscribers, a community for '+timeElapsed 
                     : "A community for "+timeElapsed
             }));
             fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');    
@@ -1284,7 +1260,7 @@ function buildConfigToUI(deleteFlag) {
             }
         }
     }
-    columnsOrHomeButton();
+    buttonType();
     contentResizeEvent();
 }
 function buildButtons(arr) {
@@ -1781,6 +1757,43 @@ function bindWatchSave() {
                         popOverOptions('top','Verification', 'Please select at least one thread from the list.'));
                 }
             }
+        }
+    });
+}
+function bindOpenControls() {
+    $('.open-controls').unbind('click').on('click',function() {launchControls();});
+}
+function bindHelpModal() {
+    $('.help').unbind('click').on('click', function() {
+        console.log('help modal');
+    });
+}
+function bindDeleteColumn(ctx) {
+    $('#delete-column').unbind('click').on('click',function() {
+        var fn = new Fn(),
+            config = fn.getFromCookie('config');
+        config.forEach(function(obj, i){ deleteRefresh(i); });
+        fn.remove(config, $(this).data('column'));
+        fn.setInCookie('config', config);
+        buildConfigToUI(true);
+    });
+}
+function bindAutoRefreshActive() {
+    $('#carousel').unbind('slid.bs.carousel').on('slid.bs.carousel', function () {
+        autoRefreshOnlyActiveColumn();
+    });
+}
+function bindColumnsOrHomeButton() {
+    $('.columns-or-home').unbind('click').on('click', function() {
+        var type = buttonType();
+        if (type=='columns') {
+            new Fn().getFromCookie('config').length > 0
+                ? buildConfigToUI() : $(this).parent().launchPopOver(3000,
+                popOverOptions('top','No columns','Build at least one column to view columns.'));
+        } else { // type home
+            $('#watch-threads .list-group.contain').children().length===0 ? watchList() : '';
+            showFeature('#greeting');
+            buttonType();
         }
     });
 }
