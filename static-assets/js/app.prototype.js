@@ -282,6 +282,7 @@ function blenddit() {
         bindDeleteColumn();
         bindAutoRefreshActive();
         bindColumnsOrHomeButton();
+        buttonType(true);
         visibilityChange();
         redditNames = redditNamesFn();
         redditNames.initialize();
@@ -407,12 +408,12 @@ function autoRefresh(bool, exceptNum) {
         }); // turn on all column auto refresh (if toggled on)
     }
 }
-function buttonType() {
-    if ($('#greeting').hasClass('hide')) { 
+function buttonType(override) {
+    if ($('#greeting').hasClass('hide') && !override) { 
         $('.columns-or-home i').removeClass('fa-columns').addClass('fa-home'); return 'home';
-    } else if (new Fn().getFromCookie('config').length > 0) { 
+    } else {
         $('.columns-or-home i').removeClass('fa-home').addClass('fa-columns'); return 'columns'; 
-    } else { return 'home'; }
+    }
 }
 function redditSearchRadio() {
     $('form.reddit-search input[type=radio]').unbind('click').on('click', function() {
