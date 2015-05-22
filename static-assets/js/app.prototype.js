@@ -291,7 +291,7 @@ function blenddit() {
         redditSearch('#reddit-greeting-collapse', true);
         redditSearch('#reddit-results-collapse');
         redditSearch('#search-control-panel', false, function(){ $('#controlModal').modal('hide'); });
-        redditSearchRadio();
+        bindRedditSearchRadio();
     }
 }
 function startBlending() {
@@ -414,14 +414,6 @@ function buttonType(override) {
     } else {
         $('.columns-or-home i').removeClass('fa-home').addClass('fa-columns'); return 'columns'; 
     }
-}
-function redditSearchRadio() {
-    $('form.reddit-search input[type=radio]').unbind('click').on('click', function() {
-       var $selects = $(this.form).find('select');
-       $(this.form).find('input[type=radio]:checked').val()=='submissions'
-        ? $selects.removeAttr('disabled')
-        : $selects.attr('disabled', true);
-    });
 }
 function redditSearch(parent, trigger, callback) {
     if (!$(parent+' .reddit-search-input').hasClass('tt-input')) typeAheadReddit(parent+' .reddit-search-input');
@@ -662,12 +654,7 @@ function frame_content_height(columnNum, optInt) {
 function launchControls() {
     bindControlPanelButtons();
     bindAccounts();
-    $('#save-changes').unbind('click').on('click',function() {
-        var newColumnAdded = addColumnToConfig();
-        newColumnAdded 
-            ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromCookie('config').length-1); }()
-            : buildConfigToUI();
-    });
+    bindSaveChanges();
     $('#controlModal').modal();
 }
 function addColumnToConfig() {
@@ -1462,6 +1449,9 @@ function bindCancelEdit(configObj, columnNum) {
 function commentBindings() {
     externalLinks('.md a');
     bindReplySwitch();
+    bindSaveReply();
+    bindTextAreaReply();
+    bindCancelReply();
     bindVoteCast();
     bindRefreshComment();
     bindShowReply();
@@ -1605,18 +1595,7 @@ function bindVoteCast() {
         new Fn().getBlurred();
     });
 }
-function bindReplySwitch() {
-    $('.reply-switch').unbind('click').on('click',function() {
-        var $replyForm = $(this).parent().parent().find('.reply-form');
-        if ($replyForm.hasClass('hide')) {
-            $replyForm.removeClass('hide');
-            $replyForm.find('form').removeClass('hide');
-            $replyForm.find('.submitting').removeClass('faded').addClass('hide');
-            fadeIn($replyForm, 100);
-        } else {
-            $replyForm.removeClass('faded').addClass('hide');
-        }
-    });
+function bindSaveReply() {
     $('.save-reply').unbind('click').on('click',function() {
         var $postPane = $(this).parents('.write-comment'),
             thing_id_raw = this.form.thing_id.value,
@@ -1656,14 +1635,31 @@ function bindReplySwitch() {
         var formData = {thing_id: thing_id, text: text };
         genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
     });
+}
+function bindTextAreaReply() {
     $('.textarea-reply').unbind('focus').on('focus', function() {
         !isRedditUserLoggedIn() ? $('#login-reddit-modal').modal() : void 0;
     });
+}
+function bindCancelReply(){
     $('.cancel-reply').unbind('click').on('click',function() {
         var $comment_footer = $(this).parents('.comment-footer');
         $comment_footer.length>0
             ? $comment_footer.find('.reply-switch').trigger('click')
             : showAllColumnOptions($(this).parents('.column-options').data('column'));
+    });
+}
+function bindReplySwitch() {
+    $('.reply-switch').unbind('click').on('click',function() {
+        var $replyForm = $(this).parent().parent().find('.reply-form');
+        if ($replyForm.hasClass('hide')) {
+            $replyForm.removeClass('hide');
+            $replyForm.find('form').removeClass('hide');
+            $replyForm.find('.submitting').removeClass('faded').addClass('hide');
+            fadeIn($replyForm, 100);
+        } else {
+            $replyForm.removeClass('faded').addClass('hide');
+        }
     });
 }
 function bindShowReply(){
@@ -1796,5 +1792,21 @@ function bindColumnsOrHomeButton() {
             showFeature('#greeting');
             buttonType();
         }
+    });
+}
+function bindRedditSearchRadio() {
+    $('form.reddit-search input[type=radio]').unbind('click').on('click', function() {
+       var $selects = $(this.form).find('select');
+       $(this.form).find('input[type=radio]:checked').val()=='submissions'
+        ? $selects.removeAttr('disabled')
+        : $selects.attr('disabled', true);
+    });
+}
+function bindSaveChanges() {
+    $('#save-changes').unbind('click').on('click',function() {
+        var newColumnAdded = addColumnToConfig();
+        newColumnAdded 
+            ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromCookie('config').length-1); }()
+            : buildConfigToUI();
     });
 }
