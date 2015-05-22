@@ -397,7 +397,6 @@ blockquote, blockquote p {
   margin-top:0 !important;
   border-left: 1px solid rgba(255,255,255,.25);
   border-right: 1px solid rgba(255,255,255,.25);
-  border-top: 1px solid rgba(255,255,255,.25);
 }
 .bookmark {
   position: absolute;
@@ -426,9 +425,9 @@ blockquote, blockquote p {
 .frame {
   width: 100%;
   border-radius: 6px;
-  background-color: rgb(32,32,32) !important;
+  background-color: #303236 !important;
   color: white;
-  border: 2px solid #888888;
+  border: 2px solid #303236;
 }
 .account {
   background-color: initial;
