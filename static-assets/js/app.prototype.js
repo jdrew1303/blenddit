@@ -81,7 +81,9 @@
                         popoverState.options.content = options.content;
                     }
                     popoverState = $(this).data('bs.popover');
-                    clearTimeout(popoverState.timeoutId);
+                    if (typeof popoverState.timeoutId !== 'undefined') {
+                        clearTimeout(popoverState.timeoutId);    
+                    }
                     $(this).popover('show');
                     popoverState.timeoutId = setTimeout(function(){
                         $(that).popover('hide');
