@@ -241,7 +241,7 @@ blockquote, blockquote p {
 }
 .media {
   padding: 5px 5px 5px 0;
-  border-top: 1px solid rgba(255,255,255,.25) !important;
+  border-top: 1px solid #303236 !important;
   margin-top: 5px !important;
   background-color: rgb(32,32,32);
 }
@@ -395,8 +395,8 @@ blockquote, blockquote p {
 }
 .parent {
   margin-top:0 !important;
-  border-left: 1px solid rgba(255,255,255,.25);
-  border-right: 1px solid rgba(255,255,255,.25);
+  border-left: 1px solid #303236;
+  border-right: 1px solid #303236;
 }
 .bookmark {
   position: absolute;
@@ -412,7 +412,7 @@ blockquote, blockquote p {
   overflow: auto;
   width: 100%;
   padding:1px;
-  background-color: #888888;
+  background-color: rgb(32,32,32);
 }
 .frame-edit {
   overflow-y: scroll;
