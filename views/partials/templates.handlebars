@@ -61,7 +61,7 @@
 </script>
 <script type="text/html" id="tmpl_j">
 	<div data-column="<%=num%>" class="btn-group column-bars">
-		<a class="btn">
+		<a class="btn" onclick="bindColumnBars.call(this, <%=num%>);">
 			<i data-column="<%=num%>" class="fa fa-bars fa-lg"></i>
 		</a>
 	</div>
@@ -70,7 +70,7 @@
 	<i data-column="<%=num%>" class="nopacity loading fa fa-refresh fa-spin fa-2x"></i>
 	<div class="frame-overlay" data-column="<%=num%>">
 		<div data-column="<%=num%>" class="frame">
-			<h6 class="frame-header">
+			<h6 class="frame-header" onclick="bindGetCommentsForColumn.call(this, <%=num%>);">
 				<%=type%> <%=configObj.settings.name%>
 			</h6>
 			<%=icons%>
@@ -80,19 +80,19 @@
 </script>
 <script type="text/html" id="tmpl_p">
 	<div data-column="<%=columnNum%>" class="hide column-options btn-group" style="height:0;">
-		<a data-column="<%=columnNum%>" class="btn column-option teal manage-threads">
+		<a data-column="<%=columnNum%>" class="btn column-option teal manage-threads" onclick="bindManageThreads.call(this, <%=columnNum%>)">
 			<i class="fa fa-newspaper-o fa-2x"></i>
 			<p>THREADS</p>
 		</a>
 		<form action="javascript:void(0);" data-column="<%=columnNum%>" class="hide edit-form teal">
 			<input data-column="<%=columnNum%>" type="submit" class="hide">
 		</form>
-		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch">
+		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch" onclick="bindSettings.call(this, <%=columnNum%>)">
 			<i class="fa fa-cog fa-2x"></i>
 			<p>SETTINGS</p>
 		</a>
 		<div data-column="<%=columnNum%>" class="hide settings-tab darkgoldenrod"></div>
-		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue">
+		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue" onclick="bindWriteComment.call(this, <%=columnNum%>)">
 			<i class="fa fa-pencil fa-2x"></i>
 			<p>WRITE COMMENT</p>
 		</a>
@@ -101,7 +101,7 @@
 			<i class="fa fa-toggle-on fa-2x"></i>
 			<p>AUTO REFRESH</p>
 		</a>
-		<a data-column="<%=columnNum%>" class="trash btn column-option darkred">
+		<a data-column="<%=columnNum%>" class="trash btn column-option darkred" onclick="bindDeleteColumnButton.call(this, <%=columnNum%>)">
 			<i class="fa fa-trash fa-2x"></i>
 			<p>DELETE COLUMN</p>
 		</a>

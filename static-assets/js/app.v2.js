@@ -1401,9 +1401,14 @@ function bindFetchThreadValue(ctx) {
     });
 }
 function bindSaveEdit(configObj, columnNum) {
-    var context = '.column-options[data-column='+columnNum+']';
     $(".column-options[data-column="+columnNum+"] .save-edit-button").unbind('click').on('click', function() {
-        updateConfigObjFromDOM(context+' .subreddit-group-edit', '.subreddit-edit', '.thread-edit', context+' .edit-column-settings', columnNum);
+        updateConfigObjFromDOM(
+            '.column-options[data-column='+columnNum+'] .subreddit-group-edit', 
+            '.subreddit-edit', 
+            '.thread-edit', 
+            '.column-options[data-column='+columnNum+'] .edit-column-settings', 
+            columnNum
+        );
         buildColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
         makeItemActive(columnNum);
     });
@@ -1425,12 +1430,12 @@ function commentBindings() {
 }
 function bindColumnControls(columnNum) {
     bindRefreshCommentSwitch(columnNum);
-    bindGetCommentsForColumn(columnNum);
-    bindColumnBars(columnNum);
-    bindManageThreads(columnNum);
-    bindSettings(columnNum);
-    bindWriteComment(columnNum);
-    bindDeleteColumnButton(columnNum);
+    // bindGetCommentsForColumn(columnNum);
+    // bindColumnBars(columnNum);
+    // bindManageThreads(columnNum);
+    // bindSettings(columnNum);
+    // bindWriteComment(columnNum);
+    // bindDeleteColumnButton(columnNum);
 }
 function bindCancelButton() {
     $('#cancel-column').unbind('click').on('click',function() {
@@ -1788,62 +1793,47 @@ function bindRefreshCommentSwitch(columnNum) {
     });    
 }
 function bindGetCommentsForColumn(columnNum) {
-    $('.frame[data-column='+columnNum+'] .frame-header').unbind('click').on('click', function(){
-        getCommentsForColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
-    });
+    getCommentsForColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
 }
 function bindColumnBars(columnNum) {
-    $(".column-bars[data-column="+columnNum+"] > a").unbind('click').on('click',function(){  // edit
-        var columnNum = $(this).parent().data('column'),
-            $columnOptions = $(".column-options[data-column="+columnNum+"]");
-        if ($columnOptions.hasClass('hide')) {
-            $columnOptions.removeClass('hide');
-            column_options_height(columnNum);
-            frame_content_height();
-            $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index) {
-                var inputVal = $(this).find('.subreddit-edit.tt-input').val(),
-                    $thread = $(this).find('.thread-edit'),
-                    threadval = $thread.val(), column = $thread.data('column');
-                if (inputVal !== '' && threadval===null) { // existing subreddit thread needs to be populated
-                    var thread = '.edit-form[data-column='+column+'] .thread-edit';
-                    getPosts('/r/'+inputVal, '', '', {target: [thread,index,column], errorMsgLoc: this, callback: setThreads});
-                }
-            });
-        } else {
-            showAllColumnOptions(columnNum);
-            $columnOptions.addClass('hide');
-            column_options_height(columnNum, 0);
-        }
-    });
+    var $columnOptions = $(".column-options[data-column="+columnNum+"]");
+    if ($columnOptions.hasClass('hide')) {
+        $columnOptions.removeClass('hide');
+        column_options_height(columnNum);
+        frame_content_height();
+        $(".edit-form[data-column="+columnNum+"] .subreddit-group-edit").each(function(index) {
+            var inputVal = $(this).find('.subreddit-edit.tt-input').val(),
+                $thread = $(this).find('.thread-edit'),
+                threadval = $thread.val(), column = $thread.data('column');
+            if (inputVal !== '' && threadval===null) { // existing subreddit thread needs to be populated
+                var thread = '.edit-form[data-column='+column+'] .thread-edit';
+                getPosts('/r/'+inputVal, '', '', {target: [thread,index,column], errorMsgLoc: this, callback: setThreads});
+            }
+        });
+    } else {
+        showAllColumnOptions(columnNum);
+        $columnOptions.addClass('hide');
+        column_options_height(columnNum, 0);
+    }
 }
 function bindManageThreads(columnNum) {
-    $(".manage-threads[data-column="+columnNum+"]").unbind('click').on('click', function() {
-        var columnNum = $(this).data('column'), $edit_form = $('.edit-form[data-column='+columnNum+']');
-        !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($edit_form, columnNum);
-        frame_content_height(columnNum);
-    });
+    var $edit_form = $('.edit-form[data-column='+columnNum+']');
+    !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($edit_form, columnNum);
+    frame_content_height(columnNum);
 }
 function bindSettings(columnNum) {
-    $(".settings-switch[data-column="+columnNum+"]").unbind('click').on('click', function() {
-        var columnNum = $(this).data('column'), $settings_form = $('.settings-tab[data-column='+columnNum+']');
-        !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($settings_form, columnNum);
-    });
+    var $settings_form = $('.settings-tab[data-column='+columnNum+']');
+    !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($settings_form, columnNum);
 }
 function bindWriteComment(columnNum) {
-    $(".write-comment-switch[data-column="+columnNum+"]").unbind('click').on('click', function() {
-        var columnNum = $(this).data('column'),
-            $write_comment = $('.write-comment[data-column='+columnNum+']'),
-            targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
-        setPostThreads(targetContext, fromContext);
-        !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($write_comment, columnNum);
-        frame_content_height(columnNum);
-    });
+    var $write_comment = $('.write-comment[data-column='+columnNum+']'),
+        targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
+    setPostThreads(targetContext, fromContext);
+    !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($write_comment, columnNum);
+    frame_content_height(columnNum);
 }
 function bindDeleteColumnButton(columnNum) {
-    $(".fa-close[data-column="+columnNum+"], .trash[data-column="+columnNum+"]").unbind('click').on('click',function(){
-        var columnNum = $(this).data('column');
-        $('#delete-column').data('column', columnNum);
-        $('#column-to-delete').text(new Fn().getFromCookie('config')[columnNum].settings.name);
-        $('#delete-column-modal').modal();
-    });
+    $('#delete-column').data('column', columnNum);
+    $('#column-to-delete').text(new Fn().getFromCookie('config')[columnNum].settings.name);
+    $('#delete-column-modal').modal();
 }

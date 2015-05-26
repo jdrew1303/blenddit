@@ -8,6 +8,6 @@
 		"REDDIT_CONSUMER_KEY_LIVE" : "QHHs17DAGyhlUg",
 		"REDDIT_CONSUMER_SECRET_LIVE" : "nME1dKnhpIQye_UB9-KNzN9uahQ"
 	},
-	"jsFiles" : ["app.prototype.js","ga.js"],
+	"jsFiles" : ["app.v2.js","ga.js"],
 	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]
 }
