@@ -38,7 +38,7 @@
 		<label class="control-label label-width">Subreddit 
 			<span class="label label-danger delete-edit pull-right">Delete</span>
 		</label>
-		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit">
+		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
 </script>
 <script type="text/html" id="tmpl_f">
@@ -97,7 +97,7 @@
 			<p>WRITE COMMENT</p>
 		</a>
 		<div data-column="<%=columnNum%>" class="hide write-comment cornflowerblue"></div>
-		<a data-column="<%=columnNum%>" class="refreshSwitch btn column-option slateblue">
+		<a data-column="<%=columnNum%>" class="refreshSwitch btn column-option slateblue" onclick="bindRefreshCommentSwitch.call(this, <%=columnNum%>)">
 			<i class="fa fa-toggle-on fa-2x"></i>
 			<p>AUTO REFRESH</p>
 		</a>
