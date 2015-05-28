@@ -2,7 +2,7 @@
 	<li class="list-group-item">
         <div class="input-group">
         	<input class="form-control" type="text" value="<%=thing%>"></input>
-        	<span class="input-group-addon"><i class="fa fa-close"></i></span>
+        	<span class="input-group-addon" onclick="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
     	</div>
     </li>
 </script>
@@ -28,7 +28,7 @@
 <script type="text/html" id="tmpl_d">
 	<div class="form-group">
 		<label class="control-label label-width">Threads 
-			<span class="info-edit label label-default pull-right">Info</span>
+			<span class="info-edit label label-default pull-right" onclick="bindInfoThread.call(this)">Info</span>
 		</label>
 		<select data-column="<%=columnNum%>" class="form-control thread-edit"></select>
 	</div>
@@ -38,7 +38,7 @@
 		<label class="control-label label-width">Subreddit 
 			<span class="label label-danger delete-edit pull-right">Delete</span>
 		</label>
-		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit" onkeypress="bindPreventEnterButton.call(this)">
+		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit" onchange="bindFetchThreadValue.call(this, <%=columnNum%>)" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
 </script>
 <script type="text/html" id="tmpl_f">
@@ -47,7 +47,7 @@
 <script type="text/html" id="tmpl_g">
 	<form action="javascript:void(0);" class="edit-column-settings">
 		<%=settings%>
-		<input type="submit" class="hide">
+		<input type="submit" class="hide" onclick="bindSubmitSave.call(this)">
 	</form>
 </script>
 <script type="text/html" id="tmpl_am">
@@ -85,7 +85,7 @@
 			<p>THREADS</p>
 		</a>
 		<form action="javascript:void(0);" data-column="<%=columnNum%>" class="hide edit-form teal">
-			<input data-column="<%=columnNum%>" type="submit" class="hide">
+			<input data-column="<%=columnNum%>" type="submit" class="hide" onclick="bindSubmitSave.call(this)">
 		</form>
 		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch" onclick="bindSettings.call(this, <%=columnNum%>)">
 			<i class="fa fa-cog fa-2x"></i>
@@ -127,7 +127,7 @@
 <script type="text/html" id="tmpl_s">
 	<div class="form-group">
 		<label class="control-label label-width">
-			Threads <span class="<%=infoClass%> label label-default pull-right">Info</span>
+			Threads <span class="<%=infoClass%> label label-default pull-right" onclick="bindInfoThread.call(this)">Info</span>
 		</label>
 		<select class="form-control <%=threadClass%>"></select>
 	</div>
@@ -137,7 +137,7 @@
 		<label class="control-label label-width">Subreddit 
 			<span class="<%=deleteClass%> label label-danger pull-right">Delete</span>
 		</label>
-		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit">
+		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
 </script>
 <script type="text/html" id="tmpl_u">
@@ -155,8 +155,8 @@
 </script>
 <script type="text/html" id="tmpl_x">
 	<div class="reply-buttons">
-		<button class="cancel-reply btn btn-default">Cancel</button>
-		<button type="submit" class="save-reply btn <%=buttonClass%>">Save</button>
+		<button class="cancel-reply btn btn-default" onclick="bindCancelReply.call(this)">Cancel</button>
+		<button type="submit" class="save-reply btn <%=buttonClass%>" onclick="bindSaveReply.call(this)">Save</button>
 	</div>
 </script>
 <script type="text/html" id="tmpl_y">
@@ -164,7 +164,7 @@
 </script>
 <script type="text/html" id="tmpl_z">
 	<%=label%>
-	<textarea name="text" class="form-control textarea-reply" placeholder="<%=placeholder%>"></textarea>
+	<textarea name="text" class="form-control textarea-reply" placeholder="<%=placeholder%>" onfocus="bindTextAreaReply.call(this)"></textarea>
 </script>
 <script type="text/html" id="tmpl_aa">
 	<div class="<%=className%> reply-form">
@@ -180,38 +180,38 @@
 	<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
 </script>
 <script type="text/html" id="tmpl_ad">
-	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="btn reply"></a>
+	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="btn reply" onclick="bindShowReply.call(this)"></a>
 </script>
 <script type="text/html" id="tmpl_ae">
 	<footer data-id="<%=comment.data.name%>" class="comment-footer">
 	<div class="links-container btn-group">
 		<a data-created-utc="<%=comment.data.created_utc%>" class="btn time-elapsed white"><%=timeElapsed%></a>
-		<a class="btn reply-switch"><i class="fa fa-reply fa-lg"></i></a>
+		<a class="btn reply-switch" onclick="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
 		<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
-		<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>"><i class="fa fa-refresh fa-lg"></i></a>
+		<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" onclick="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
 		<%=expander%>
 	</div>
 	<%=replyForm%>
 	</footer>
 </script>
 <script type="text/html" id="tmpl_af">
-	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="btn reply">
+	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="btn reply" onclick="bindShowReply.call(this)">
 		<span class="reply-num text-warning"><%=replyLength%></span>
 		<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
 	</a>
 </script>
 <script type="text/html" id="tmpl_ag">
 	<div class="media-heading btn-group">
-		<a data-id="<%=comment.data.name%>" class="btn vote up"><i class="fa fa-arrow-up"></i></a>
+		<a data-id="<%=comment.data.name%>" class="btn vote up" onclick="bindVoteCast.call(this)"><i class="fa fa-arrow-up"></i></a>
 		<a data-id="<%=comment.data.name%>" class="score btn"><%=comment.data.score%></a>
-		<a data-id="<%=comment.data.name%>" class="btn vote down"><i class="fa fa-arrow-down"></i></a>
+		<a data-id="<%=comment.data.name%>" class="btn vote down" onclick="bindVoteCast.call(this)"><i class="fa fa-arrow-down"></i></a>
 		<a class="btn from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>
 		<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
 		<%=flair%>
 	</div><%=text%>
 </script>
 <script type="text/html" id="tmpl_ah">
-	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments">
+	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" onclick="bindRefreshComment.call(this)">
 		<i class="fa fa-download"></i>&nbsp; load more comments
 	</div><%=text%>
 </script>
@@ -229,7 +229,7 @@
 <script type="text/html" id="tmpl_al">
 	<li class="list-group-item">
 		<div class="input-group">
-			<input class="form-control" type="text"><span class="input-group-addon"><i class="fa fa-close"></i></span>
+			<input class="form-control" type="text"><span class="input-group-addon" onclick="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
 		</div>
 	</li>
 </script>
