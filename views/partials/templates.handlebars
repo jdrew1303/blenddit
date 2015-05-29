@@ -14,7 +14,7 @@
     </li>
 </script>
 <script type="text/html" id="tmpl_c0">
-	<a class="btn <%=arrPos0%>"><i class="fa fa-<%=arrPos1%> fa-2x"></i></a>
+	<a class="btn <%=arrPos0%>" <%=arrPos2%>><i class="fa fa-<%=arrPos1%> fa-2x"></i></a>
 </script>
 <script type="text/html" id="tmpl_c">
 	<ul class="list-group controls <%=ulClass%>">
@@ -36,7 +36,7 @@
 <script type="text/html" id="tmpl_e">
 	<div class="form-group">
 		<label class="control-label label-width">Subreddit 
-			<span class="label label-danger delete-edit pull-right">Delete</span>
+			<span class="label label-danger delete-edit pull-right" onclick="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
 		</label>
 		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit" onchange="bindFetchThreadValue.call(this, <%=columnNum%>)" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
@@ -135,9 +135,9 @@
 <script type="text/html" id="tmpl_t">
 	<div class="form-group">
 		<label class="control-label label-width">Subreddit 
-			<span class="<%=deleteClass%> label label-danger pull-right">Delete</span>
+			<span class="<%=deleteClass%> label label-danger pull-right" onclick="bindDeleteThread.call(this)">Delete</span>
 		</label>
-		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit" onkeypress="bindPreventEnterButton.call(this)">
+		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit" onchange="bindPopulateThreadSelect.call(this, <%=input%>, <%=groupClass%>, <%=threadClass%>)" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
 </script>
 <script type="text/html" id="tmpl_u">

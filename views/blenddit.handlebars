@@ -234,7 +234,7 @@
             </div>
             <div id='reddit'>
               <div class='btn-group column-control-buttons'>
-                <a class="add-thread-button btn btn-lg btn-block btn-primary">Add Thread</a>
+                <a class="add-thread-button btn btn-lg btn-block btn-primary" onclick="bindAddThreadButton.call(this, '#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls')">Add Thread</a>
               </div>
               <form role='form' action='javascript:void(0)'>
                 <div class="column-settings form-group hide">
@@ -310,15 +310,15 @@
             </div>
             <div id='delete-columns'>
                 <div class='list-group'>
-                    <a href="javascript:void(0)" class="list-group-item" id='delete-reddit-columns'>
+                    <a onclick="bindDeleteColumns.call(this)" class="list-group-item" id='delete-reddit-columns'>
                         <h5 class="list-group-item-heading">Delete Reddit Columns</h5>
                         <p class="list-group-item-text">Delete your saved Reddit columns.</p>
                     </a>
-                    <a href="javascript:void(0)" class="list-group-item" id='delete-twitter-columns'>
+                    <a onclick="bindDeleteColumns.call(this)" href="javascript:void(0)" class="list-group-item" id='delete-twitter-columns'>
                         <h5 class="list-group-item-heading">Delete Twitter Columns</h5>
                         <p class="list-group-item-text">Delete your saved Twitter columns.</p>
                     </a>
-                    <a href="javascript:void(0)" class="list-group-item" id='delete-all-columns'>
+                    <a onclick="bindDeleteColumns.call(this)" href="javascript:void(0)" class="list-group-item" id='delete-all-columns'>
                         <h5 class="list-group-item-heading">Delete All Columns</h5>
                         <p class="list-group-item-text">Delete all of your saved Reddit and Twitter Columns</p>
                     </a>
