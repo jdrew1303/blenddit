@@ -1237,8 +1237,8 @@ function buildColumnOptions(configObj, columnNum) {
         var addThread = tmpl('tmpl_c', {ulClass:"edit-button-group", 
             buttons: buildButtons([
                 ['add-thread-button','plus-circle', 'onclick="bindAddThreadButton.call(this, \'.edit-form[data-column='+columnNum+']\', \'edit-button-group\', \'subreddit-group-edit\', \'subreddit-edit\', \'thread-edit\', \'delete-edit\', \'info-edit\', '+columnNum+')"'],
-                ['cancel-edit-button','close',''],
-                ['save-edit-button','save','']])
+                ['cancel-edit-button','close','onclick="bindCancelEdit.call(this, '+columnNum+')"'],
+                ['save-edit-button','save','onclick="bindSaveEdit.call(this, '+columnNum+')"']])
         });
         for (var i = 0, len = configObj.threads.length; i < len; i++) {
             var threads = tmpl('tmpl_d', {columnNum:columnNum}),
@@ -1249,7 +1249,9 @@ function buildColumnOptions(configObj, columnNum) {
     }();
     var settingsTab = function() {
         var settingsButtons = tmpl('tmpl_c', {ulClass:"edit-button-group", 
-                buttons: buildButtons([['cancel-edit-button','close'],['save-edit-button','save']])
+                buttons: buildButtons([
+                    ['cancel-edit-button','close','onclick="bindCancelEdit.call(this, '+columnNum+')"'],
+                    ['save-edit-button','save','onclick="bindSaveEdit.call(this, '+columnNum+')"']])
             }),
             settingSelects = $('<div>').append($('.column-settings').children().clone().each(function() {
             var $label = $(this).find('label'); var $input = $(this).find('*[id]');
@@ -1264,15 +1266,7 @@ function buildColumnOptions(configObj, columnNum) {
     $(".write-comment[data-column="+columnNum+"]").append(postTab);
 
     inputLoad(columnNum);
-    // bindDeleteThread('delete-edit', 'subreddit-group-edit');
-    // bindInfoThread('info-edit');
-    // bindAddThreadButton('.edit-form[data-column='+columnNum+']', "edit-button-group", "subreddit-group-edit", "subreddit-edit", "thread-edit", "delete-edit", "info-edit", columnNum);
-    bindCancelEdit(configObj, columnNum);
-    bindSaveEdit(configObj, columnNum);
-    // bindSubmitSave('.edit-form[data-column='+columnNum+']', columnNum);
-    // bindSubmitSave('.settings-tab[data-column='+columnNum+']', columnNum);
     setSettingsFromConfig(columnNum, configObj);
-    //bindPreventEnterButton();
 }
 function bindNewComment(newCommentSpan) {
     $(newCommentSpan).unbind('click').on('click', function() {
@@ -1381,23 +1375,19 @@ function bindFetchThreadValue(columnNum) {
         getPosts('/r/'+this.value, '', '', {target: ['.edit-form[data-column='+columnNum+'] .thread-edit',index], errorMsgLoc: this, callback: setThreads});    
     }
 }
-function bindSaveEdit(configObj, columnNum) {
-    $(".column-options[data-column="+columnNum+"] .save-edit-button").unbind('click').on('click', function() {
-        updateConfigObjFromDOM(
-            '.column-options[data-column='+columnNum+'] .subreddit-group-edit', 
-            '.subreddit-edit', 
-            '.thread-edit', 
-            '.column-options[data-column='+columnNum+'] .edit-column-settings', 
-            columnNum
-        );
-        buildColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
-        makeItemActive(columnNum);
-    });
+function bindSaveEdit(columnNum) {
+    updateConfigObjFromDOM(
+        '.column-options[data-column='+columnNum+'] .subreddit-group-edit', 
+        '.subreddit-edit', 
+        '.thread-edit', 
+        '.column-options[data-column='+columnNum+'] .edit-column-settings', 
+        columnNum
+    );
+    buildColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
+    makeItemActive(columnNum);
 }
-function bindCancelEdit(configObj, columnNum) {
-    $(".edit-form[data-column="+columnNum+"] .cancel-edit-button, .settings-tab[data-column="+columnNum+"] .cancel-edit-button").unbind('click').on('click', function() {
-        showAllColumnOptions(columnNum);
-    });
+function bindCancelEdit(columnNum) {
+    showAllColumnOptions(columnNum);
 }
 function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass, optionalColumnNum) {
     var threads = tmpl('tmpl_s', {infoClass:infoClass, threadClass:threadClass}),
