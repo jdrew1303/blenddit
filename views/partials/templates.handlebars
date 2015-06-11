@@ -7,7 +7,7 @@
     </li>
 </script>
 <script type="text/html" id="tmpl_b">
-	<li data-subid="<%=thing.subreddit_id%>" data-subreddit="<%=thing.subreddit%>" data-thread="<%=thing.permalink%>" data-threadid="<%=thing.id%>" class="list-group-item nopacity">
+	<li data-subid="<%=thing.subreddit_id%>" data-subreddit="<%=thing.subreddit%>" data-thread="<%=thing.permalink%>" data-threadid="<%=thing.id%>" class="list-group-item nopacity" onclick="bindWatchThreads.call(this)">
 		<%=thing.title%>
 		<span class="text-primary">in /r/<%=thing.subreddit%></span>
         <span class="badge pull-right"><%=thing.timeElapsed%></span>

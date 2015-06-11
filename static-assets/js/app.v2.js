@@ -564,7 +564,7 @@ function fetchWatchThreads(matchingArray) {
                     $('#watch-threads .list-group.contain').append(buildWatchInputOrThreadHtmlString(thread.data));
                 }
                 fadeIn($('#watch-threads .list-group-item'),100);
-                bindWatchThreads();
+                // bindWatchThreads();
             });
         }});
     });
@@ -1328,9 +1328,7 @@ function bindThreadResults() {
     });
 }
 function bindWatchThreads() {
-    $('#watch-threads .list-group-item').unbind('click').on('click',function() {
-        $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
-    });
+    $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
 }
 function bindDeleteColumns() {
     var fn = new Fn(), config = fn.getFromCookie('config');
