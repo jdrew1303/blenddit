@@ -173,7 +173,7 @@
 	</div>
 </script>
 <script type="text/html" id="tmpl_ab">
-	<a class="btn new-comment"><span class="text-primary diff"><%=newRepliesNum%> new</span></a>
+	<a class="btn new-comment" onclick="bindNewComment.call(this)"><span class="text-primary diff"><%=newRepliesNum%> new</span></a>
 </script>
 <script type="text/html" id="tmpl_ac">
 	<span class="reply-num text-warning"><%=replyLength%></span>
@@ -237,7 +237,7 @@
 	<a target="_blank" href="<%=url%>"><%=title%></a>
 </script>
 <script type="text/html" id="tmpl_ao">
-	<li class="media" data-subreddit="<%=obj.data.subreddit%>" data-thread="<%=permalink%>" data-id="<%=obj.data.id%>" data-subid="<%=obj.data.subreddit_id%>">
+	<li class="media" data-subreddit="<%=obj.data.subreddit%>" data-thread="<%=permalink%>" data-id="<%=obj.data.id%>" data-subid="<%=obj.data.subreddit_id%>" onclick="bindThreadResults.call(this)">
 		<a class="subreddit-thumb pull-left" href="#">
 	        <%=thumbnail%>
 		</a>
@@ -254,7 +254,7 @@
 	<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>
 </script>
 <script type="text/html" id="tmpl_aq">
-	<li class="media" data-id="<%=obj.data.id%>" data-subreddit="<%=obj.data.display_name%>">
+	<li class="media" data-id="<%=obj.data.id%>" data-subreddit="<%=obj.data.display_name%>" onclick="bindSubList.call(this)">
 		<a class="subreddit-thumb pull-left" href="#">&nbsp</a>
 		<div class="media-body">
 			<h4 class="media-heading"><span class="text-warning">/r/<%=obj.data.display_name%></span> : <%=obj.data.title%></h4>

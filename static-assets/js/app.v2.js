@@ -503,7 +503,6 @@ function subredditsMatching(data, query, loadMore) {
     $('#subreddit-result-title').text('Subreddits matching "'+query+'"..');
     buttonType();
     buildRedditMedia(data, 't5', loadMore);
-    bindSubList();
 }
 function threadResults(data, obj, loadMore, type) {
     showFeature('#subreddit-container');
@@ -513,7 +512,6 @@ function threadResults(data, obj, loadMore, type) {
         : $('#subreddit-result-title').text('/r/'+obj.query);
     buttonType();
     buildRedditMedia(data, 't3', loadMore);
-    bindThreadResults();
 }
 function typeAheadReddit(inputSelector, completeFn) {
     $(inputSelector).typeahead(null, {
@@ -545,10 +543,6 @@ function watchList() {
             match:['Game Thread','Match Thread','Live Thread']};
     buildWatchList(localWatch);
     fetchWatchThreads(localWatch.match);
-    // bindDeleteWatchButtons();
-    // bindWatchSave();
-    // bindWatchAdd();
-    // bindWatchRefresh();
 }
 function fetchWatchThreads(matchingArray) {
     $('#watch-threads .list-group.contain').children().remove();
@@ -564,7 +558,6 @@ function fetchWatchThreads(matchingArray) {
                     $('#watch-threads .list-group.contain').append(buildWatchInputOrThreadHtmlString(thread.data));
                 }
                 fadeIn($('#watch-threads .list-group-item'),100);
-                // bindWatchThreads();
             });
         }});
     });
@@ -929,21 +922,18 @@ function newCommentsOnRefresh(replyLength, name, commentFooter) {
         $replyNum.text(replyLength);
         if (newRepliesNum > 0 && $(commentFooter+' .new-comment').length===0) {
             $(newButton).insertAfter(commentFooter+' .reply');
-            bindNewComment(commentFooter+' .new-comment');
         } else {
             if (!$('footer[data-id='+name+'] .reply').children().length && $preloadedReplies.length>0) {
                 $('footer[data-id='+name+'] .reply').append(optionalExpander);
                 $('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square');
             }
             newRepliesNum <= 0 ? void 0 : $(commentFooter+' .new-comment .diff').text(newRepliesNum+' new');
-            bindNewComment(commentFooter+' .new-comment');
         }
     } else if (replyLength > 0 && $replySwitch.length===0) { // replies don't exist until now
         var existingRepls = tmpl('tmpl_ad', {name:name, replyLength:replyLength});
         $(existingRepls).insertAfter(commentFooter+' .refresh-comment');
         if (newRepliesNum > 0) {
             $(newButton).insertAfter(commentFooter+' .reply');
-            bindNewComment(commentFooter+' .new-comment');
         }
         if ($preloadedReplies.hasClass('faded')) {
             $('footer[data-id='+name+'] .reply').append(optionalExpander);
@@ -1133,7 +1123,6 @@ function buildColumn(configObj, num) {
         framePosition = tmpl('tmpl_n', {num:num, configObj:configObj, frameContainer:frameContainer}),
         item = tmpl('tmpl_o', {num:num, active: num===0?'active':'', framePosition:framePosition});
     buildColumnToUI(item, num);
-    //bindColumnControls(num);
     buildColumnOptions(configObj, num, 'column');
     if (configObj.type=='reddit') {
         getCommentsForColumn(configObj, num);
@@ -1268,10 +1257,8 @@ function buildColumnOptions(configObj, columnNum) {
     inputLoad(columnNum);
     setSettingsFromConfig(columnNum, configObj);
 }
-function bindNewComment(newCommentSpan) {
-    $(newCommentSpan).unbind('click').on('click', function() {
-        $(this).parent().parent().find('.refresh-comment').trigger('click');
-    });
+function bindNewComment() {
+    $(this).parent().parent().find('.refresh-comment').trigger('click');
 }
 function bindLoadMore(after, type, objParam, resetCount) {
     var $media_more = $('.media-more li');
@@ -1308,24 +1295,20 @@ function bindMediaMore(after, type, objParam) {
     });
 }
 function bindSubList() {
-    $('.media-results li').unbind('click').on('click', function() {
-        copyToAllRedditSearches($(this).data('subreddit'));
-        threadsOfSubreddit($(this).data('subreddit'));
-    });
+    copyToAllRedditSearches($(this).data('subreddit'));
+    threadsOfSubreddit($(this).data('subreddit'));
 }
 function bindThreadResults() {
-    $('.media-results li').unbind('click').on('click', function() {
-        var threadObj = {}, data = {};
-        data.subreddit_id = $(this).data('subid');
-        data.subreddit = $(this).data('subreddit');
-        data.permalink = $(this).data('thread');
-        data.id = $(this).data('id');
-        data.title = $(this).find('h4').text();
-        threadObj.data = data;
-        addToConfigObj(buildRedditConfigObjByThreads([threadObj]));
-        configObjAction();
-        makeItemActive(new Fn().getFromCookie('config').length-1);
-    });
+    var threadObj = {}, data = {};
+    data.subreddit_id = $(this).data('subid');
+    data.subreddit = $(this).data('subreddit');
+    data.permalink = $(this).data('thread');
+    data.id = $(this).data('id');
+    data.title = $(this).find('h4').text();
+    threadObj.data = data;
+    addToConfigObj(buildRedditConfigObjByThreads([threadObj]));
+    configObjAction();
+    makeItemActive(new Fn().getFromCookie('config').length-1);
 }
 function bindWatchThreads() {
     $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
