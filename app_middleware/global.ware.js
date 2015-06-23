@@ -64,8 +64,12 @@ module.exports = function(module) {
 			response.write('Redirecting to ' + host + request.url + '');
 			response.end();
 		},
-		requireHTTPS : function(req, res, next) { // user is signed in but requested using http
-			if(req.isAuthenticated() && !req.secure) {
+		/*
+		 * Force HTTPS redirect for all users so we can leverage local storage via the
+		 * HTTPS origin.
+		*/
+		requireHTTPS : function(req, res, next) {
+			if (!req.secure) {
 				var host = nconf.get('debug') ? '127.0.0.1:8443' : req.get('Host');
 				return res.redirect(['https://', host, req.url].join(''));
 			}
