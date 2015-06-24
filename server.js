@@ -34,11 +34,11 @@ app.engine('handlebars', exphbs({defaultLayout: 'main'}));
 app.set('view engine', 'handlebars');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 app.use(session({ secret: 'dat-ass', resave: false, saveUninitialized: false}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(globalware.requireHTTPS)
+app.use(globalware.requireHTTPS);
 app.use(pjax());
 app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/',{maxAge:31536000000}));
 app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/',{maxAge:31536000000}));
@@ -50,8 +50,14 @@ app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/
 */
 routes(app, globalware, [], kutil);
 
+// Create an application server instance on HTTP port 8080 (80)
 http.createServer(app).listen(nconf.get('port_http'));
-https.createServer({key:fs.readFileSync('key.pem'), cert:fs.readFileSync('cert.pem')}, app).listen(nconf.get('port_https'));
+
+// Create an application server instance on HTTPS port 8443 (443)
+nconf.get('debug')
+    ? https.createServer({key:fs.readFileSync('key.pem'), cert:fs.readFileSync('cert.pem')}, app).listen(nconf.get('port_https'))
+    : https.createServer(kutil.getProductionHttpsOptions(), app).listen(nconf.get('port_https'));
+
 kutil.serverOut();
 
 // Generating a self signed certificate that works.
