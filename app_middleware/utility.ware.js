@@ -76,29 +76,6 @@ KUtil.prototype = {
           }
         };
         return options;
-	},
-	getProductionHttpsOptions : function() {
-		var ca = [],
-			chain = fs.readFileSync('commodo/www.blenddit.com.ca-bundle', 'utf8'),
-			chain = chain.split('\n'),
-			cert = [];
-
-		for (i = 0, len = chain.length; i < len; i++) {
-			var line = chain[i];
-			if (!(line.length !== 0)) {
-				continue;
-			}
-			cert.push(line);
-			if (line.match(/-END CERTIFICATE-/)) {
-				ca.push(cert.join("\n"));
-				cert = [];
-			}
-		}
-		return {
-			ca: ca,
-			key: 'commodo/key.pem',
-			cert: 'commodo/www.blenddit.com.crt'
-		};
 	}
 };
 module.exports = exports = new KUtil();

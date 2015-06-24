@@ -56,7 +56,13 @@ http.createServer(app).listen(nconf.get('port_http'));
 // Create an application server instance on HTTPS port 8443 (443)
 nconf.get('debug')
     ? https.createServer({key:fs.readFileSync('key.pem'), cert:fs.readFileSync('cert.pem')}, app).listen(nconf.get('port_https'))
-    : https.createServer(kutil.getProductionHttpsOptions(), app).listen(nconf.get('port_https'));
+    : https.createServer(
+        {
+            ca: [fs.readFileSync('commodo/bundle0.crt'), fs.readFileSync('commodo/bundle1.crt'), fs.readFileSync('commodo/bundle2.crt')],
+            key: fs.readFileSync('commodo/key.pem'),
+            cert: fs.readFileSync('commodo/www.blenddit.com.crt')
+        }, 
+        app).listen(nconf.get('port_https'));
 
 kutil.serverOut();
 
