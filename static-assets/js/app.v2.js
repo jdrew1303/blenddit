@@ -112,20 +112,22 @@
         }
     },
     scriptErrorEvent = function(evt) { // CDN broke, use local
-        var brokenScript = evt.srcElement.src, localScript;
-        console.warn('Error loading CDN resource: '+brokenScript+'. Loading local resource.');
-        removeBroken('script', brokenScript);
-        switch (brokenScript) {
-            case scripts.jqueryCDN:
-                localScript = scripts.jqueryLocal; break;
-            case scripts.bootstrapCDN:
-                localScript = scripts.bootstrapLocal; break;
-            case scripts.pjaxCDN:
-                localScript = scripts.pjaxLocal; break;
-            case scripts.typeaheadCDN:
-                localScript = scripts.typeaheadLocal; break;
-        }
-        require([localScript], scriptSuccessEvent, scriptErrorEvent, 'script');
+        try {
+            var brokenScript = evt.srcElement.src, localScript;
+            console.warn('Error loading CDN resource: '+brokenScript+'. Loading local resource.');
+            removeBroken('script', brokenScript);
+            switch (brokenScript) {
+                case scripts.jqueryCDN:
+                    localScript = scripts.jqueryLocal; break;
+                case scripts.bootstrapCDN:
+                    localScript = scripts.bootstrapLocal; break;
+                case scripts.pjaxCDN:
+                    localScript = scripts.pjaxLocal; break;
+                case scripts.typeaheadCDN:
+                    localScript = scripts.typeaheadLocal; break;
+            }
+            require([localScript], scriptSuccessEvent, scriptErrorEvent, 'script');
+        } catch(err) { throw err; }
     },
     cssErrorEvent = function(evt) {
         console.error('Error loading resource: '+evt.srcElement.href);
