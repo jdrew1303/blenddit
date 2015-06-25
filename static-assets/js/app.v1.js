@@ -236,16 +236,16 @@ function pjx() {
     $(document).pjax('a[data-pjax]', '#pjax-container');
     $(document).on('pjax:send', function() {});
     $(document).on('pjax:end', function() {
-            if ($('#listsjs').length>0) { listsjs();
-            } else if ($('#blenddit').length>0) { blenddit();
-            } else {
-                $('.teams').hide();
-                $('#sidebarTrigger').hide();
-                $('.navbar-fixed-top').show();
-                $('.navbar-brand > .text-warning').text('kurtlocker.org');
-                $('.social').show();
-                $('html, body').removeClass('noverflow');
-            }
+        if ($('#listsjs').length>0) { listsjs();
+        } else if ($('#blenddit').length>0) { blenddit();
+        } else {
+            $('.teams').hide();
+            $('#sidebarTrigger').hide();
+            $('.navbar-fixed-top').show();
+            $('.navbar-brand > .text-warning').text('kurtlocker.org');
+            $('.social').show();
+            $('html, body').removeClass('noverflow');
+        }
     });
 }
 function listsjs() {

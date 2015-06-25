@@ -176,7 +176,14 @@ Fn.prototype = {
             if (f(elem)) { bool = true; return;}
         }); return bool;
     },
-    setCookie : function(cname, cvalue) {
+    deleteCookie : function(cname) {
+        this.setCookie(cname, undefined, true);
+    },
+    setCookie : function(cname, cvalue, deleteFlag) {
+        if (deleteFlag) {
+            document.cookie = cname + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            return;
+        }
         var d = new Date();
         d.setTime(d.getTime() + (3650*24*60*60*1000));
         var expires = "expires="+d.toUTCString();
@@ -193,22 +200,40 @@ Fn.prototype = {
         }
         return "";
     },
-    getBlurred : function() {
-        document.activeElement.blur();
-        $('input').blur();
-    },
     cookieExists : function(cname) {
         return this.getCookie(cname) ? true : false;
+    },
+    getFromStorage : function(item) { 
+        if (item == 'config') {
+            return localStorage
+                ? localStorage.getItem(item)
+                    ? JSON.parse(localStorage.getItem(item)) : []
+                : this.cookieExists(item)
+                    ? JSON.parse(this.getCookie(item)) : []
+        } else {
+            return localStorage
+                ? localStorage.getItem(item)
+                    ? JSON.parse(localStorage.getItem(item)) : {}
+                : this.cookieExists(item)
+                    ? JSON.parse(this.getCookie(item)) : {}
+        }
+    },
+    setInStorage : function(name, item) {
+        var item = JSON.stringify(item);
+        if (localStorage) {
+            localStorage.setItem(name, item);
+            this.cookieExists(name) ? this.deleteCookie(name) : void 0;
+        } else {
+            this.setCookie(name, item);    
+        }
     },
     brokenImage : function(img) {
         $(img).parents('.media a').empty().append(tmpl('tmpl_ap',{}));
     },
-    getFromCookie : function(item) { 
-        return item == 'config' 
-            ? this.cookieExists(item) ? JSON.parse(this.getCookie(item)) : []
-            : this.cookieExists(item) ? JSON.parse(this.getCookie(item)) : {}
-    },
-    setInCookie : function(name, item) { this.setCookie(name, JSON.stringify(item));}
+    getBlurred : function() {
+        document.activeElement.blur();
+        $('input').blur();
+    }
 }
 
 // tmpl loads templates from the templates.handlebars script tags and pushes
@@ -397,14 +422,14 @@ function visibilityChange(){
 }
 function autoRefresh(bool, exceptNum) {
     if (!bool) {
-        new Fn().getFromCookie('config').forEach(function(obj, i) {
+        new Fn().getFromStorage('config').forEach(function(obj, i) {
             var frameContentExists = $('.frame-content[data-column='+i+']').length > 0;
             typeof exceptNum !== 'undefined' && i == exceptNum && frameContentExists
                 ? typeof window['r'+i] === 'undefined' ? toggleRefresh(i, true) : void 0 // exceptNum case - allow this column to continue refreshing (if toggled on)
                 : frameContentExists ? toggleRefresh(i, false) : void 0; // turn off this column's autorefresh and clear interval 
         });
     } else {
-        new Fn().getFromCookie('config').forEach(function(obj, i) {
+        new Fn().getFromStorage('config').forEach(function(obj, i) {
             var frameContentExists = $('.frame-content[data-column='+i+']').length > 0;
             if (frameContentExists && typeof window['r'+i] === 'undefined') toggleRefresh(i, true); 
         }); // turn on all column auto refresh (if toggled on)
@@ -525,7 +550,7 @@ function typeAheadReddit(inputSelector, completeFn) {
     });
 }
 function configObjAction() {
-    if (new Fn().getFromCookie('config').length > 0) {
+    if (new Fn().getFromStorage('config').length > 0) {
         $('.carousel-inner').children().remove();
         buildConfigToUI();
     } else {
@@ -537,7 +562,7 @@ function popOverOptions(paramPlacement, paramTitle, paramContent) {
     return {placement:paramPlacement, title:paramTitle,content:paramContent, trigger:'manual'};
 }
 function watchList() {
-    var localWatch, watch = new Fn().getFromCookie('watch');
+    var localWatch, watch = new Fn().getFromStorage('watch');
     Object.keys(watch).length
         ? localWatch = watch
         : localWatch = {
@@ -578,7 +603,7 @@ function saveWatchList() {
             input.value !== "" && input.value !== null ? matchArray.push(input.value) : '';
         }); return matchArray;
     }();
-    new Fn().setInCookie('watch', watchList);
+    new Fn().setInStorage('watch', watchList);
 }
 function contentResizeEvent() {
     window.height = window.innerHeight;
@@ -700,7 +725,7 @@ function toggleRefresh(columnNum, override) {
     var condition = typeof override !== 'undefined' 
         ? $(".refreshSwitch[data-column="+columnNum+"] i").hasClass('fa-toggle-on') && override
         : $(".refreshSwitch[data-column="+columnNum+"] i").hasClass('fa-toggle-on'),
-        config = new Fn().getFromCookie('config');
+        config = new Fn().getFromStorage('config');
     deleteRefresh(columnNum);
     if (condition && window.autoRefreshState) {
         window['r'+columnNum] = setInterval(function() {
@@ -722,7 +747,7 @@ function getCommentsForColumn(configObj, columnNum) {
             sort = configObj.settings.sortBy,
             limit = configObj.settings.limitPosts;
         getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
-            var config = new Fn().getFromCookie('config');
+            var config = new Fn().getFromStorage('config');
             dataArray = dataArray.concat([data.concat(target.columnNum).concat(target.threadNum)]);
             if (typeof config[target.columnNum] !== 'undefined' && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
                 var mergedData = getMergedData(dataArray);
@@ -755,7 +780,7 @@ function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClas
         settings = $(settingsClass).find('.form-control'), newColumnAdded = false,
         type = typeof num !== 'undefined' && $(".frame-position[data-column="+num+"]").data('type')=='reddit' || !$('#reddit').hasClass('hide')
             ? 'reddit' : 'twitter',
-        fn = new Fn(), config = fn.getFromCookie('config');
+        fn = new Fn(), config = fn.getFromStorage('config');
     $group.each(function(index, el) {
         var threadVal = $(el).find(threadClass).val(), 
             subVal = $(el).find(subClass+'.tt-input').val();
@@ -782,19 +807,19 @@ function updateConfigObjFromDOM(parentClass, subClass, threadClass, settingsClas
         typeof num !== 'undefined'
             ? config[num] = column
             : function() { config = config.concat(column); newColumnAdded = true; }();
-        fn.setInCookie('config', config);
+        fn.setInStorage('config', config);
     }
     return newColumnAdded;
 }
 function addToConfigObj(column) {
     var fn = new Fn();
-    fn.setInCookie('config', fn.getFromCookie('config').concat(column));
+    fn.setInStorage('config', fn.getFromStorage('config').concat(column));
 }
 function setThreads(data, selectTarget) {
     var $select = typeof selectTarget[2] !== 'undefined' // columnNum was passed
             ? $($(selectTarget[0]+"[data-column="+selectTarget[2]+"]")[selectTarget[1]])
             : $($(selectTarget[0])[selectTarget[1]]),
-        config = new Fn().getFromCookie('config');
+        config = new Fn().getFromStorage('config');
     $select.children().remove();
     data.data.children.forEach(function(post) {
         $select.append(tmpl('tmpl_v', {post:post}));
@@ -1200,7 +1225,7 @@ function buildReplyForm(thing_id, author, isTopLevel) {
     return form;
 }
 function buildConfigToUI(deleteFlag) {
-    var config = new Fn().getFromCookie('config');
+    var config = new Fn().getFromStorage('config');
     if (config.length===0) {
         showFeature('#greeting');
         $('#watch-threads .list-group.contain').children().length === 0 ? watchList() : void 0;
@@ -1310,22 +1335,22 @@ function bindThreadResults() {
     threadObj.data = data;
     addToConfigObj(buildRedditConfigObjByThreads([threadObj]));
     configObjAction();
-    makeItemActive(new Fn().getFromCookie('config').length-1);
+    makeItemActive(new Fn().getFromStorage('config').length-1);
 }
 function bindWatchThreads() {
     $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
 }
 function bindDeleteColumns() {
-    var fn = new Fn(), config = fn.getFromCookie('config');
+    var fn = new Fn(), config = fn.getFromStorage('config');
     if (this.id=='delete-reddit-columns') {
         config = config.filter(function(obj){
             return obj.type != 'reddit';
         });
-        fn.setInCookie('config',config);
+        fn.setInStorage('config',config);
         buildConfigToUI(true);
     } else if (this.id=='delete-all-columns') {
         config = [];
-        fn.setInCookie('config',[]);
+        fn.setInStorage('config',[]);
         buildConfigToUI(true);
     }
     $('#controlModal').modal('hide');
@@ -1341,7 +1366,7 @@ function bindSubmitSave(context) {
 }
 function inputLoad(columnNum) {
     var $subreddit_edit = $(".edit-form[data-column="+columnNum+"] .subreddit-edit"),
-        config = new Fn().getFromCookie('config');
+        config = new Fn().getFromStorage('config');
     $subreddit_edit.each(function(index, el) {
         this.value = config[columnNum].threads[index].subreddit;
         typeAheadReddit(el, function(element){
@@ -1366,7 +1391,7 @@ function bindSaveEdit(columnNum) {
         '.column-options[data-column='+columnNum+'] .edit-column-settings', 
         columnNum
     );
-    buildColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
+    buildColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
     makeItemActive(columnNum);
 }
 function bindCancelEdit(columnNum) {
@@ -1569,7 +1594,7 @@ function bindWatchSave() {
                 });
                 addToConfigObj(buildRedditConfigObjByThreads(children));
                 configObjAction();
-                makeItemActive(fn.getFromCookie('config').length-1);
+                makeItemActive(fn.getFromStorage('config').length-1);
             } else {
                 $('#watch-threads .list-group-item.controls').launchPopOver(3000,
                     popOverOptions('top','Verification', 'Please select at least one thread from the list.'));
@@ -1582,10 +1607,10 @@ function bindHelpModal() {
 }
 function bindDeleteColumn() {
     var fn = new Fn(),
-        config = fn.getFromCookie('config');
+        config = fn.getFromStorage('config');
     config.forEach(function(obj, i){ deleteRefresh(i); });
     fn.remove(config, $(this).data('column'));
-    fn.setInCookie('config', config);
+    fn.setInStorage('config', config);
     buildConfigToUI(true);
 }
 function bindAutoRefreshActive() {
@@ -1596,7 +1621,7 @@ function bindAutoRefreshActive() {
 function bindColumnsOrHomeButton() {
     var type = buttonType();
     if (type=='columns') {
-        new Fn().getFromCookie('config').length > 0
+        new Fn().getFromStorage('config').length > 0
             ? buildConfigToUI() : $(this).parent().launchPopOver(3000,
             popOverOptions('top','No columns','Build at least one column to view columns.'));
     } else { // type home
@@ -1614,7 +1639,7 @@ function bindRedditSearchRadio() {
 function bindSaveChanges() {
     var newColumnAdded = addColumnToConfig();
     newColumnAdded 
-        ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromCookie('config').length-1); }()
+        ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromStorage('config').length-1); }()
         : buildConfigToUI();
 }
 function bindPreventEnterButton() {
@@ -1662,11 +1687,11 @@ function bindLeftButtons() {
 function bindRefreshCommentSwitch(columnNum) {
     var $icon = $(this).find('i');
     $icon.toggleClass('fa-toggle-on fa-toggle-off');
-    if ($icon.hasClass('fa-toggle-on')) getCommentsForColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
+    if ($icon.hasClass('fa-toggle-on')) getCommentsForColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
     toggleRefresh(columnNum);
 }
 function bindGetCommentsForColumn(columnNum) {
-    getCommentsForColumn(new Fn().getFromCookie('config')[columnNum], columnNum);
+    getCommentsForColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
 }
 function bindColumnBars(columnNum) {
     var $columnOptions = $(".column-options[data-column="+columnNum+"]");
@@ -1707,6 +1732,6 @@ function bindWriteComment(columnNum) {
 }
 function bindDeleteColumnButton(columnNum) {
     $('#delete-column').data('column', columnNum);
-    $('#column-to-delete').text(new Fn().getFromCookie('config')[columnNum].settings.name);
+    $('#column-to-delete').text(new Fn().getFromStorage('config')[columnNum].settings.name);
     $('#delete-column-modal').modal();
 }
