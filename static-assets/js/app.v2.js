@@ -90,10 +90,9 @@
                     }, closeTime);
                 };
                 $.fn.hasWidthOverflowed = function(){
-                    return this.length > 0 ? this[0].scrollWidth > this[0].clientWidth : false;
-                };
-                $.fn.hasHeightOverflowed = function() {
-                    return this.length > 0 ? this[0].scrollHeight > this[0].clientHeight : false;
+                    return this.length > 0 
+                        ? this[0].scrollWidth > this[0].clientWidth && this[0].clientWidth > 640
+                        : false;
                 };
                 document.getElementsByDataAttribute = function(className, dataAttr, dataValue) {
                     var nodeList = document.querySelectorAll(className), nodeArray = [];

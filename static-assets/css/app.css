@@ -104,6 +104,22 @@ html, body {
     max-height: 420px;
     overflow: auto;
 }
+#control-panel-buttons .list-group .list-group-item,
+#accounts .list-group .list-group-item {
+  border:0;
+  border-right: 1px solid #282828;
+  margin: 0;
+}
+#control-panel-buttons .list-group .list-group-item:first-child,
+#accounts .list-group .list-group-item:first-child {
+  border-top-right-radius: 0px;
+  border-top-left-radius: 0px;
+}
+#control-panel-buttons .list-group .list-group-item:last-child,
+#accounts .list-group .list-group-item:last-child {
+  border-bottom-right-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
 #control-panel-buttons .active {
     background-color: #484848;
 }
@@ -800,5 +816,8 @@ span.twitter-typeahead {
   }
   .carousel-inner>.active, .carousel-inner>.next, .carousel-inner>.prev {
     display:block;
+  }
+  .carousel-inner .item.active {
+    padding: 0;
   }
 }
