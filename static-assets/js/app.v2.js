@@ -1403,7 +1403,8 @@ function bindAddThreadButton(context, target, groupClass, subClass, threadClass,
             deleteClass:deleteClass, 
             subClass:subClass,
             groupClass:"\'"+groupClass+"\'",
-            threadClass:"\'"+threadClass+"\'"
+            threadClass:"\'"+threadClass+"\'",
+            columnNum: typeof optionalColumnNum !== 'undefined' ? optionalColumnNum : false
         }),
         subreddit_group = tmpl('tmpl_u', {groupClass:groupClass, subreddit:subreddit, threads:threads});
     $(subreddit_group).insertAfter(context+' .'+target);

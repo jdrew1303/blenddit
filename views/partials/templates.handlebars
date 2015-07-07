@@ -135,7 +135,7 @@
 <script type="text/html" id="tmpl_t">
 	<div class="form-group">
 		<label class="control-label label-width">Subreddit 
-			<span class="<%=deleteClass%> label label-danger pull-right" onclick="bindDeleteThread.call(this)">Delete</span>
+			<span class="<%=deleteClass%> label label-danger pull-right asdf" onclick="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
 		</label>
 		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit" onchange="bindPopulateThreadSelect.call(this, <%=input%>, <%=groupClass%>, <%=threadClass%>)" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
