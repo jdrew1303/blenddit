@@ -61,7 +61,7 @@
 </script>
 <script type="text/html" id="tmpl_j">
 	<div data-column="<%=num%>" class="btn-group column-bars">
-		<a class="btn" onclick="bindColumnBars.call(this, <%=num%>);">
+		<a class="btn" <%=event%>="bindColumnBars.call(this, <%=num%>);">
 			<i data-column="<%=num%>" class="fa fa-bars fa-lg"></i>
 		</a>
 	</div>

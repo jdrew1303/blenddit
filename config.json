@@ -9,5 +9,5 @@
 		"REDDIT_CONSUMER_SECRET_LIVE" : "nME1dKnhpIQye_UB9-KNzN9uahQ"
 	},
 	"jsFiles" : ["app.v2.js","ga.js"],
-	"cssFiles" : ["bootstrap.min.css","ir_black.css","app.css"]
+	"cssFiles" : ["bootstrap.min.css","app.css"]
 }

@@ -36,3 +36,9 @@
 	</footer>
   </div>
 </nav>
+{{#if debug}}
+	<script type="text/javascript" src="static-assets/js/ga.js?v={{version}}"></script>
+	<script type="text/javascript" src="static-assets/js/app.v2.js?v={{version}}"></script>
+{{else}}
+	<script type="text/javascript" src="static-assets/js/all.js?v={{version}}" async></script>
+{{/if}}

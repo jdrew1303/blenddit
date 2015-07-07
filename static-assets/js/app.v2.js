@@ -254,6 +254,9 @@ function tmpl(str, data){
       + "');}return p.join('');");
     return data ? fn(data) : fn;
 }
+function getPressEvent() { // window.isMobile defined in head.handlebars
+    return window.isMobile ? 'ontouchend' : 'onclick'
+}
 function hideControlModal() {
     $('#controlModal').modal('hide');
 }
@@ -1136,7 +1139,7 @@ function buildRedditConfigObjByThreads(children) {
 function buildColumn(configObj, num) {
     $(".item[data-column="+num+"]").remove();
     var frameContent = tmpl('tmpl_i', {num:num}),
-        icons = tmpl('tmpl_j', {num:num}),
+        icons = tmpl('tmpl_j', {num:num, event:getPressEvent()}),
         frame = tmpl('tmpl_l', {
             bigButtons: tmpl('tmpl_p',{columnNum:num}), 
             type: configObj.type == 'reddit' ? tmpl('tmpl_ired', {}) : tmpl('tmpl_itwt',{}),
