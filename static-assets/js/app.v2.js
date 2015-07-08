@@ -254,11 +254,8 @@ function tmpl(str, data){
       + "');}return p.join('');");
     return data ? fn(data) : fn;
 }
-function getPressEvent() { // window.isMobile defined in head.handlebars
-    return window.isMobile ? 'onclick' : 'onclick'
-}
-function getTriggerEvent() {
-    return window.isMobile ? 'click' : 'click'
+function getPressEvent() { // window.pressType comes from user-agent request to server
+    return window.pressType;
 }
 function hideControlModal() {
     $('#controlModal').modal('hide');
@@ -449,7 +446,7 @@ function buttonType(override) {
 }
 function redditSearch(parent, trigger) {
     if (!$(parent+' .reddit-search-input').hasClass('tt-input')) typeAheadReddit(parent+' .reddit-search-input');
-    if (trigger) $(parent+' .reddit-search-submit').trigger(getTriggerEvent());
+    if (trigger) bindRedditSearch.call($(parent+' .reddit-search-submit'));
 }
 function submissionsSearchAPI(obj) {
     obj.url = window.location.protocol+'//www.reddit.com/search.json?q='+encodeURIComponent(obj.query)+'&restrict_sr=off&sort='+obj.sorted_by+'&t='+obj.links_from;
@@ -513,7 +510,7 @@ function copyToAllRedditSearches(query, obj) {
             sortedBy = $form.find('select.sorted-by').val(),
             linksFrom = $form.find('select.links-from').val();
         $('form.reddit-search').each(function(i, form) {
-            $(form).find('input[type=radio][value='+radioType+']').prop('checked',true).trigger(getTriggerEvent());
+            bindRedditSearchRadio.call($(form).find('input[type=radio][value='+radioType+']').prop('checked',true));
             $(form).find('select.sorted-by option[value='+sortedBy+']').prop('selected',true);
             $(form).find('select.links-from option[value='+linksFrom+']').prop('selected',true);
         });
@@ -887,12 +884,12 @@ function postTopLevelComment(objArray, additionalData) {
     $submitting.removeClass('faded').addClass('hide');
     $form.removeClass('hide');
     frame_content_height(additionalData.columnNum);
-    $('.column-bars[data-column='+additionalData.columnNum+'] > a, .frame[data-column='+additionalData.columnNum+'] .frame-header').trigger(getTriggerEvent());
+    bindColumnBars.call($('.column-bars[data-column='+additionalData.columnNum+'] > a'));
+    bindGetCommentsForColumn.call($('.frame[data-column='+additionalData.columnNum+'] .frame-header'));
 }
 function insertReplyIntoDOM(objArray, additionalData) {
     $(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
         .insertAfter('#'+objArray[0].data.parent_id+' .comment-footer:first');
-    $('#'+objArray[0].data.parent_id+' .fa-reply:first').trigger(getTriggerEvent());
     externalLinks('.md a');
     fadeIn($('#'+objArray[0].data.name), 100);
 }
@@ -1290,7 +1287,7 @@ function buildColumnOptions(configObj, columnNum) {
     setSettingsFromConfig(columnNum, configObj);
 }
 function bindNewComment() {
-    $(this).parent().parent().find('.refresh-comment').trigger(getTriggerEvent());
+    bindRefreshComment.call($(this).parent().parent().find('.refresh-comment'));
 }
 function bindLoadMore(after, type, objParam, resetCount) {
     var $media_more = $('.media-more li');
@@ -1367,7 +1364,7 @@ function bindAccounts() {
     });
 }
 function bindSubmitSave(context) {
-    $(this.form).find('.save-edit-button').trigger(getTriggerEvent());
+    bindSaveEdit.call($(this.form).find('.save-edit-button'));
 }
 function inputLoad(columnNum) {
     var $subreddit_edit = $(".edit-form[data-column="+columnNum+"] .subreddit-edit"),
@@ -1513,7 +1510,7 @@ function bindTextAreaReply() {
 function bindCancelReply(){
     var $comment_footer = $(this).parents('.comment-footer');
     $comment_footer.length>0
-        ? $comment_footer.find('.reply-switch').trigger(getTriggerEvent())
+        ? bindReplySwitch.call($comment_footer.find('.reply-switch'))
         : showAllColumnOptions($(this).parents('.column-options').data('column'));
 }
 function bindReplySwitch() {
@@ -1700,7 +1697,6 @@ function bindGetCommentsForColumn(columnNum) {
     getCommentsForColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
 }
 function bindColumnBars(columnNum) {
-    event.preventDefault();
     var $columnOptions = $(".column-options[data-column="+columnNum+"]");
     if ($columnOptions.hasClass('hide')) {
         $columnOptions.removeClass('hide');
@@ -1727,10 +1723,12 @@ function bindManageThreads(columnNum) {
     frame_content_height(columnNum);
 }
 function bindSettings(columnNum) {
+    event.preventDefault();
     var $settings_form = $('.settings-tab[data-column='+columnNum+']');
     !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($settings_form, columnNum);
 }
 function bindWriteComment(columnNum) {
+    event.preventDefault();
     var $write_comment = $('.write-comment[data-column='+columnNum+']'),
         targetContext = '.write-comment[data-column='+columnNum+']', fromContext = '.edit-form[data-column='+columnNum+']';
     setPostThreads(targetContext, fromContext);

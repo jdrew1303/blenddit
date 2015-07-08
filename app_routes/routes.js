@@ -17,6 +17,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 			threadidURI : req.session.threadid,
 			threadidsURI : req.session.threadids
 		};
+		json.pressType = kutil.getPressType(req.headers['user-agent'])
 		res.renderPjax('blenddit', json);	
 		req.session.subreddit = req.session.threadid = req.session.threadids = null;
 	});

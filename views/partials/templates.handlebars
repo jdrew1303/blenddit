@@ -2,12 +2,12 @@
 	<li class="list-group-item">
         <div class="input-group">
         	<input class="form-control" type="text" value="<%=thing%>"></input>
-        	<span class="input-group-addon" onclick="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
+        	<span class="input-group-addon" <%=getPressEvent()%>="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
     	</div>
     </li>
 </script>
 <script type="text/html" id="tmpl_b">
-	<li data-subid="<%=thing.subreddit_id%>" data-subreddit="<%=thing.subreddit%>" data-thread="<%=thing.permalink%>" data-threadid="<%=thing.id%>" class="list-group-item nopacity" onclick="bindWatchThreads.call(this)">
+	<li data-subid="<%=thing.subreddit_id%>" data-subreddit="<%=thing.subreddit%>" data-thread="<%=thing.permalink%>" data-threadid="<%=thing.id%>" class="list-group-item nopacity" <%=getPressEvent()%>="bindWatchThreads.call(this)">
 		<%=thing.title%>
 		<span class="text-primary">in /r/<%=thing.subreddit%></span>
         <span class="badge pull-right"><%=thing.timeElapsed%></span>
@@ -28,7 +28,7 @@
 <script type="text/html" id="tmpl_d">
 	<div class="form-group">
 		<label class="control-label label-width">Threads 
-			<span class="info-edit label label-default pull-right" onclick="bindInfoThread.call(this)">Info</span>
+			<span class="info-edit label label-default pull-right" <%=getPressEvent()%>="bindInfoThread.call(this)">Info</span>
 		</label>
 		<select data-column="<%=columnNum%>" class="form-control thread-edit"></select>
 	</div>
@@ -36,7 +36,7 @@
 <script type="text/html" id="tmpl_e">
 	<div class="form-group">
 		<label class="control-label label-width">Subreddit 
-			<span class="label label-danger delete-edit pull-right" onclick="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
+			<span class="label label-danger delete-edit pull-right" <%=getPressEvent()%>="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
 		</label>
 		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit" onchange="bindFetchThreadValue.call(this, <%=columnNum%>)" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
@@ -47,7 +47,7 @@
 <script type="text/html" id="tmpl_g">
 	<form action="javascript:void(0);" class="edit-column-settings">
 		<%=settings%>
-		<input type="submit" class="hide" onclick="bindSubmitSave.call(this)">
+		<input type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this)">
 	</form>
 </script>
 <script type="text/html" id="tmpl_am">
@@ -61,7 +61,7 @@
 </script>
 <script type="text/html" id="tmpl_j">
 	<div data-column="<%=num%>" class="btn-group column-bars">
-		<a class="btn" onclick="bindColumnBars.call(this, <%=num%>);">
+		<a class="btn" <%=getPressEvent()%>="bindColumnBars.call(this, <%=num%>);">
 			<i data-column="<%=num%>" class="fa fa-bars fa-lg"></i>
 		</a>
 	</div>
@@ -70,7 +70,7 @@
 	<i data-column="<%=num%>" class="nopacity loading fa fa-refresh fa-spin fa-2x"></i>
 	<div class="frame-overlay" data-column="<%=num%>">
 		<div data-column="<%=num%>" class="frame">
-			<h6 class="frame-header" onclick="bindGetCommentsForColumn.call(this, <%=num%>);">
+			<h6 class="frame-header" <%=getPressEvent()%>="bindGetCommentsForColumn.call(this, <%=num%>);">
 				<%=type%> <%=configObj.settings.name%>
 			</h6>
 			<%=icons%>
@@ -80,28 +80,28 @@
 </script>
 <script type="text/html" id="tmpl_p">
 	<div data-column="<%=columnNum%>" class="hide column-options btn-group" style="height:0;">
-		<a data-column="<%=columnNum%>" class="btn column-option teal manage-threads" onclick="bindManageThreads.call(this, <%=columnNum%>)">
+		<a data-column="<%=columnNum%>" class="btn column-option teal manage-threads" <%=getPressEvent()%>="bindManageThreads.call(this, <%=columnNum%>)">
 			<i class="fa fa-newspaper-o fa-2x"></i>
 			<p>THREADS</p>
 		</a>
 		<form action="javascript:void(0);" data-column="<%=columnNum%>" class="hide edit-form teal">
-			<input data-column="<%=columnNum%>" type="submit" class="hide" onclick="bindSubmitSave.call(this)">
+			<input data-column="<%=columnNum%>" type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this)">
 		</form>
-		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch" onclick="bindSettings.call(this, <%=columnNum%>)">
+		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch" <%=getPressEvent()%>="bindSettings.call(this, <%=columnNum%>)">
 			<i class="fa fa-cog fa-2x"></i>
 			<p>SETTINGS</p>
 		</a>
 		<div data-column="<%=columnNum%>" class="hide settings-tab darkgoldenrod"></div>
-		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue" onclick="bindWriteComment.call(this, <%=columnNum%>)">
+		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue" ontouchcancel="console.log("asdf")" <%=getPressEvent()%>="bindWriteComment.call(this, <%=columnNum%>)">
 			<i class="fa fa-pencil fa-2x"></i>
 			<p>WRITE COMMENT</p>
 		</a>
 		<div data-column="<%=columnNum%>" class="hide write-comment cornflowerblue"></div>
-		<a data-column="<%=columnNum%>" class="refreshSwitch btn column-option slateblue" onclick="bindRefreshCommentSwitch.call(this, <%=columnNum%>)">
+		<a data-column="<%=columnNum%>" class="refreshSwitch btn column-option slateblue" <%=getPressEvent()%>="bindRefreshCommentSwitch.call(this, <%=columnNum%>)">
 			<i class="fa fa-toggle-on fa-2x"></i>
 			<p>AUTO REFRESH</p>
 		</a>
-		<a data-column="<%=columnNum%>" class="trash btn column-option darkred" onclick="bindDeleteColumnButton.call(this, <%=columnNum%>)">
+		<a data-column="<%=columnNum%>" class="trash btn column-option darkred" <%=getPressEvent()%>="bindDeleteColumnButton.call(this, <%=columnNum%>)">
 			<i class="fa fa-trash fa-2x"></i>
 			<p>DELETE COLUMN</p>
 		</a>
@@ -127,7 +127,7 @@
 <script type="text/html" id="tmpl_s">
 	<div class="form-group">
 		<label class="control-label label-width">
-			Threads <span class="<%=infoClass%> label label-default pull-right" onclick="bindInfoThread.call(this)">Info</span>
+			Threads <span class="<%=infoClass%> label label-default pull-right" <%=getPressEvent()%>="bindInfoThread.call(this)">Info</span>
 		</label>
 		<select class="form-control <%=threadClass%>"></select>
 	</div>
@@ -135,7 +135,7 @@
 <script type="text/html" id="tmpl_t">
 	<div class="form-group">
 		<label class="control-label label-width">Subreddit 
-			<span class="<%=deleteClass%> label label-danger pull-right asdf" onclick="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
+			<span class="<%=deleteClass%> label label-danger pull-right asdf" <%=getPressEvent()%>="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
 		</label>
 		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit" onchange="bindPopulateThreadSelect.call(this, <%=input%>, <%=groupClass%>, <%=threadClass%>)" onkeypress="bindPreventEnterButton.call(this)">
 	</div>
@@ -155,8 +155,8 @@
 </script>
 <script type="text/html" id="tmpl_x">
 	<div class="reply-buttons">
-		<button class="cancel-reply btn btn-default" onclick="bindCancelReply.call(this)">Cancel</button>
-		<button type="submit" class="save-reply btn <%=buttonClass%>" onclick="bindSaveReply.call(this)">Save</button>
+		<button class="cancel-reply btn btn-default" <%=getPressEvent()%>="bindCancelReply.call(this)">Cancel</button>
+		<button type="submit" class="save-reply btn <%=buttonClass%>" <%=getPressEvent()%>="bindSaveReply.call(this)">Save</button>
 	</div>
 </script>
 <script type="text/html" id="tmpl_y">
@@ -173,45 +173,45 @@
 	</div>
 </script>
 <script type="text/html" id="tmpl_ab">
-	<a class="btn new-comment" onclick="bindNewComment.call(this)"><span class="text-primary diff"><%=newRepliesNum%> new</span></a>
+	<a class="btn new-comment" <%=getPressEvent()%>="bindNewComment.call(this)"><span class="text-primary diff"><%=newRepliesNum%> new</span></a>
 </script>
 <script type="text/html" id="tmpl_ac">
 	<span class="reply-num text-warning"><%=replyLength%></span>
 	<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
 </script>
 <script type="text/html" id="tmpl_ad">
-	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="btn reply" onclick="bindShowReply.call(this)"></a>
+	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="btn reply" <%=getPressEvent()%>="bindShowReply.call(this)"></a>
 </script>
 <script type="text/html" id="tmpl_ae">
 	<footer data-id="<%=comment.data.name%>" class="comment-footer">
 	<div class="links-container btn-group">
 		<a data-created-utc="<%=comment.data.created_utc%>" class="btn time-elapsed white"><%=timeElapsed%></a>
-		<a class="btn reply-switch" onclick="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
+		<a class="btn reply-switch" <%=getPressEvent()%>="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
 		<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
-		<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" onclick="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
+		<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" <%=getPressEvent()%>="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
 		<%=expander%>
 	</div>
 	<%=replyForm%>
 	</footer>
 </script>
 <script type="text/html" id="tmpl_af">
-	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="btn reply" onclick="bindShowReply.call(this)">
+	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="btn reply" <%=getPressEvent()%>="bindShowReply.call(this)">
 		<span class="reply-num text-warning"><%=replyLength%></span>
 		<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
 	</a>
 </script>
 <script type="text/html" id="tmpl_ag">
 	<div class="media-heading btn-group">
-		<a data-id="<%=comment.data.name%>" class="btn vote up" onclick="bindVoteCast.call(this)"><i class="fa fa-arrow-up"></i></a>
+		<a data-id="<%=comment.data.name%>" class="btn vote up" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-up"></i></a>
 		<a data-id="<%=comment.data.name%>" class="score btn"><%=comment.data.score%></a>
-		<a data-id="<%=comment.data.name%>" class="btn vote down" onclick="bindVoteCast.call(this)"><i class="fa fa-arrow-down"></i></a>
+		<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down"></i></a>
 		<a class="btn from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>
 		<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
 		<%=flair%>
 	</div><%=text%>
 </script>
 <script type="text/html" id="tmpl_ah">
-	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" onclick="bindRefreshComment.call(this)">
+	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" <%=getPressEvent()%>="bindRefreshComment.call(this)">
 		<i class="fa fa-download"></i>&nbsp; load more comments
 	</div><%=text%>
 </script>
@@ -229,7 +229,7 @@
 <script type="text/html" id="tmpl_al">
 	<li class="list-group-item">
 		<div class="input-group">
-			<input class="form-control" type="text"><span class="input-group-addon" onclick="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
+			<input class="form-control" type="text"><span class="input-group-addon" <%=getPressEvent()%>="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
 		</div>
 	</li>
 </script>
@@ -237,7 +237,7 @@
 	<a target="_blank" href="<%=url%>"><%=title%></a>
 </script>
 <script type="text/html" id="tmpl_ao">
-	<li class="media" data-subreddit="<%=obj.data.subreddit%>" data-thread="<%=permalink%>" data-id="<%=obj.data.id%>" data-subid="<%=obj.data.subreddit_id%>" onclick="bindThreadResults.call(this)">
+	<li class="media" data-subreddit="<%=obj.data.subreddit%>" data-thread="<%=permalink%>" data-id="<%=obj.data.id%>" data-subid="<%=obj.data.subreddit_id%>" <%=getPressEvent()%>="bindThreadResults.call(this)">
 		<a class="subreddit-thumb pull-left" href="#">
 	        <%=thumbnail%>
 		</a>
@@ -254,7 +254,7 @@
 	<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>
 </script>
 <script type="text/html" id="tmpl_aq">
-	<li class="media" data-id="<%=obj.data.id%>" data-subreddit="<%=obj.data.display_name%>" onclick="bindSubList.call(this)">
+	<li class="media" data-id="<%=obj.data.id%>" data-subreddit="<%=obj.data.display_name%>" <%=getPressEvent()%>="bindSubList.call(this)">
 		<a class="subreddit-thumb pull-left" href="#">&nbsp</a>
 		<div class="media-body">
 			<h4 class="media-heading"><span class="text-warning">/r/<%=obj.data.display_name%></span> : <%=obj.data.title%></h4>
