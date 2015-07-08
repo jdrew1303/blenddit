@@ -255,10 +255,10 @@ function tmpl(str, data){
     return data ? fn(data) : fn;
 }
 function getPressEvent() { // window.isMobile defined in head.handlebars
-    return window.isMobile ? 'ontouchstart' : 'onclick'
+    return window.isMobile ? 'onclick' : 'onclick'
 }
 function getTriggerEvent() {
-    return window.isMobile ? 'touchstart' : 'click'
+    return window.isMobile ? 'click' : 'click'
 }
 function hideControlModal() {
     $('#controlModal').modal('hide');
