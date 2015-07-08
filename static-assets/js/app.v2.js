@@ -1700,6 +1700,7 @@ function bindGetCommentsForColumn(columnNum) {
     getCommentsForColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
 }
 function bindColumnBars(columnNum) {
+    event.preventDefault();
     var $columnOptions = $(".column-options[data-column="+columnNum+"]");
     if ($columnOptions.hasClass('hide')) {
         $columnOptions.removeClass('hide');
