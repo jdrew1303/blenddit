@@ -1257,9 +1257,9 @@ function buildColumnOptions(configObj, columnNum) {
     var addThreadTab = function() {
         var addThread = tmpl('tmpl_c', {ulClass:"edit-button-group", 
             buttons: buildButtons([
-                ['add-thread-button','plus-circle', 'onclick="bindAddThreadButton.call(this, \'.edit-form[data-column='+columnNum+']\', \'edit-button-group\', \'subreddit-group-edit\', \'subreddit-edit\', \'thread-edit\', \'delete-edit\', \'info-edit\', '+columnNum+')"'],
-                ['cancel-edit-button','close','onclick="bindCancelEdit.call(this, '+columnNum+')"'],
-                ['save-edit-button','save','onclick="bindSaveEdit.call(this, '+columnNum+')"']])
+                ['add-thread-button','plus-circle', getPressEvent()+'="bindAddThreadButton.call(this, \'.edit-form[data-column='+columnNum+']\', \'edit-button-group\', \'subreddit-group-edit\', \'subreddit-edit\', \'thread-edit\', \'delete-edit\', \'info-edit\', '+columnNum+')"'],
+                ['cancel-edit-button','close',getPressEvent()+'="bindCancelEdit.call(this, '+columnNum+')"'],
+                ['save-edit-button','save',getPressEvent()+'="bindSaveEdit.call(this, '+columnNum+')"']])
         });
         for (var i = 0, len = configObj.threads.length; i < len; i++) {
             var threads = tmpl('tmpl_d', {columnNum:columnNum}),
@@ -1271,8 +1271,8 @@ function buildColumnOptions(configObj, columnNum) {
     var settingsTab = function() {
         var settingsButtons = tmpl('tmpl_c', {ulClass:"edit-button-group", 
                 buttons: buildButtons([
-                    ['cancel-edit-button','close','onclick="bindCancelEdit.call(this, '+columnNum+')"'],
-                    ['save-edit-button','save','onclick="bindSaveEdit.call(this, '+columnNum+')"']])
+                    ['cancel-edit-button','close',getPressEvent()+'="bindCancelEdit.call(this, '+columnNum+')"'],
+                    ['save-edit-button','save',getPressEvent()+'="bindSaveEdit.call(this, '+columnNum+')"']])
             }),
             settingSelects = $('<div>').append($('.column-settings').children().clone().each(function() {
             var $label = $(this).find('label'); var $input = $(this).find('*[id]');
@@ -1433,7 +1433,7 @@ function bindInfoThread(infoClass) {
                 $('#info-title, #info-content').children().remove();
                 $('#info-title').html(tmpl('tmpl_an', {url:data.data.children[0].data.url, title: data.data.children[0].data.title}));
                 $('#info-content').append($("<div/>").html(data.data.children[0].data.selftext_html).text());
-                $('#author-button').text('/u/'+data.data.children[0].data.author).attr("onclick", "window.open('"+window.location.protocol+"//www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');");
+                $('#author-button').text('/u/'+data.data.children[0].data.author).attr(getPressEvent(), "window.open('"+window.location.protocol+"//www.reddit.com/u/"+data.data.children[0].data.author+"','_blank');");
                 $('#time-button').text(getTimeElapsed(data.data.children[0].data.created_utc));
                 externalLinks('#info-content .md a');
                 $('#info-modal').modal();
@@ -1513,7 +1513,7 @@ function bindTextAreaReply() {
 function bindCancelReply(){
     var $comment_footer = $(this).parents('.comment-footer');
     $comment_footer.length>0
-        ? $comment_footer.find('.reply-switch').trigger("touchend")
+        ? $comment_footer.find('.reply-switch').trigger(getTriggerEvent())
         : showAllColumnOptions($(this).parents('.column-options').data('column'));
 }
 function bindReplySwitch() {
