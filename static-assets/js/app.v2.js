@@ -1139,7 +1139,7 @@ function buildRedditConfigObjByThreads(children) {
 function buildColumn(configObj, num) {
     $(".item[data-column="+num+"]").remove();
     var frameContent = tmpl('tmpl_i', {num:num}),
-        icons = tmpl('tmpl_j', {num:num, event:getPressEvent()}),
+        icons = tmpl('tmpl_j', {num:num}),
         frame = tmpl('tmpl_l', {
             bigButtons: tmpl('tmpl_p',{columnNum:num}), 
             type: configObj.type == 'reddit' ? tmpl('tmpl_ired', {}) : tmpl('tmpl_itwt',{}),
