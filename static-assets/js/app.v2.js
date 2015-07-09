@@ -1673,7 +1673,6 @@ function bindRedditSearchRadio() {
         : $selects.attr('disabled', true);
 }
 function bindSaveChanges() {
-    event.preventDefault();
     var newColumnAdded = addColumnToConfig();
     newColumnAdded 
         ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromStorage('config').length-1); }()
