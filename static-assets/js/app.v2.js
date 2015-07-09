@@ -1639,7 +1639,6 @@ function bindHelpModal() {
     console.log('help modal');
 }
 function bindDeleteColumn() {
-    event.preventDefault();
     var fn = new Fn(),
         config = fn.getFromStorage('config');
     config.forEach(function(obj, i){ deleteRefresh(i); });
