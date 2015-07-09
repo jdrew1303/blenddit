@@ -1667,9 +1667,8 @@ function bindColumnsOrHomeButton() {
     }
 }
 function bindRedditSearchRadio() {
-    event.preventDefault();
-    var $selects = $(this.form).find('select');
-    $(this.form).find('input[type=radio]:checked').val()=='submissions'
+    var $selects = $(this).parents('form').find('select');
+    $(this).parents('form').find('input[type=radio]:checked').val()=='submissions'
         ? $selects.removeAttr('disabled')
         : $selects.attr('disabled', true);
 }

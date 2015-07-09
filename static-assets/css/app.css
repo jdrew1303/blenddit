@@ -195,9 +195,12 @@ blockquote, blockquote p {
   padding: 0 !important;
 }
 .vote.down { margin-right: 5px; }
-.vote .btn { 
-  padding: 0 2px 0 2px !important;
-  font-size: small;
+.vote.btn {
+  padding-left: 3px !important;
+  padding-right: 3px !important;
+}
+.score.btn {
+  padding-right: 0!important;
 }
 .author {font-size: medium;}
 .time-elapsed {
