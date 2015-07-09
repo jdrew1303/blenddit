@@ -1645,6 +1645,7 @@ function bindDeleteColumn() {
     fn.remove(config, $(this).data('column'));
     fn.setInStorage('config', config);
     buildConfigToUI(true);
+    $('#delete-column-modal').modal('hide');
 }
 function bindAutoRefreshActive() {
     event.preventDefault();
@@ -1677,6 +1678,7 @@ function bindSaveChanges() {
     newColumnAdded 
         ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromStorage('config').length-1); }()
         : buildConfigToUI();
+    $('#controlModal').modal('hide');
 }
 function bindPreventEnterButton() {
     if (event.which == 13) {

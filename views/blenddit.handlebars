@@ -388,7 +388,7 @@
           <div>
             <button id='back-button' type="button" class='btn btn-default hide' {{pressType}}="bindBackButton.call(this)"><i class='fa fa-chevron-left'></i>&nbsp;Back</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button id='save-changes' type="button" class="btn btn-primary" data-dismiss="modal" {{pressType}}="bindSaveChanges.call(this)">Save</button>
+            <button id='save-changes' type="button" class="btn btn-primary" {{pressType}}="bindSaveChanges.call(this)">Save</button>
           </div>
         </div>
       </div>
@@ -406,7 +406,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button id='delete-column' data-column='' type="button" class="btn btn-primary" data-dismiss="modal" {{pressType}}="bindDeleteColumn.call(this)">Delete</button>
+          <button id='delete-column' data-column='' type="button" class="btn btn-primary" {{pressType}}="bindDeleteColumn.call(this)">Delete</button>
         </div>
       </div>
     </div>
