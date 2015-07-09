@@ -884,8 +884,8 @@ function postTopLevelComment(objArray, additionalData) {
     $submitting.removeClass('faded').addClass('hide');
     $form.removeClass('hide');
     frame_content_height(additionalData.columnNum);
-    bindColumnBars.call($('.column-bars[data-column='+additionalData.columnNum+'] > a'));
-    bindGetCommentsForColumn.call($('.frame[data-column='+additionalData.columnNum+'] .frame-header'));
+    bindColumnBars.call($('.column-bars[data-column='+additionalData.columnNum+'] > a'), additionalData.columnNum);
+    bindGetCommentsForColumn.call($('.frame[data-column='+additionalData.columnNum+'] .frame-header'), additionalData.columnNum);
 }
 function insertReplyIntoDOM(objArray, additionalData) {
     $(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
@@ -1287,16 +1287,19 @@ function buildColumnOptions(configObj, columnNum) {
     setSettingsFromConfig(columnNum, configObj);
 }
 function bindNewComment() {
+    event.preventDefault();
     bindRefreshComment.call($(this).parent().parent().find('.refresh-comment'));
 }
 function bindLoadMore(after, type, objParam, resetCount) {
+    event.preventDefault();
     var $media_more = $('.media-more li');
     $media_more.data('after', after); $media_more.data('type', type); $media_more.data('query', objParam.query); 
     resetCount ? $media_more.data('count',25) : $media_more.data('count',$media_more.data('count')+25);
     bindMediaMore(after, type, objParam);
 }
 function bindMediaMore(after, type, objParam) {
-    $('.media-more li').unbind('click').on('click', function() {
+    $('.media-more li').unbind(getPressEvent().slice(2)).on(getPressEvent().slice(2), function() {
+        event.preventDefault();
         var type = $(this).data('type'),
             url = type == 'thread' 
                 ? objParam.url+'?count='+$(this).data('count')+'&after='+$(this).data('after')
@@ -1324,10 +1327,12 @@ function bindMediaMore(after, type, objParam) {
     });
 }
 function bindSubList() {
+    event.preventDefault();
     copyToAllRedditSearches($(this).data('subreddit'));
     threadsOfSubreddit($(this).data('subreddit'));
 }
 function bindThreadResults() {
+    event.preventDefault();
     var threadObj = {}, data = {};
     data.subreddit_id = $(this).data('subid');
     data.subreddit = $(this).data('subreddit');
@@ -1340,9 +1345,11 @@ function bindThreadResults() {
     makeItemActive(new Fn().getFromStorage('config').length-1);
 }
 function bindWatchThreads() {
+    event.preventDefault();
     $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
 }
 function bindDeleteColumns() {
+    event.preventDefault();
     var fn = new Fn(), config = fn.getFromStorage('config');
     if (this.id=='delete-reddit-columns') {
         config = config.filter(function(obj){
@@ -1358,15 +1365,18 @@ function bindDeleteColumns() {
     $('#controlModal').modal('hide');
 }
 function bindAccounts() {
+    event.preventDefault();
     genericGet('/reddit-logout', function(html) {
         $('[data-reddituser]').data('reddituser',null);
         $('#reddit-logout').replaceWith(html);
     });
 }
 function bindSubmitSave(context) {
+    event.preventDefault();
     bindSaveEdit.call($(this.form).find('.save-edit-button'));
 }
 function inputLoad(columnNum) {
+    event.preventDefault();
     var $subreddit_edit = $(".edit-form[data-column="+columnNum+"] .subreddit-edit"),
         config = new Fn().getFromStorage('config');
     $subreddit_edit.each(function(index, el) {
@@ -1379,6 +1389,7 @@ function inputLoad(columnNum) {
     });
 }
 function bindFetchThreadValue(columnNum) {
+    event.preventDefault();
     if (this.value) {
         var group = ".edit-form[data-column="+columnNum+"] .subreddit-edit",
             index = $(group).parent().parent().parent().index($(this).parent().parent().parent());
@@ -1386,6 +1397,7 @@ function bindFetchThreadValue(columnNum) {
     }
 }
 function bindSaveEdit(columnNum) {
+    event.preventDefault();
     updateConfigObjFromDOM(
         '.column-options[data-column='+columnNum+'] .subreddit-group-edit', 
         '.subreddit-edit', 
@@ -1397,9 +1409,11 @@ function bindSaveEdit(columnNum) {
     makeItemActive(columnNum);
 }
 function bindCancelEdit(columnNum) {
+    event.preventDefault();
     showAllColumnOptions(columnNum);
 }
 function bindAddThreadButton(context, target, groupClass, subClass, threadClass, deleteClass, infoClass, optionalColumnNum) {
+    event.preventDefault();
     var threads = tmpl('tmpl_s', {infoClass:infoClass, threadClass:threadClass}),
         subreddit = tmpl('tmpl_t', {
             input: "\'"+context+' .'+subClass+'.tt-input:first'+"\'", 
@@ -1419,10 +1433,12 @@ function bindAddThreadButton(context, target, groupClass, subClass, threadClass,
     fadeIn('.'+groupClass, 100);
 }
 function bindPopulateThreadSelect(input, groupClass, threadClass) {
+    event.preventDefault();
     var index = $('.'+groupClass).index($(this).parent().parent().parent());
     getPosts('/r/'+this.value, '', '', {target: ['.'+threadClass,index], errorMsgLoc: this, callback: setThreads});
 }
 function bindInfoThread(infoClass) {
+    event.preventDefault();
     var threadid = $(this).parents('.form-group').find('select option:selected').data('threadid');
     if (threadid) {
         getThreadById(threadid, function(data) {
@@ -1441,10 +1457,12 @@ function bindInfoThread(infoClass) {
     }
 }
 function bindDeleteThread(columnNum) {
+    event.preventDefault();
     $(this).parent().parent().parent().remove();
     if (typeof columnNum !== 'undefined') frame_content_height(columnNum);
 }
 function bindVoteCast() {
+    event.preventDefault();
     if (isRedditUserLoggedIn()) {
         var id = $(this).data('id').split('-')[0],
             vote_state = $('.score[data-id='+$(this).data('id')+']').data('vote-state'),
@@ -1466,6 +1484,7 @@ function bindVoteCast() {
     new Fn().getBlurred();
 }
 function bindSaveReply() {
+    event.preventDefault();
     var $postPane = $(this).parents('.write-comment'),
         thing_id_raw = this.form.thing_id.value,
         thing_id = thing_id_raw.split('-')[0] || 't3_'+$postPane.find('.post-thread option:selected').data('threadid'),
@@ -1505,15 +1524,18 @@ function bindSaveReply() {
     genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
 }
 function bindTextAreaReply() {
+    event.preventDefault();
     !isRedditUserLoggedIn() ? $('#login-reddit-modal').modal() : void 0;
 }
 function bindCancelReply(){
+    event.preventDefault();
     var $comment_footer = $(this).parents('.comment-footer');
     $comment_footer.length>0
         ? bindReplySwitch.call($comment_footer.find('.reply-switch'))
         : showAllColumnOptions($(this).parents('.column-options').data('column'));
 }
 function bindReplySwitch() {
+    event.preventDefault();
     var $replyForm = $(this).parent().parent().find('.reply-form');
     if ($replyForm.hasClass('hide')) {
         $replyForm.removeClass('hide');
@@ -1525,6 +1547,7 @@ function bindReplySwitch() {
     }
 }
 function bindShowReply(){
+    event.preventDefault();
     var name = $(this).data('name'),
         $replies = $('#'+name+' .media[data-parentid='+name+']'),
         $icon = $(this).find('.expand');
@@ -1537,6 +1560,7 @@ function bindShowReply(){
     }
 }
 function bindRefreshComment() {
+    event.preventDefault();
     var linkid = $(this).data('linkid') || $('#'+$(this).data('parent')).data('linkid'),
         id = $(this).data('id') || $('#'+$(this).data('parent')).attr('id'),
         isTopLevel = $('#'+id).hasClass('parent') || $('#'+$(this).data('parent')).hasClass('parent');
@@ -1556,19 +1580,24 @@ function bindRefreshComment() {
     });
 }
 function bindDeleteWatchButtons() {
+    event.preventDefault();
     $(this).parent().parent().remove();
 }
 function bindWatchAddSubreddit() {
+    event.preventDefault();
     $('#watch-subreddits .list-group.contain').append(tmpl('tmpl_al',{}));
 }
 function bindWatchAddMatching() {
+    event.preventDefault();
     $('#watch-matching .list-group.contain').append(tmpl('tmpl_al',{}));
 }
 function bindWatchRefresh() {
+    event.preventDefault();
     saveWatchList();
     watchList();
 }
 function bindWatchSave() {
+    event.preventDefault();
     function notEmpty(x) { return !($(x).val()==="") }
     var fn = new Fn(),
         $watchSubs = $('#watch-subreddits .list-group.contain'), 
@@ -1606,9 +1635,11 @@ function bindWatchSave() {
     }
 }
 function bindHelpModal() {
+    event.preventDefault();
     console.log('help modal');
 }
 function bindDeleteColumn() {
+    event.preventDefault();
     var fn = new Fn(),
         config = fn.getFromStorage('config');
     config.forEach(function(obj, i){ deleteRefresh(i); });
@@ -1617,11 +1648,13 @@ function bindDeleteColumn() {
     buildConfigToUI(true);
 }
 function bindAutoRefreshActive() {
+    event.preventDefault();
     $('#carousel').unbind('slid.bs.carousel').on('slid.bs.carousel', function () {
         autoRefreshOnlyActiveColumn();
     });
 }
 function bindColumnsOrHomeButton() {
+    event.preventDefault();
     var type = buttonType();
     if (type=='columns') {
         new Fn().getFromStorage('config').length > 0
@@ -1634,12 +1667,14 @@ function bindColumnsOrHomeButton() {
     }
 }
 function bindRedditSearchRadio() {
-   var $selects = $(this.form).find('select');
-   $(this.form).find('input[type=radio]:checked').val()=='submissions'
+    event.preventDefault();
+    var $selects = $(this.form).find('select');
+    $(this.form).find('input[type=radio]:checked').val()=='submissions'
         ? $selects.removeAttr('disabled')
         : $selects.attr('disabled', true);
 }
 function bindSaveChanges() {
+    event.preventDefault();
     var newColumnAdded = addColumnToConfig();
     newColumnAdded 
         ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromStorage('config').length-1); }()
@@ -1654,6 +1689,7 @@ function bindPreventEnterButton() {
     }
 }
 function bindRedditSearch(callback) {
+    event.preventDefault();
     var query = $(this.form).find('.reddit-search-input.tt-input').val(), 
         fn = new Fn();
     if (query) {
@@ -1667,12 +1703,14 @@ function bindRedditSearch(callback) {
     fn.getBlurred();
 }
 function bindBackButton() {
+    event.preventDefault();
     $('#control-panel-buttons .list-group a').removeClass('active').addClass('non-active');
     $('#reddit, #accounts, #delete-columns, #search-control-panel').removeClass('active');
     $('#panel-help').addClass('active');
     $(this).addClass('hide');
 }
 function bindLeftButtons() {
+    event.preventDefault();
     var $allButtons = $('#control-panel-buttons .list-group a'),
         $allPanels = $('#accounts, #reddit, #delete-columns, #search-control-panel'),
         id = this.id;
@@ -1688,15 +1726,18 @@ function bindLeftButtons() {
     } else if (id=='remove-button') { $('#delete-columns').addClass('active') }
 }
 function bindRefreshCommentSwitch(columnNum) {
+    event.preventDefault();
     var $icon = $(this).find('i');
     $icon.toggleClass('fa-toggle-on fa-toggle-off');
     if ($icon.hasClass('fa-toggle-on')) getCommentsForColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
     toggleRefresh(columnNum);
 }
 function bindGetCommentsForColumn(columnNum) {
+    event.preventDefault();
     getCommentsForColumn(new Fn().getFromStorage('config')[columnNum], columnNum);
 }
 function bindColumnBars(columnNum) {
+    event.preventDefault();
     var $columnOptions = $(".column-options[data-column="+columnNum+"]");
     if ($columnOptions.hasClass('hide')) {
         $columnOptions.removeClass('hide');
@@ -1718,6 +1759,7 @@ function bindColumnBars(columnNum) {
     }
 }
 function bindManageThreads(columnNum) {
+    event.preventDefault();
     var $edit_form = $('.edit-form[data-column='+columnNum+']');
     !$(this.nextElementSibling).hasClass('hide') ? showAllColumnOptions(columnNum) : showColumnOption($edit_form, columnNum);
     frame_content_height(columnNum);
@@ -1736,6 +1778,7 @@ function bindWriteComment(columnNum) {
     frame_content_height(columnNum);
 }
 function bindDeleteColumnButton(columnNum) {
+    event.preventDefault();
     $('#delete-column').data('column', columnNum);
     $('#column-to-delete').text(new Fn().getFromStorage('config')[columnNum].settings.name);
     $('#delete-column-modal').modal();
