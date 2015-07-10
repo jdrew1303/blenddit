@@ -741,6 +741,12 @@ span.twitter-typeahead {
   width: 350px;
   height: 350px;
 }
+.twitter-wrapper {
+  padding: 5px;
+}
+#twitter-accordion .alert {
+  margin-bottom:0;
+}
 ::-webkit-scrollbar {
     width: 10px;
     height: 11px;

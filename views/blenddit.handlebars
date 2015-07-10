@@ -4,6 +4,14 @@
       <div id='main-loader'><i class='fa fa-cog fa-spin fa-5x'></i></div>
     </div>
     <div id='greeting' class='container content-padding nopacity hide'>
+      <div class="alert alert-dismissible alert-info">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        Welcome! <strong>Blenddit</strong> is currently in Alpha. Features are still being developed. <a href="javascript:void(0);" onclick="document.getElementById('donate').submit();">Support Blenddit by donating!</a>
+        <form id="donate" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+          <input type="hidden" name="cmd" value="_s-xclick">
+          <input type="hidden" name="hosted_button_id" value="BF85YMXPBBAUG">
+        </form>
+      </div>
       <div class='bookmark'><a data-toggle="tooltip" data-placement="bottom" title="Drag this bookmarklet onto your bookmarks toolbar and click to use on the comment section of a reddit thread to instantly build a column." href="javascript:(function(){var l=window.location;if (l.host+l.pathname.substr(0,3)=='www.reddit.com/r/'){l.href='http://blenddit.com'+l.pathname;}})();" class="btn btn-default"><i class='fa fa-bookmark'></i>&nbsp;blenddit</a></div>
       <div class="jumbotron">
         <div class='text-center'>
@@ -67,6 +75,11 @@
                         <h4 class="panel-title"><i class='fa fa-search'></i>&nbsp;Search Twitter</h4>
                     </div>
                     <div id="twitter-collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo" aria-expanded="true">
+                      <div class='panel-body'>
+                        <div class="alert alert-info">
+                          Twitter integration is still under development. You can encourage development of this feature by donating. <a href="javascript:void(0);" onclick="document.getElementById('donate').submit();">Support Blenddit by donating!</a>
+                        </div>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -282,6 +295,13 @@
                 <input id='config' type='submit' class='hide'>
               </form>
             </div>
+            <div id='twitter'>
+              <div class='twitter-wrapper'>
+                <div class="alert alert-info">
+                  Twitter integration is still under development. You can encourage development of this feature by donating. <a href="javascript:void(0);" onclick="document.getElementById('donate').submit();">Support Blenddit by donating!</a>
+                </div>
+              </div>
+            </div>
             <div id='accounts'>
                 <div class='list-group' data-reddituser='{{reddit.redditUser}}'>
                   {{#if reddit.redditUserExists}}
@@ -434,7 +454,7 @@
           <div id='info-content'></div>
         </div>
         <div class="modal-footer">
-          <button id='author-button' {{pressType}}="" type="button" class="pull-left transparent">Test</button>
+          <button id='author-button' {{pressType}}="" type="button" class="pull-left transparent"></button>
           <button id='time-button' type="button" class="pull-left transparent">Time</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>

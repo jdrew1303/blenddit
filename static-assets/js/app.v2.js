@@ -1704,14 +1704,14 @@ function bindRedditSearch(callback) {
 function bindBackButton() {
     event.preventDefault();
     $('#control-panel-buttons .list-group a').removeClass('active').addClass('non-active');
-    $('#reddit, #accounts, #delete-columns, #search-control-panel').removeClass('active');
+    $('#reddit, #twitter, #accounts, #delete-columns, #search-control-panel').removeClass('active');
     $('#panel-help').addClass('active');
     $(this).addClass('hide');
 }
 function bindLeftButtons() {
     event.preventDefault();
     var $allButtons = $('#control-panel-buttons .list-group a'),
-        $allPanels = $('#accounts, #reddit, #delete-columns, #search-control-panel'),
+        $allPanels = $('#accounts, #twitter, #reddit, #delete-columns, #search-control-panel'),
         id = this.id;
     $allButtons.removeClass('active non-active'); 
     $allPanels.removeClass('active');
@@ -1719,7 +1719,7 @@ function bindLeftButtons() {
     $('#panel-help').removeClass('active');
     $(this).addClass('active');
     if (id=='reddit-button') { $('#reddit').addClass('active');
-    } else if (id=='twitter-button') { void 0;
+    } else if (id=='twitter-button') { $('#twitter').addClass('active');
     } else if (id=='accounts-button') { $('#accounts').addClass('active');
     } else if (id=='search-button') { $('#search-control-panel').addClass('active');
     } else if (id=='remove-button') { $('#delete-columns').addClass('active') }
