@@ -107,7 +107,6 @@ html, body {
 #control-panel-buttons .list-group .list-group-item,
 #accounts .list-group .list-group-item {
   border:0;
-  border-right: 1px solid #282828;
   margin: 0;
 }
 #control-panel-buttons .list-group .list-group-item:first-child,

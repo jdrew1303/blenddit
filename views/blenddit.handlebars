@@ -16,7 +16,7 @@
       <div class="jumbotron">
         <div class='text-center'>
           <img class='logo-responsive' src='static-assets/imgs/logo.png' alt='error'></img>
-          <p class="lead">Build columns of live reddit threads or twitter feeds. <a class='help'>See how</a>.</p>
+          <p class="lead">Build columns of live reddit threads or twitter feeds. <a href="javascript:void(0);" {{pressType}}="bindHelpModal.call(this)">See how</a>.</p>
         </div>
         <div class='row'>
           <div class='col-sm-6'>
@@ -439,7 +439,7 @@
           <h6 class="modal-title">Sign In Required</h6>
         </div>
         <div class="modal-body">
-          <a href='/auth/reddit'><button id='login-reddit' type="button" class="btn btn-primary btn-lg btn-block">Sign in to Reddit</button></a>
+          <a id='login-reddit' class="btn btn-primary btn-lg btn-block" href='/auth/reddit'>Sign in to Reddit</a>
         </div>
       </div>
     </div>
@@ -457,6 +457,37 @@
           <button id='author-button' {{pressType}}="" type="button" class="pull-left transparent"></button>
           <button id='time-button' type="button" class="pull-left transparent">Time</button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title">How do I use Blenddit.com?</h6>
+        </div>
+        <div class="modal-body">
+          <p>Blenddit.com is a web application that wraps other social mediums like 
+            <a target="_blank" href="http://www.reddit.com">Reddit</a> and <a href="http://www.twitter.com" target="_blank">Twitter</a>. 
+            The idea is to consolidate live streams of activity from these mediums. Its a refresh button on steroids.
+          </p>
+          <p>
+            Reddit has "subdomains" called <i>subreddits</i> that are specific to community interests. <a href="http://www.reddit.com/r/nfl" target="_blank">/r/NFL</a> 
+            is an example of a community of people discussing NFL-related things. These subdomains will typically host discussion threads for live events (football games).
+            Blenddit allows you to pool comments (newest first) from any number of threads into a single column. This allows you to read and interact with threads in real time
+            from opposing teams' subreddits.
+          </p>
+          <p>
+            The Twitter use case has an inherently more "live" feel so its integration will be similar to TweetDeck's. You will be able to build columns whose content 
+            are the aggregated tweets of <i>users</i> (@), <i>trends</i> (#), etc.
+          </p>
+          <p>
+            <strong><span class='text-warning'>Watch the following instructional screencasts to start using Blenddit right now.</span></strong>
+          </p>
+        </div>
+        <div class="modal-footer">
+          <a onclick="document.getElementById('donate').submit()" class="btn btn-primary btn-lg btn-block">Donate</a>
         </div>
       </div>
     </div>

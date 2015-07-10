@@ -1636,7 +1636,7 @@ function bindWatchSave() {
 }
 function bindHelpModal() {
     event.preventDefault();
-    console.log('help modal');
+    $('#help-modal').modal('toggle');
 }
 function bindDeleteColumn() {
     var fn = new Fn(),
