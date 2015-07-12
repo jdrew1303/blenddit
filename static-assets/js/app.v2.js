@@ -1038,7 +1038,7 @@ function genericGet(url, done, fail, always, cacheBool, errorMsgLoc, additionalD
     .always(function() { if (always) always(); });
 }
 function genericPost(url, data, done, fail, always, additionalData, errorMsgLoc) {
-    $.ajax({ url: url, type: 'POST', timeout:7000, data: data, cache: false })
+    $.ajax({ url: url, type: 'POST', timeout:additionalData.timeout || 7000, data: data, cache: false })
     .done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData);})
     .fail(function(jqXHR, textStatus, errorThrown) {
         if (fail) fail(jqXHR, textStatus, errorThrown, additionalData);
@@ -1491,7 +1491,8 @@ function bindSaveReply() {
         additionalData = {
             columnNum: thing_id_raw.split('-')[1] || $postPane.data('column'),
             threadNum: thing_id_raw.split('-')[2],
-            postPane: $postPane.length > 0 ? $postPane : $(this).parents('.comment-footer')
+            postPane: $postPane.length > 0 ? $postPane : $(this).parents('.comment-footer'),
+            timeout: 99999
         },
         text = this.form.text.value,
         $submitting = $(this.form.previousSibling);
