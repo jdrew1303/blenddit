@@ -69,6 +69,7 @@ html, body {
 .thumb {
   margin: 5px 5px 0 5px !important;
   padding-right:0px !important;
+  border-radius: 4px;
 }
 .subreddit-thumb-alt {
   height: 70px !important;
