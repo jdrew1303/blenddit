@@ -12,6 +12,7 @@
     "oauth" : "*",
     "passport": "*",
     "passport-reddit": "*",
+    "passport-twitter" : "*",
     "body-parser":"*",
     "express-session":"*",
     "method-override":"*",

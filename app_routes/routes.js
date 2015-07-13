@@ -9,14 +9,18 @@ module.exports = function(app, globalware, elseware, kutil) {
 	    all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/', gware.nowww, function(req, res){
-		var json = {}; 
+		var json = {};
 		json.reddit = { 
-			redditUserExists : req.user ? true : false, 
+			redditUserExists : req.user && !req.user.provider ? true : false, 
 			redditUser : req.user ? req.user.name : '',
 			subredditURI : req.session.subreddit,
 			threadidURI : req.session.threadid,
 			threadidsURI : req.session.threadids
-		};
+		}
+		json.twitter = {
+			twitterUserExists : req.user && req.user.provider ? true : false,
+			twitterUser : req.user ? req.user.username : ''
+		}
 		json.pressType = kutil.getPressType(req.headers['user-agent'])
 		res.renderPjax('blenddit', json);	
 		req.session.subreddit = req.session.threadid = req.session.threadids = null;
@@ -47,6 +51,14 @@ module.exports = function(app, globalware, elseware, kutil) {
 		});
 	});
 	
+	app.get('/auth/reddit', function(req, res, next){
+	  req.session.state = crypto.randomBytes(32).toString('hex');
+	  passport.authenticate('reddit', {
+	    state: req.session.state,
+	    duration: 'permanent'
+	  })(req, res, next);
+	});
+
 	app.get('/auth/reddit/callback', function(req, res, next){
 	  if (req.query.state == req.session.state){
 	    passport.authenticate('reddit', {
@@ -59,13 +71,16 @@ module.exports = function(app, globalware, elseware, kutil) {
 	  }
 	});
 	
-	app.get('/auth/reddit', function(req, res, next){
-	  req.session.state = crypto.randomBytes(32).toString('hex');
-	  passport.authenticate('reddit', {
-	    state: req.session.state,
-	    duration: 'permanent'
-	  })(req, res, next);
-	});
+	app.get('/auth/twitter', passport.authenticate('twitter'), function(req, res){});
+
+	app.get('/auth/twitter/callback', 
+		passport.authenticate('twitter', { 
+			failureRedirect: '/' 
+		}),
+		function(req, res) {
+			res.redirect('/');
+		}
+	);
 
 	app.post('/check-login', gware.ensureAuthenticated, function(req, res, next) {
 		res.setHeader('Content-Type', 'application/json');

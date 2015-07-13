@@ -306,7 +306,7 @@
                 <div class='list-group' data-reddituser='{{reddit.redditUser}}'>
                   {{#if reddit.redditUserExists}}
                     <a href="javascript:void(0);" class="list-group-item" id='reddit-logout' {{pressType}}="bindAccounts.call(this)">
-                        <h5 class="list-group-item-heading"><i class='fa fa-reddit'></i>&nbsp;<span class='text-warning'>{{reddit.redditUser}}</span></h5>
+                        <h5 class="list-group-item-heading"><span class='text-warning'><i class='fa fa-reddit'></i>&nbsp;{{reddit.redditUser}}</span></h5>
                         <p class="list-group-item-text">Click here to sign out.</p>
                     </a>
                   {{else}}
@@ -317,11 +317,11 @@
                   {{/if}}
                   {{#if twitter.twitterUserExists}}
                     <a href="javascript:void(0);" class="list-group-item" id='twitter-logout'>
-                        <h5 class="list-group-item-heading"><i class='fa fa-twitter'></i>&nbsp;{{twitter.twitterUser}}</h5>
+                        <h5 class="list-group-item-heading"><span class='text-primary'><i class='fa fa-twitter'></i>&nbsp;{{twitter.twitterUser}}</span></h5>
                         <p class="list-group-item-text">Click here to sign out.</p>
                     </a>
                   {{else}}
-                    <a href="javascript:void(0)" class="list-group-item">
+                    <a href="/auth/twitter" class="list-group-item">
                         <h5 class="list-group-item-heading"><i class='fa fa-twitter'></i>&nbsp;Sign in to Twitter</h5>
                         <p class="list-group-item-text">Follow this link to connect your Twitter account to Blenddit.</p>
                     </a>
