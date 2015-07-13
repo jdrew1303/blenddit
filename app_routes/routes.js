@@ -11,15 +11,15 @@ module.exports = function(app, globalware, elseware, kutil) {
 	app.get('/', gware.nowww, function(req, res){
 		var json = {};
 		json.reddit = { 
-			redditUserExists : req.user && !req.user.provider ? true : false, 
-			redditUser : req.user ? req.user.name : '',
+			redditUserExists : req.session.reddit ? true : false, 
+			redditUser : req.session.reddit ? req.session.reddit.name : '',
 			subredditURI : req.session.subreddit,
 			threadidURI : req.session.threadid,
 			threadidsURI : req.session.threadids
 		}
 		json.twitter = {
-			twitterUserExists : req.user && req.user.provider ? true : false,
-			twitterUser : req.user ? req.user.username : ''
+			twitterUserExists : req.session.twitter ? true : false,
+			twitterUser : req.session.twitter ? req.session.twitter.username : ''
 		}
 		json.pressType = kutil.getPressType(req.headers['user-agent'])
 		res.renderPjax('blenddit', json);	
@@ -62,13 +62,14 @@ module.exports = function(app, globalware, elseware, kutil) {
 	app.get('/auth/reddit/callback', function(req, res, next){
 	  if (req.query.state == req.session.state){
 	    passport.authenticate('reddit', {
-	      successRedirect: '/',
 	      failureRedirect: '/'
 	    })(req, res, next);
-	  }
-	  else {
+	  } else {
 	    next( new Error(403) );
 	  }
+	}, function(req,res,next) {
+		req.session.reddit = req.user;
+		res.redirect('/');
 	});
 	
 	app.get('/auth/twitter', passport.authenticate('twitter'), function(req, res){});
@@ -78,6 +79,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 			failureRedirect: '/' 
 		}),
 		function(req, res) {
+			req.session.twitter = req.user;
 			res.redirect('/');
 		}
 	);

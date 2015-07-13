@@ -71,7 +71,7 @@ KUtil.prototype = {
           url: url,
           headers: {
               'User-Agent': 'request',
-              'Authorization':'bearer '+req.session.passport.user.redditAccessToken,
+              'Authorization':'bearer '+req.session.reddit.redditAccessToken,
               'Content-Type':'application/x-www-form-urlencoded'
           }
         };

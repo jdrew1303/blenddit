@@ -41,6 +41,8 @@ passport.use(new TwitterStrategy({
     callbackURL: twitter_redirect_uri
   },
   function(token, tokenSecret, profile, done) {
+    profile.twitterToken = token;
+    profile.twitterTokenSecret = tokenSecret;
     process.nextTick(function () {
       return done(null, profile);
     });

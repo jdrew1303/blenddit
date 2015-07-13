@@ -19,7 +19,7 @@ module.exports = function(module) {
   			}
 		},
 		refreshAccessToken : function(req,res,next) {
-			if (new Date() > new Date(req.session.passport.user.redditAccessTokenExpireTime)) { // an hour has passed since the the accessToken was retrieved
+			if (new Date() > new Date(req.session.reddit.redditAccessTokenExpireTime)) { // an hour has passed since the the accessToken was retrieved
 				var options = {
 				    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/v1/access_token',
 				    headers: {
@@ -29,8 +29,8 @@ module.exports = function(module) {
 			  	};
 			  	require('request').post(options, function callback(error, response, body) {
 		    		if (!error && response.statusCode == 200) {
-		    			req.session.passport.user.redditAccessToken = JSON.parse(body).access_token;
-		    			req.session.passport.user.redditAccessTokenExpireTime = (function() { 
+		    			req.session.reddit.redditAccessToken = JSON.parse(body).access_token;
+		    			req.session.reddit.redditAccessTokenExpireTime = (function() { 
       						var now = new Date(), oneHourFromNow = new Date(now);
       						oneHourFromNow.setMinutes(now.getMinutes()+55);
       						return oneHourFromNow;
@@ -42,7 +42,7 @@ module.exports = function(module) {
 		    		} else {
 		    			res.redirect('/reddit-login')	
 		    		}
-			  	}).form({'grant_type':'refresh_token', 'refresh_token':req.user.redditRefreshToken});
+			  	}).form({'grant_type':'refresh_token', 'refresh_token':req.session.reddit.redditRefreshToken});
 			} else {
 				next();
 			}
