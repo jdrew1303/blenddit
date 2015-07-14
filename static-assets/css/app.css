@@ -258,11 +258,17 @@ blockquote, blockquote p {
   padding-top: 10px; 
   padding-bottom: 50px;
 }
-.media {
+.frame-content .media {
   border-radius: 5px;
   padding: 5px 5px 5px 0;
-  margin-top: 5px !important;
   background-color: rgb(32,32,32);
+}
+#accounts .media {
+  padding: 10px 15px;
+  margin-top: 0;
+}
+#accounts .media:hover {
+  background-color: #484848;
 }
 .frame-content .media:not(:first-child) {
   border-top: 1px solid #303236 !important;
@@ -390,7 +396,7 @@ blockquote, blockquote p {
 .fa-bars, .delete-edit, .info-edit, .delete-controls, .info-controls, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
 #watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more,
-.panel-heading {
+.panel-heading, #accounts .media {
   cursor: pointer;
 }
 .load-comments {

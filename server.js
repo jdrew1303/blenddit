@@ -35,7 +35,7 @@ app.set('view engine', 'handlebars');
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(session({ secret: 'dat-ass', resave: false, saveUninitialized: false}));
+app.use(session({ secret: 'dat-ass', resave: false, saveUninitialized: false, cookie:{maxAge:31536000000}}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(globalware.requireHTTPS);

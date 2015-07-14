@@ -19,7 +19,8 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}
 		json.twitter = {
 			twitterUserExists : req.session.twitter ? true : false,
-			twitterUser : req.session.twitter ? req.session.twitter.username : ''
+			twitterUser : req.session.twitter ? req.session.twitter.username : '',
+			userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : ''
 		}
 		json.pressType = kutil.getPressType(req.headers['user-agent'])
 		res.renderPjax('blenddit', json);	
@@ -69,11 +70,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 	  }
 	}, function(req,res,next) {
 		req.session.reddit = req.user;
-		req.session.save(function(err){ 
-			if (err) return next(err);
-			res.redirect('/');
-		})
-		
+		res.redirect('/');
 	});
 	
 	app.get('/auth/twitter', passport.authenticate('twitter'), function(req, res){});
@@ -84,10 +81,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}),
 		function(req, res) {
 			req.session.twitter = req.user;
-			req.session.save(function(err){ 
-				if (err) return next(err);
-				res.redirect('/');
-			})
+			res.redirect('/');
 		}
 	);
 
@@ -103,10 +97,15 @@ module.exports = function(app, globalware, elseware, kutil) {
 	
 	app.get('/reddit-logout', function(req, res, next) {
 		req.logout();
-		res.send(['<a href="/auth/reddit" class="list-group-item">',
-					'<h5 class="list-group-item-heading"><i class="fa fa-reddit"></i>&nbsp;Sign in to Reddit</h5>',
-					'<p class="list-group-item-text">Follow this link to connect your Reddit account to Blenddit.</p>',
-				'</a>'].join(''));
+		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindLogIn.call(this);'>",
+					"<a href='javascript:void(0);' class='pull-left'>",
+						"<span class='text-warning'><i class='fa fa-reddit' style='font-size:2.2em;'></i></span>",
+					"</a>",
+					"<div class='media-body'>",
+						"<h4 class='media-heading'><span class='text-warning'>Sign in to Reddit</span></h4>",
+						"<p>Follow this link to connect your Reddit account to Blenddit.</p>",
+					"</div>",
+            	"</div>"].join(''));
 	});
 
 	app.post('/save-reddit-reply', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){

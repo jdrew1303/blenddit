@@ -1371,6 +1371,9 @@ function bindAccounts() {
         $('#reddit-logout').replaceWith(html);
     });
 }
+function bindLogIn() {
+    window.location = '/auth/reddit';
+}
 function bindSubmitSave(context) {
     event.preventDefault();
     bindSaveEdit.call($(this.form).find('.save-edit-button'));
