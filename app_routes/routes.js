@@ -69,7 +69,11 @@ module.exports = function(app, globalware, elseware, kutil) {
 	  }
 	}, function(req,res,next) {
 		req.session.reddit = req.user;
-		res.redirect('/');
+		req.session.save(function(err){ 
+			if (err) return next(err);
+			res.redirect('/');
+		})
+		
 	});
 	
 	app.get('/auth/twitter', passport.authenticate('twitter'), function(req, res){});
@@ -80,7 +84,10 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}),
 		function(req, res) {
 			req.session.twitter = req.user;
-			res.redirect('/');
+			req.session.save(function(err){ 
+				if (err) return next(err);
+				res.redirect('/');
+			})
 		}
 	);
 
