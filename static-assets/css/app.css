@@ -216,15 +216,11 @@ blockquote, blockquote p {
 .media-results h4, .media-results p { 
   word-break: break-word;
 }
-.media-results li, .media-more li {
-  border-radius: 4px;
-  border: 1px solid rgba(255,255,255,.25) !important;
-}
 .media-results li {
    opacity: 0;
 }
-.media-results {
-  margin-bottom: 0;
+.media-results .media {
+  margin-top: 5px;
 }
 .media-more li {
   padding: 10px;
@@ -258,7 +254,7 @@ blockquote, blockquote p {
   padding-top: 10px; 
   padding-bottom: 50px;
 }
-.frame-content .media {
+.frame-content .media, .media-results .media {
   border-radius: 5px;
   padding: 5px 5px 5px 0;
   background-color: rgb(32,32,32);
@@ -326,7 +322,7 @@ blockquote, blockquote p {
   padding: 5px 0 5px 0;
 }
 #subreddit-container .panel-group {
-    margin-bottom: 0;   
+    margin-bottom: 0;
 }
 .column-settings {
   padding-top:5px;
