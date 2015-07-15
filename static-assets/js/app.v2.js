@@ -519,7 +519,7 @@ function copyToAllRedditSearches(query, obj) {
 }
 function noResults(jqXHR, textStatus, errorThrown, obj) {
     if (jqXHR.status==403) {
-        $('#subreddit-container .reddit-search-input.tt-input').val(obj.query);
+        $('#search-results-container .reddit-search-input.tt-input').val(obj.query);
         window.scrollTo(0, 0);
         $('#reddit-search-results').launchPopOver(5000,
             popOverOptions('bottom','','This subreddit is private and you do not have access to view it.')); return;
@@ -527,14 +527,14 @@ function noResults(jqXHR, textStatus, errorThrown, obj) {
     subredditsSearchAPI(obj);
 }
 function subredditsMatching(data, query, loadMore) {
-    showFeature('#subreddit-container');
+    showFeature('#search-results-container');
     window.scrollTo(0, 0);
     $('#subreddit-result-title').text('Subreddits matching "'+query+'"..');
     buttonType();
     buildRedditMedia(data, 't5', loadMore);
 }
 function threadResults(data, obj, loadMore, type) {
-    showFeature('#subreddit-container');
+    showFeature('#search-results-container');
     window.scrollTo(0, 0);
     type == 'submissions'
         ? $('#subreddit-result-title').text('Submissions matching "'+obj.query+'"..') 
@@ -702,7 +702,7 @@ function showFeature(feature) {
 }
 function hideAllFeatures() {
     autoRefresh(false);
-    $('#main-loader-container, #content-container, #greeting, #subreddit-container')
+    $('#main-loader-container, #content-container, #greeting, #search-results-container')
         .removeClass('faded').addClass('hide');
 }
 function setPostThreads(context, fromContext) {
@@ -1075,7 +1075,7 @@ function getPosts(path, sort, limit, obj){
     });
 }
 function buildRedditMedia(data, type, loadMore) {
-    var $mediaList = $('#subreddit-container .media-results');
+    var $mediaList = $('#search-results-container .media-results');
     if (loadMore===false) $mediaList.children().remove();
     if (type == 't3') { // we're building a list of threads
         data.data.children.forEach(function(thread, i) {
@@ -1087,7 +1087,7 @@ function buildRedditMedia(data, type, loadMore) {
                     ? tmpl('tmpl_ao0', {src: window.location.protocol+thread.data.thumbnail.substr(5)}) 
                     : tmpl('tmpl_ap', {})
             }));
-            fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');
+            fadeIn($('#search-results-container .media-results li:last-child'), 100+(i*50), 'opacity-7');
         });
     } else if (type == 't5') {
         data.data.children.forEach(function(sub, i) {
@@ -1099,7 +1099,7 @@ function buildRedditMedia(data, type, loadMore) {
                     ? parseInt(sub.data.subscribers).toLocaleString()+' subscribers, a community for '+timeElapsed 
                     : "A community for "+timeElapsed
             }));
-            fadeIn($('#subreddit-container .media-results li:last-child'), 100+(i*50), 'opacity-7');    
+            fadeIn($('#search-results-container .media-results li:last-child'), 100+(i*50), 'opacity-7');    
         });
     }
 }
@@ -1308,7 +1308,7 @@ function bindMediaMore(after, type, objParam) {
                 ? function(data, textStatus, jqXHR, obj) {
                     if (obj.previousAfter) {
                         threadResults(data, objParam, true, type);
-                        $('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
+                        $('#search-results-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
                         bindLoadMore(data.data.after, type, objParam);
                     } else {
                         $('.media-more li').unbind('click');
@@ -1317,7 +1317,7 @@ function bindMediaMore(after, type, objParam) {
                 : function(data, textStatus, jqXHR, obj) {
                     if (obj.previousAfter) {
                         subredditsMatching(data, objParam.query, true);
-                        $('#subreddit-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
+                        $('#search-results-container .media[data-id='+obj.previousAfter.substr(3)+']')[0].scrollIntoView();
                         bindLoadMore(data.data.after, type, objParam);
                     } else {
                         $('.media-more li').unbind('click');

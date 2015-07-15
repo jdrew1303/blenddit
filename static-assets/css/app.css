@@ -215,7 +215,7 @@ blockquote, blockquote p {
 }
 .media-results h4, .media-results p { 
   word-break: break-word;
-}
+} 
 .media-results li {
    opacity: 0;
 }
@@ -321,7 +321,7 @@ blockquote, blockquote p {
 .subreddit-group {
   padding: 5px 0 5px 0;
 }
-#subreddit-container .panel-group {
+#search-results-container .panel-group {
     margin-bottom: 0;
 }
 .column-settings {
