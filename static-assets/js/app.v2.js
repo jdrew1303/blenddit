@@ -662,7 +662,7 @@ function frame_content_height(columnNum, optInt) {
     }
 }
 function launchControls() {
-    $('#controlModal').modal();
+    showFeature('#controls');
 }
 function addColumnToConfig() {
     var newColumnAdded = false;
@@ -702,7 +702,7 @@ function showFeature(feature) {
 }
 function hideAllFeatures() {
     autoRefresh(false);
-    $('#main-loader-container, #content-container, #greeting, #search-results-container')
+    $('#controls, #main-loader-container, #content-container, #greeting, #search-results-container')
         .removeClass('faded').addClass('hide');
 }
 function setPostThreads(context, fromContext) {

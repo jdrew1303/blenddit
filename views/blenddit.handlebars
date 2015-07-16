@@ -206,9 +206,45 @@
         </div>
       </div>
     </div>
+    <div id='controls' class="container content-padding nopacity hide">
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="tile purple">
+            <h3 class="title">Reddit Column</h3>
+            <p>Add any number of threads.</p>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="tile red">
+            <h3 class="title">Twitter Column</h3>
+            <p>Add any number of twitter search terms.</p>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="tile orange">
+            <h3 class="title">Accounts</h3>
+            <p>Your active reddit and twitter accounts while using Blenddit</p>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-4">
+          <div class="tile green">
+            <h3 class="title">Search</h3>
+            <p>Find subreddits with live threads or twitter searches.</p>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="tile blue">
+            <h3 class="title">Delete Columns</h3>
+            <p>Delete all of a specified column type.</p>
+          </div>
+        </div>    
+      </div>
+    </div>
     <div id='reddit-uri' data-subredditURI='{{reddit.subredditURI}}' data-threadidURI='{{reddit.threadidURI}}' data-threadidsURI='{{reddit.threadidsURI}}'></div>
   </div>
-  <div class="modal fade" id="controlModal" tabindex="-1" role="dialog" aria-labelledby="controlModalTitle" aria-hidden="true">
+  {{!-- <div class="modal fade" id="controlModal" tabindex="-1" role="dialog" aria-labelledby="controlModalTitle" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -433,7 +469,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> --}}
   <div class="modal fade" id="delete-column-modal" tabindex="-1" role="dialog" aria-labelledby="delete-column-modal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
