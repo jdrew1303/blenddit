@@ -47,7 +47,7 @@
 <script type="text/html" id="tmpl_g">
 	<form action="javascript:void(0);" class="edit-column-settings">
 		<%=settings%>
-		<input type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this)">
+		<input type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this, <%=columnNum%>)">
 	</form>
 </script>
 <script type="text/html" id="tmpl_am">
@@ -57,7 +57,7 @@
 	</div>
 </script>
 <script type="text/html" id="tmpl_i">
-	<div data-column="<%=num%>" class="frame-content nopacity"></div>
+	<div data-column="<%=num%>" class="frame-content"></div>
 </script>
 <script type="text/html" id="tmpl_j">
 	<div data-column="<%=num%>" class="btn-group column-bars">
@@ -85,14 +85,14 @@
 			<p>THREADS</p>
 		</a>
 		<form action="javascript:void(0);" data-column="<%=columnNum%>" class="hide edit-form teal">
-			<input data-column="<%=columnNum%>" type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this)">
+			<input data-column="<%=columnNum%>" type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this, <%=columnNum%>)">
 		</form>
 		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch" <%=getPressEvent()%>="bindSettings.call(this, <%=columnNum%>)">
 			<i class="fa fa-cog fa-2x"></i>
 			<p>SETTINGS</p>
 		</a>
 		<div data-column="<%=columnNum%>" class="hide settings-tab darkgoldenrod"></div>
-		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue" ontouchcancel="console.log("asdf")" <%=getPressEvent()%>="bindWriteComment.call(this, <%=columnNum%>)">
+		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue" <%=getPressEvent()%>="bindWriteComment.call(this, <%=columnNum%>)">
 			<i class="fa fa-pencil fa-2x"></i>
 			<p>WRITE COMMENT</p>
 		</a>

@@ -312,7 +312,6 @@ function blenddit() {
         $('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse({'toggle': false});
         window.autoRefreshState = true;
         bindAutoRefreshActive();
-        buttonType(true);
         visibilityChange();
         redditNames = redditNamesFn();
         redditNames.initialize();
@@ -437,13 +436,6 @@ function autoRefresh(bool, exceptNum) {
         }); // turn on all column auto refresh (if toggled on)
     }
 }
-function buttonType(override) {
-    if ($('#greeting').hasClass('hide') && !override) { 
-        $('.columns-or-home i').removeClass('fa-columns').addClass('fa-home'); return 'home';
-    } else {
-        $('.columns-or-home i').removeClass('fa-home').addClass('fa-columns'); return 'columns'; 
-    }
-}
 function redditSearch(parent, trigger) {
     if (!$(parent+' .reddit-search-input').hasClass('tt-input')) typeAheadReddit(parent+' .reddit-search-input');
     if (trigger) bindRedditSearch.call($(parent+' .reddit-search-submit'));
@@ -530,7 +522,6 @@ function subredditsMatching(data, query, loadMore) {
     showFeature('#search-results-container');
     window.scrollTo(0, 0);
     $('#subreddit-result-title').text('Subreddits matching "'+query+'"..');
-    buttonType();
     buildRedditMedia(data, 't5', loadMore);
 }
 function threadResults(data, obj, loadMore, type) {
@@ -539,7 +530,7 @@ function threadResults(data, obj, loadMore, type) {
     type == 'submissions'
         ? $('#subreddit-result-title').text('Submissions matching "'+obj.query+'"..') 
         : $('#subreddit-result-title').text('/r/'+obj.query);
-    buttonType();
+    
     buildRedditMedia(data, 't3', loadMore);
 }
 function typeAheadReddit(inputSelector, completeFn) {
@@ -661,8 +652,21 @@ function frame_content_height(columnNum, optInt) {
         $frame_content.removeAttr('style').css('height', window.innerHeight-(107+localOffset+overFlowed));
     }
 }
-function launchControls() {
+function launchControls() {    
     showFeature('#controls');
+    updateControlsView();
+}
+function updateControlsView() {
+    var configArr = new Fn().getFromStorage('config');
+    $('.panel-red .huge').text(getColumnCount(configArr, 'reddit'));
+    $('.panel-primary .huge').text(getColumnCount(configArr, 'twitter'));
+}
+function getColumnCount(configArr, type) {
+    var count = 0;
+    configArr.forEach(function(obj) {
+        if (obj.type == type) count++;
+    });
+    return count;
 }
 function addColumnToConfig() {
     var newColumnAdded = false;
@@ -903,8 +907,8 @@ function externalLinks(selector) {
 function displayComments(data, columnNum) {
     var $frameContent = $(".frame-content[data-column="+columnNum+"]");
     if (!$frameContent.children().length) { // first time load
-        $frameContent.append(buildCommentHtmlString(data[1].data.children, false, true));
-        fadeIn($frameContent, 1000);
+        $frameContent.append(buildCommentHtmlString(data[1].data.children, true, true));
+        fadeIn($frameContent.children(), 100);
     } else { // subsequent loads
         var cachedfirstComment = window['firstComment'+columnNum];
         if (!(cachedfirstComment == data[1].data.children[0].data.name)) {
@@ -1240,7 +1244,7 @@ function buildConfigToUI(deleteFlag) {
             }
         }
     }
-    buttonType();
+    
     contentResizeEvent();
 }
 function buildButtons(arr) {
@@ -1275,7 +1279,7 @@ function buildColumnOptions(configObj, columnNum) {
             var $label = $(this).find('label'); var $input = $(this).find('*[id]');
             $label.each(function(i, lab){ $(lab).attr('for', $(lab).attr('for')+'-column-'+columnNum)});
             $input.each(function(i, inp){ $(inp).attr('id', $(inp).attr('id')+'-column-'+columnNum)});
-        })).html(); return tmpl('tmpl_g', {settings:settingsButtons+settingSelects});
+        })).html(); return tmpl('tmpl_g', {settings:settingsButtons+settingSelects, columnNum: columnNum});
     }();
     var postTab = tmpl('tmpl_am',{})+buildReplyForm("","",true);
 
@@ -1374,9 +1378,9 @@ function bindAccounts() {
 function bindLogIn() {
     window.location = '/auth/reddit';
 }
-function bindSubmitSave(context) {
+function bindSubmitSave(columnNum) {
     event.preventDefault();
-    bindSaveEdit.call($(this.form).find('.save-edit-button'));
+    bindSaveEdit.call($(this.form).find('.save-edit-button'), columnNum);
 }
 function inputLoad(columnNum) {
     event.preventDefault();
@@ -1638,10 +1642,6 @@ function bindWatchSave() {
         }
     }
 }
-function bindHelpModal() {
-    event.preventDefault();
-    $('#help-modal').modal('toggle');
-}
 function bindDeleteColumn() {
     var fn = new Fn(),
         config = fn.getFromStorage('config');
@@ -1657,18 +1657,14 @@ function bindAutoRefreshActive() {
         autoRefreshOnlyActiveColumn();
     });
 }
-function bindColumnsOrHomeButton() {
-    event.preventDefault();
-    var type = buttonType();
-    if (type=='columns') {
-        new Fn().getFromStorage('config').length > 0
-            ? buildConfigToUI() : $(this).parent().launchPopOver(3000,
-            popOverOptions('top','No columns','Build at least one column to view columns.'));
-    } else { // type home
-        $('#watch-threads .list-group.contain').children().length===0 ? watchList() : '';
-        showFeature('#greeting');
-        buttonType();
-    }
+function bindColumnButton() {
+    new Fn().getFromStorage('config').length > 0
+        ? buildConfigToUI() 
+        : $(this).parent().launchPopOver(3000,popOverOptions('top','No columns','Build at least one column to view columns.'));
+}
+function bindHomeButton() {
+    $('#watch-threads .list-group.contain').children().length===0 ? watchList() : '';
+    showFeature('#greeting');
 }
 function bindRedditSearchRadio() {
     var $selects = $(this).parents('form').find('select');
