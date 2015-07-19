@@ -773,6 +773,9 @@ span.twitter-typeahead {
     display: none;
     float: left;
 }
+.huge {
+  font-size: 40px;
+}
 @media screen and (max-width: 767px) {
     #back-button { display: block; }
     #control-panel-buttons .list-group-item:not(.active) {
