@@ -699,15 +699,24 @@ function hideAllColumnOptions(columnNum) {
 function showFeature(feature) {
     hideAllFeatures();
     fadeIn($(feature).removeClass('hide'),100);
+    if (feature == '#greeting') $('.home-button').addClass('active-feature');
+    if (feature == '#controls') $('.open-controls').addClass('active-feature');
     if (feature == '#content-container') {
+        var configArr = new Fn().getFromStorage('config');
         $('html, body').addClass('noverflow');
         autoRefreshOnlyActiveColumn();
+        $('.columns-button').addClass('active-feature');
+        configArr.length > 1 
+            ? $('.carousel-control').removeClass('hide')
+            : $('.carousel-control').addClass('hide')
     } else { $('html, body').removeClass('noverflow'); }
 }
 function hideAllFeatures() {
     autoRefresh(false);
     $('#controls, #main-loader-container, #content-container, #greeting, #search-results-container')
         .removeClass('faded').addClass('hide');
+    $('.home-button, .columns-button, .open-controls').removeClass('active-feature');
+    $('.carousel-control').addClass('hide');
 }
 function setPostThreads(context, fromContext) {
     var $postThread = $(context+' .post-thread'),
@@ -1244,7 +1253,6 @@ function buildConfigToUI(deleteFlag) {
             }
         }
     }
-    
     contentResizeEvent();
 }
 function buildButtons(arr) {
