@@ -97,7 +97,7 @@ html, body {
 #watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover, .from-sub:hover {
   opacity: 1 !important;
 }
-#control-panel-buttons {
+/*#control-panel-buttons {
     padding: 0;
 }
 #control-panel-buttons .list-group {
@@ -134,8 +134,8 @@ html, body {
 }
 #control-panel-panels #search-control-panel .panel-group {
     margin-bottom: 0;
-}
-#search-control-panel .tt-dropdown-menu{ 
+}*/
+/*#search-control-panel .tt-dropdown-menu{ 
   position: inherit !important;
   top: 0 !important;
 }
@@ -149,7 +149,7 @@ html, body {
 #panel-help {
     text-align: center;
     margin-top: 40%;
-}
+}*/
 .jumbotron {
   margin-bottom: 10px;
 }
@@ -392,7 +392,7 @@ blockquote, blockquote p {
 .fa-bars, .delete-edit, .info-edit, .delete-controls, .info-controls, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
 #watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more,
-.panel-heading, #accounts .media {
+.panel-heading, #accounts .media, #linked-accounts * {
   cursor: pointer;
 }
 .open-controls, .columns-button, .home-button {
@@ -781,6 +781,9 @@ span.twitter-typeahead {
 #controls .panel-footer {
   position:relative;
 }
+#controls .panel-body .list-group {
+  margin-bottom: 0;
+}
 .huge {
   font-size: 40px;
 }
@@ -809,6 +812,9 @@ span.twitter-typeahead {
 .panel-red {
   border-color: #d9534f;
 }
+.text-red {
+  color: #d9534f;
+}
 .panel-red .panel-heading {
   border-color: #d9534f;
   color: #fff;
@@ -818,7 +824,7 @@ span.twitter-typeahead {
   color: #d9534f;
 }
 
-@media screen and (max-width: 767px) {
+/*@media screen and (max-width: 767px) {
     #back-button { display: block; }
     #control-panel-buttons .list-group-item:not(.active) {
         display: none;
@@ -830,7 +836,7 @@ span.twitter-typeahead {
         overflow: hidden !important;
     }
     #panel-help { display: none; }
-}
+}*/
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {
     content: ' ';

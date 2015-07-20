@@ -254,7 +254,7 @@
         </div>
         <div class="col-lg-12 col-md-12">
             <div class="panel panel-yellow">
-                <div class="panel-heading">
+                <div class="panel-heading" data-toggle="collapse" data-target="#linked-accounts">
                     <div class="row">
                         <div class="col-xs-3">
                             <i class="fa fa-user fa-5x"></i>
@@ -265,9 +265,55 @@
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <div id="linked-accounts" class="panel-body collapse">
+                  <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
+                    {{#if reddit.redditUserExists}}
+                      <div class="media" id="reddit-logout" {{pressType}}="bindAccounts.call(this)">
+                          <a href="#" class="pull-left">
+                            <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+                          </a>
+                          <div class="media-body">
+                              <h4 class="media-heading"><span class="text-warning">{{reddit.redditUser}}</span></h4>
+                              <p>Click here to sign out of Reddit.</p>
+                          </div>
+                      </div>
+                    {{else}}
+                      <div class="media" {{pressType}}="document.location='/auth/reddit';">
+                        <a href="javascript:void(0);" class="pull-left">
+                          <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+                        </a>
+                        <div class="media-body">
+                          <h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
+                          <p>Follow this link to connect your Reddit account to Blenddit.</p>
+                        </div>
+                      </div>
+                    {{/if}}
+                    {{#if twitter.twitterUserExists}}
+                      <div class="media">
+                          <a href="#" class="pull-left">
+                              <img src="{{twitter.userAvatar}}" class="media-object img-thumbnail" alt="Sample Image">
+                          </a>
+                          <div class="media-body">
+                              <h4 class="media-heading"><span class="text-primary">@{{twitter.twitterUser}}</span></h4>
+                              <p>Click here to sign out of Twitter.</p>
+                          </div>
+                      </div>
+                    {{else}}
+                      <div class="media" {{pressType}}="document.location='/auth/twitter';">
+                          <a href="javascript:void(0);" class="pull-left">
+                              <span class="text-primary"><i class="fa fa-twitter-square fa-4x"></i></span>
+                          </a>
+                          <div class="media-body">
+                              <h4 class="media-heading"><span class="text-primary">Sign in to Twitter</span></h4>
+                              <p>Follow this link to connect your Twitter account to Blenddit.</p>
+                          </div>
+                      </div>
+                    {{/if}}
+                  </div>
+                </div>
+                <a href="javascript:void(0)" data-toggle="collapse" data-target="#linked-accounts">
                     <div class="panel-footer">
-                        <span class="pull-left">Connect Accounts</span>
+                        <span class="pull-left">Link Accounts</span>
                         <span class="pull-right"><i class="fa fa-plus-square fa-lg"></i></span>
                         <div class="clearfix"></div>
                     </div>
@@ -394,7 +440,7 @@
                 </div>
               </div>
             </div>
-            <div id='accounts'>
+            {{!-- <div id='accounts'>
                 <div class='list-group' data-reddituser='{{reddit.redditUser}}'>
                   {{#if reddit.redditUserExists}}
                     <div class="media" id="reddit-logout" {{pressType}}="bindAccounts.call(this)">
@@ -439,7 +485,7 @@
                       </div>
                   {{/if}}
                 </div>
-            </div>
+            </div> --}}
             <div id='delete-columns'>
                 <div class='list-group'>
                     <a {{pressType}}="bindDeleteColumns.call(this)" class="list-group-item" id='delete-reddit-columns'>
