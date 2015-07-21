@@ -268,12 +268,12 @@
                 <div id="linked-accounts" class="panel-body collapse">
                   <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
                     {{#if reddit.redditUserExists}}
-                      <div class="media" id="reddit-logout" {{pressType}}="bindAccounts.call(this)">
+                      <div class="media" id="reddit-logout" {{pressType}}="bindRedditSignOut.call(this)">
                           <a href="#" class="pull-left">
                             <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
                           </a>
                           <div class="media-body">
-                              <h4 class="media-heading"><span class="text-warning">{{reddit.redditUser}}</span></h4>
+                              <h4 class="media-heading"><span class="text-red">{{reddit.redditUser}}</span></h4>
                               <p>Click here to sign out of Reddit.</p>
                           </div>
                       </div>
@@ -291,7 +291,7 @@
                     {{#if twitter.twitterUserExists}}
                       <div class="media">
                           <a href="#" class="pull-left">
-                              <img src="{{twitter.userAvatar}}" class="media-object img-thumbnail" alt="Sample Image">
+                              <img src="{{twitter.userAvatar}}" class="media-object" alt="Sample Image">
                           </a>
                           <div class="media-body">
                               <h4 class="media-heading"><span class="text-primary">@{{twitter.twitterUser}}</span></h4>

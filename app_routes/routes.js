@@ -99,10 +99,10 @@ module.exports = function(app, globalware, elseware, kutil) {
 		req.logout();
 		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindLogIn.call(this);'>",
 					"<a href='javascript:void(0);' class='pull-left'>",
-						"<span class='text-warning'><i class='fa fa-reddit' style='font-size:2.2em;'></i></span>",
+						"<span class='text-red'><i class='fa fa-reddit-square fa-4x'></i></span>",
 					"</a>",
 					"<div class='media-body'>",
-						"<h4 class='media-heading'><span class='text-warning'>Sign in to Reddit</span></h4>",
+						"<h4 class='media-heading'><span class='text-red'>Sign in to Reddit</span></h4>",
 						"<p>Follow this link to connect your Reddit account to Blenddit.</p>",
 					"</div>",
             	"</div>"].join(''));

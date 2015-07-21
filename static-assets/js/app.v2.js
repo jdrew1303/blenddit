@@ -657,9 +657,12 @@ function launchControls() {
     updateControlsView();
 }
 function updateControlsView() {
-    var configArr = new Fn().getFromStorage('config');
+    var configArr = new Fn().getFromStorage('config'),
+        redditAcc = $('[data-reddituser]').data('reddituser') ? 1 : 0,
+        twitterAcc = $('[data-twitteruser]').data('twitteruser') ? 1 : 0;
     $('.panel-red .huge').text(getColumnCount(configArr, 'reddit'));
     $('.panel-primary .huge').text(getColumnCount(configArr, 'twitter'));
+    $('.panel-yellow .huge').text(redditAcc+twitterAcc);
 }
 function getColumnCount(configArr, type) {
     var count = 0;
@@ -1376,11 +1379,12 @@ function bindDeleteColumns() {
     }
     $('#controlModal').modal('hide');
 }
-function bindAccounts() {
+function bindRedditSignOut() {
     event.preventDefault();
     genericGet('/reddit-logout', function(html) {
         $('[data-reddituser]').data('reddituser',null);
         $('#reddit-logout').replaceWith(html);
+        updateControlsView();
     });
 }
 function bindLogIn() {
