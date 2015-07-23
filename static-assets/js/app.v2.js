@@ -1387,8 +1387,19 @@ function bindRedditSignOut() {
         updateControlsView();
     });
 }
-function bindLogIn() {
+function bindTwitterSignOut() {
+    event.preventDefault();
+    genericGet('/twitter-logout', function(html) {
+        $('[data-twitteruser]').data('twitteruser',null);
+        $('#twitter-logout').replaceWith(html);
+        updateControlsView();
+    });
+}
+function bindRedditLogIn() {
     window.location = '/auth/reddit';
+}
+function bindTwitterLogIn() {
+    window.location = '/auth/twitter';
 }
 function bindSubmitSave(columnNum) {
     event.preventDefault();

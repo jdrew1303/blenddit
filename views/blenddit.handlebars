@@ -269,7 +269,7 @@
                   <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
                     {{#if reddit.redditUserExists}}
                       <div class="media" id="reddit-logout" {{pressType}}="bindRedditSignOut.call(this)">
-                          <a href="#" class="pull-left">
+                          <a href="javascript:void(0)" class="pull-left">
                             <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
                           </a>
                           <div class="media-body">
@@ -278,7 +278,7 @@
                           </div>
                       </div>
                     {{else}}
-                      <div class="media" {{pressType}}="document.location='/auth/reddit';">
+                      <div class="media" {{pressType}}="bindRedditLogIn.call(this)">
                         <a href="javascript:void(0);" class="pull-left">
                           <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
                         </a>
@@ -289,8 +289,8 @@
                       </div>
                     {{/if}}
                     {{#if twitter.twitterUserExists}}
-                      <div class="media">
-                          <a href="#" class="pull-left">
+                      <div class="media" id="twitter-logout" {{pressType}}="bindTwitterSignOut.call(this)">
+                          <a href="javascript:void(0)" class="pull-left">
                               <img src="{{twitter.userAvatar}}" class="media-object" alt="Sample Image">
                           </a>
                           <div class="media-body">
@@ -299,7 +299,7 @@
                           </div>
                       </div>
                     {{else}}
-                      <div class="media" {{pressType}}="document.location='/auth/twitter';">
+                      <div class="media" {{pressType}}="bindTwitterLogIn.call(this)">
                           <a href="javascript:void(0);" class="pull-left">
                               <span class="text-primary"><i class="fa fa-twitter-square fa-4x"></i></span>
                           </a>

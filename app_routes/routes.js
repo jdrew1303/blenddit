@@ -6,68 +6,68 @@ var passport = require('passport'),
     reddit_sec = nconf.get('debug') ? nconf.get('authKeys').REDDIT_CONSUMER_SECRET_DEBUG : nconf.get('authKeys').REDDIT_CONSUMER_SECRET_LIVE;
 module.exports = function(app, globalware, elseware, kutil) {
 	var gware = globalware, mware = elseware,
-	    all = gware.methods.concat(kutil.getMethods(mware));
+		all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/', gware.nowww, function(req, res){
 		var json = {};
-		json.reddit = { 
-			redditUserExists : req.session.reddit ? true : false, 
+		json.reddit = {
+			redditUserExists : req.session.reddit ? true : false,
 			redditUser : req.session.reddit ? req.session.reddit.name : '',
 			subredditURI : req.session.subreddit,
 			threadidURI : req.session.threadid,
 			threadidsURI : req.session.threadids
-		}
+		};
 		json.twitter = {
 			twitterUserExists : req.session.twitter ? true : false,
 			twitterUser : req.session.twitter ? req.session.twitter.username : '',
 			userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : ''
-		}
-		json.pressType = kutil.getPressType(req.headers['user-agent'])
-		res.renderPjax('blenddit', json);	
+		};
+		json.pressType = kutil.getPressType(req.headers['user-agent']);
+		res.renderPjax('blenddit', json);
 		req.session.subreddit = req.session.threadid = req.session.threadids = null;
 	});
 	
     app.get('/comments/:threadids*', gware.nowww, function(req, res) {
         req.session.threadids = req.params.threadids;
         res.redirect('/');
-    })
+    });
     
 	app.get('/r/:subreddit/comments/:threadid*', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		req.session.threadid = req.params.threadid;
 		res.redirect('/');
-	})
+	});
 
 	app.get('/r/:subreddit*', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		res.redirect('/');
-	})
+	});
 	
 	app.get('/lists', function(req, res) {
 		var json = {};
 		fs.readFile(require('path').dirname(require.main.filename)+'/listsjs.json', 'utf8', function (err, data) {
-		  if (err) { return console.log(err); }
-		  json.listsJSON = JSON.parse(data);
-		  res.renderPjax('lists', json);	
+			if (err) { return console.log(err); }
+			json.listsJSON = JSON.parse(data);
+			res.renderPjax('lists', json);
 		});
 	});
 	
 	app.get('/auth/reddit', function(req, res, next){
-	  req.session.state = crypto.randomBytes(32).toString('hex');
-	  passport.authenticate('reddit', {
-	    state: req.session.state,
-	    duration: 'permanent'
-	  })(req, res, next);
+		req.session.state = crypto.randomBytes(32).toString('hex');
+			passport.authenticate('reddit', {
+			state: req.session.state,
+			duration: 'permanent'
+		})(req, res, next);
 	});
 
 	app.get('/auth/reddit/callback', function(req, res, next){
-	  if (req.query.state == req.session.state){
-	    passport.authenticate('reddit', {
-	      failureRedirect: '/'
-	    })(req, res, next);
-	  } else {
-	    next( new Error(403) );
-	  }
+		if (req.query.state == req.session.state){
+			passport.authenticate('reddit', {
+				failureRedirect: '/'
+			})(req, res, next);
+		} else {
+			next( new Error(403) );
+		}
 	}, function(req,res,next) {
 		req.session.reddit = req.user;
 		res.redirect('/');
@@ -75,9 +75,9 @@ module.exports = function(app, globalware, elseware, kutil) {
 	
 	app.get('/auth/twitter', passport.authenticate('twitter'), function(req, res){});
 
-	app.get('/auth/twitter/callback', 
-		passport.authenticate('twitter', { 
-			failureRedirect: '/' 
+	app.get('/auth/twitter/callback',
+		passport.authenticate('twitter', {
+			failureRedirect: '/'
 		}),
 		function(req, res) {
 			req.session.twitter = req.user;
@@ -97,7 +97,8 @@ module.exports = function(app, globalware, elseware, kutil) {
 	
 	app.get('/reddit-logout', function(req, res, next) {
 		req.logout();
-		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindLogIn.call(this);'>",
+		delete req.session.reddit;
+		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindRedditLogIn.call(this);'>",
 					"<a href='javascript:void(0);' class='pull-left'>",
 						"<span class='text-red'><i class='fa fa-reddit-square fa-4x'></i></span>",
 					"</a>",
@@ -105,51 +106,61 @@ module.exports = function(app, globalware, elseware, kutil) {
 						"<h4 class='media-heading'><span class='text-red'>Sign in to Reddit</span></h4>",
 						"<p>Follow this link to connect your Reddit account to Blenddit.</p>",
 					"</div>",
-            	"</div>"].join(''));
+				"</div>"].join(''));
+	});
+
+	app.get('/twitter-logout', function(req, res, next) {
+		req.logout();
+		delete req.session.twitter;
+		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindTwitterLogIn.call(this)'>",
+					"<a href='javascript:void(0);' class='pull-left'>",
+						"<span class='text-primary'><i class='fa fa-twitter-square fa-4x'></i></span>",
+					"</a>",
+					"<div class='media-body'>",
+						"<h4 class='media-heading'><span class='text-primary'>Sign in to Twitter</span></h4>",
+						"<p>Follow this link to connect your Twitter account to Blenddit.</p>",
+					"</div>",
+                "</div>"].join(''));
 	});
 
 	app.post('/save-reddit-reply', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
-	  var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/comment', req);
-	  
-	  require('request').post(options, function callback(error, response, body) {
-	    res.setHeader('Content-Type', 'application/json');
-	    !error && response.statusCode == 200 
-	      ? res.send(body)
-	      : error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-	        : res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
-	  }).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
+		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/comment', req);
+		require('request').post(options, function callback(error, response, body) {
+			res.setHeader('Content-Type', 'application/json');
+			!error && response.statusCode == 200 ? res.send(body)
+				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
+			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
+		}).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
 	});
 
 	app.post('/vote', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
-	  var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/vote', req);
-	  
-	  require('request').post(options, function callback(error, response, body) {
-	    res.setHeader('Content-Type', 'application/json');
-	    !error && response.statusCode == 200 
-	      ? res.send(body)
-	      : error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-	        : res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
-	  }).form({'id':req.body.id, 'dir':req.body.dir});
+		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/vote', req);
+
+		require('request').post(options, function callback(error, response, body) {
+			res.setHeader('Content-Type', 'application/json');
+			!error && response.statusCode == 200 ? res.send(body)
+				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
+			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
+		}).form({'id':req.body.id, 'dir':req.body.dir});
 	});
 
 	app.get('/search-reddit-names', function(req, res, next) {
 		var options = {
-		    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',
-		    headers: {
-		        'User-Agent': 'request',
-		        'Content-Type':'application/x-www-form-urlencoded'
-		    }
-	  	};
-	  	require('request').post(options, function callback(error, response, body) {
+			url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',
+			headers: {
+				'User-Agent': 'request',
+				'Content-Type':'application/x-www-form-urlencoded'
+			}
+		};
+		require('request').post(options, function callback(error, response, body) {
 			res.setHeader('Content-Type', 'application/json');
-			!error && response.statusCode == 200 
-		    	? res.send(body)
-		      	: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-		        	: res.send({statusCode: response.statusCode, body: JSON.stringify(body)})
+			!error && response.statusCode == 200 ? res.send(body)
+				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
+			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
 		}).form({'query':req.query.query, 'include_over_18':'true'});
 	});
 
 	app.get('/*', function(req,res) {
 		res.redirect('/');
 	});
-}
+};
