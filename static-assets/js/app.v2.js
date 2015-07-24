@@ -671,11 +671,12 @@ function getColumnCount(configArr, type) {
 function addColumnToConfig() {
     var newColumnAdded = false;
     if (new Fn().any('.thread-controls', function(x){ return !($(x).val()===null)})) { // Validate - Does the user have at least one thread?
-        $('.sub-group-controls').length == 1
+        $('.sub-group-controls').length == 1 // If its only one thread, make name
             ? $('#column-name').val($('.sub-group-controls .thread-controls option:selected').text().trim().substr(0,22)+' ...') 
             : $('#column-name').val('My Column');
         newColumnAdded = updateConfigObjFromDOM('.sub-group-controls', '.subreddit-controls', 
             '.thread-controls', '#reddit-column .column-settings');
+        if (newColumnAdded) $('#reddit-column').collapse('hide');
     } return newColumnAdded;
 }
 function showColumnOption(option, columnNum) {

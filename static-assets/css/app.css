@@ -97,59 +97,6 @@ html, body {
 #watch-subreddits .btn:hover, #watch-matching .btn:hover, #watch-threads .btn:hover, .media-results li:hover, .from-sub:hover {
   opacity: 1 !important;
 }
-/*#control-panel-buttons {
-    padding: 0;
-}
-#control-panel-buttons .list-group {
-    margin-bottom: 0;
-    max-height: 420px;
-    overflow: auto;
-}
-#control-panel-buttons .list-group .list-group-item,
-#accounts .list-group .list-group-item {
-  border:0;
-  margin: 0;
-}
-#control-panel-buttons .list-group .list-group-item:first-child,
-#accounts .list-group .list-group-item:first-child {
-  border-top-right-radius: 0px;
-  border-top-left-radius: 0px;
-}
-#control-panel-buttons .list-group .list-group-item:last-child,
-#accounts .list-group .list-group-item:last-child {
-  border-bottom-right-radius: 0px;
-  border-bottom-left-radius: 0px;
-}
-#control-panel-buttons .active {
-    background-color: #484848;
-}
-#control-panel-panels > div:not(.active) {
-    display: none;
-}
-#control-panel-panels {
-    padding: 0;
-}
-#control-panel-panels #reddit {
-    padding: 5px;
-}
-#control-panel-panels #search-control-panel .panel-group {
-    margin-bottom: 0;
-}*/
-/*#search-control-panel .tt-dropdown-menu{ 
-  position: inherit !important;
-  top: 0 !important;
-}
-#search-control-panel .col-sm-12 {
-    padding: 0;
-}
-#control-panel-panels {
-    max-height: 415px;
-    overflow: auto;
-}
-#panel-help {
-    text-align: center;
-    margin-top: 40%;
-}*/
 .jumbotron {
   margin-bottom: 10px;
 }
@@ -823,20 +770,6 @@ span.twitter-typeahead {
 .panel-red a {
   color: #d9534f;
 }
-
-/*@media screen and (max-width: 767px) {
-    #back-button { display: block; }
-    #control-panel-buttons .list-group-item:not(.active) {
-        display: none;
-    }
-    #control-panel-buttons .list-group-item.non-active { display: block; }
-    #controlModal .modal-body { overflow: auto; }
-    #control-panel-panels #reddit {
-        min-height: initial !important;
-        overflow: hidden !important;
-    }
-    #panel-help { display: none; }
-}*/
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {
     content: ' ';
