@@ -257,9 +257,6 @@ function tmpl(str, data){
 function getPressEvent() { // window.pressType comes from user-agent request to server
     return window.pressType;
 }
-function hideControlModal() {
-    $('#controlModal').modal('hide');
-}
 function init() {
     pjx();
     blenddit();
@@ -338,10 +335,10 @@ function startBlending() {
         var threadIds = threadIdsURI.toString().split('-'),
             children = [];
         threadIds.forEach(function(threadId, i) {
-            getThreadById(threadId, 
+            getThreadById(threadId,
                 function(data) {
                     children = children.concat(data.data.children);
-                    threadIds.length == children.length 
+                    threadIds.length == children.length
                         ? children.length!==0
                             ? addToConfigObj(buildRedditConfigObjByThreads(children))
                             : void 0
@@ -382,7 +379,7 @@ function redditNamesFn() {
               }
           }
     });
-} 
+}
 function sidebarTrigger() {
     $('#sidebarTrigger').unbind('click').on('click',function(e) { // sidebar toggle
         e.preventDefault();
@@ -673,11 +670,12 @@ function getColumnCount(configArr, type) {
 }
 function addColumnToConfig() {
     var newColumnAdded = false;
-    if (!$('#reddit').hasClass('hide') && new Fn().any('.thread-controls', function(x){ return !($(x).val()===null)})) {
-        // Validate - Does the user have at least one thread?
-        // Reset add column functionality, take back to "Add Column"
+    if (new Fn().any('.thread-controls', function(x){ return !($(x).val()===null)})) { // Validate - Does the user have at least one thread?
+        $('.sub-group-controls').length == 1
+            ? $('#column-name').val($('.sub-group-controls .thread-controls option:selected').text().trim().substr(0,22)+' ...') 
+            : $('#column-name').val('My Column');
         newColumnAdded = updateConfigObjFromDOM('.sub-group-controls', '.subreddit-controls', 
-            '.thread-controls', '#reddit .column-settings');
+            '.thread-controls', '#reddit-column .column-settings');
     } return newColumnAdded;
 }
 function showColumnOption(option, columnNum) {
@@ -1142,8 +1140,8 @@ function buildRedditConfigObjByThreads(children) {
     settings.limitPosts = "50";
     settings.name = children.length==1 
         ? children[0].data.title.length > 25 
-            ? children[0].data.title.substring(0,22)+' ...' 
-            : children[0].data.title
+            ? children[0].data.title.trim().substring(0,22)+' ...' 
+            : children[0].data.title.trim()
         : "My Column";
     settings.refreshRate = "60";
     settings.sortBy = "new";
@@ -1362,22 +1360,6 @@ function bindThreadResults() {
 function bindWatchThreads() {
     event.preventDefault();
     $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
-}
-function bindDeleteColumns() {
-    event.preventDefault();
-    var fn = new Fn(), config = fn.getFromStorage('config');
-    if (this.id=='delete-reddit-columns') {
-        config = config.filter(function(obj){
-            return obj.type != 'reddit';
-        });
-        fn.setInStorage('config',config);
-        buildConfigToUI(true);
-    } else if (this.id=='delete-all-columns') {
-        config = [];
-        fn.setInStorage('config',[]);
-        buildConfigToUI(true);
-    }
-    $('#controlModal').modal('hide');
 }
 function bindRedditSignOut() {
     event.preventDefault();
@@ -1700,7 +1682,7 @@ function bindSaveChanges() {
     newColumnAdded 
         ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromStorage('config').length-1); }()
         : buildConfigToUI();
-    $('#controlModal').modal('hide');
+    $('.sub-group-controls').remove();
 }
 function bindPreventEnterButton() {
     if (event.which == 13) {
