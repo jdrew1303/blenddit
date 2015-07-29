@@ -763,7 +763,7 @@ function cacheColumn(config, columnNum, data) {
 function getCommentsForColumn(configObj, columnNum, fromCache) {
     showLoader(columnNum);
     if (fromCache && configObj.cachedComments)  { // don't call reddit
-        configObj.cachedComments[0][2] = columnNum;
+        configObj.cachedComments.forEach(function(arr) { arr[2] = columnNum; });
         var cachedComments = getMergedData(configObj.cachedComments);
         if (cachedComments && $(".frame-content[data-column="+columnNum+"]").children().length===0 && cachedComments[1].data.children.length>0) {
             markFirstComment(cachedComments[1].data.children[0].data.name, columnNum);

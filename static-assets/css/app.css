@@ -9,7 +9,7 @@ html, body {
 /*-begin team styles-*/
 .icon-49ers, .icon-AZCardinals, .icon-falcons,
 .icon-ravens, .icon-buffalobills, .icon-panthers,
-.icon-CHIBears, .icon-bengals, .icon-Browns,
+.icon-CHIBears, .icon-chicagobears, .icon-bengals, .icon-Browns,
 .icon-cowboys, .icon-DenverBroncos, .icon-GreenBayPackers,
 .icon-Texans, .icon-Colts, .icon-Jaguars,
 .icon-KansasCityChiefs, .icon-miamidolphins, .icon-minnesotavikings,
@@ -28,7 +28,7 @@ html, body {
 .icon-ravens {background-position: -58px -5px;}
 .icon-buffalobills { background-position: -7px -5px;}
 .icon-panthers {background-position: -313px -65px;}
-.icon-CHIBears {background-position: -264px -5px;}
+.icon-CHIBears, .icon-chicagobears {background-position: -264px -5px;}
 .icon-bengals {background-position: -58px -65px;}
 .icon-Browns {background-position: -58px -124px;}
 .icon-cowboys {background-position: -212px -5px;}
