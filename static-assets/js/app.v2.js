@@ -756,25 +756,42 @@ function makeItemActive(columnNum) {
     $('.item').removeClass('active');
     $(".item[data-column="+columnNum+"]").addClass('active');
 }
-function getCommentsForColumn(configObj, columnNum) {
+function cacheColumn(config, columnNum, data) {
+    config[columnNum].cachedComments = data;
+    new Fn().setInStorage('config', config);
+}
+function getCommentsForColumn(configObj, columnNum, fromCache) {
     showLoader(columnNum);
-    var dataArray = [];
-    for (var i = 0, len = configObj.threads.length; i < len; i++) {
-        var path = configObj.threads[i].thread,
-            sort = configObj.settings.sortBy,
-            limit = configObj.settings.limitPosts;
-        getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
-            var config = new Fn().getFromStorage('config');
-            dataArray = dataArray.concat([data.concat(target.columnNum).concat(target.threadNum)]);
-            if (typeof config[target.columnNum] !== 'undefined' && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
-                var mergedData = getMergedData(dataArray);
-                if ($(".frame-content[data-column="+columnNum+"]").children().length===0 && mergedData[1].data.children.length>0) {
-                    markFirstComment(mergedData[1].data.children[0].data.name, target.columnNum);
+    if (fromCache && configObj.cachedComments)  { // don't call reddit
+        configObj.cachedComments[0][2] = columnNum;
+        var cachedComments = getMergedData(configObj.cachedComments);
+        if (cachedComments && $(".frame-content[data-column="+columnNum+"]").children().length===0 && cachedComments[1].data.children.length>0) {
+            markFirstComment(cachedComments[1].data.children[0].data.name, columnNum);
+        }
+        if (cachedComments) displayComments(cachedComments, columnNum);
+        hideLoader(columnNum); 
+        return;
+    } else { // call reddit
+        var dataArray = [];
+        for (var i = 0, len = configObj.threads.length; i < len; i++) {
+            var path = configObj.threads[i].thread,
+                sort = configObj.settings.sortBy,
+                limit = configObj.settings.limitPosts;
+            getPosts(path, sort, limit, {target: {columnNum:columnNum,threadNum:i}, errorMsgLoc: '.frame[data-column='+columnNum+']', callback: function(data, target) {
+                var fn = new Fn(),
+                    config = fn.getFromStorage('config');
+                dataArray = dataArray.concat([data.concat(target.columnNum).concat(target.threadNum)]);
+                if (typeof config[target.columnNum] !== 'undefined' && config[target.columnNum].threads.length == dataArray.length) { // done aggregating data from threads of config[target]
+                    cacheColumn(config, columnNum, dataArray);
+                    var mergedData = getMergedData(dataArray);
+                    if ($(".frame-content[data-column="+columnNum+"]").children().length===0 && mergedData[1].data.children.length>0) {
+                        markFirstComment(mergedData[1].data.children[0].data.name, target.columnNum);
+                    }
+                    displayComments(mergedData, target.columnNum);
+                    hideLoader(target.columnNum);
                 }
-                displayComments(mergedData, target.columnNum);
-                hideLoader(target.columnNum);
-            }
-        }});
+            }});
+        }
     }
 }
 function appendColNumAndThreadNum(children, columnNum, threadNum) {
@@ -921,9 +938,9 @@ function displayComments(data, columnNum) {
         $frameContent.append(buildCommentHtmlString(data[1].data.children, true, true));
         fadeIn($frameContent.children(), 100);
     } else { // subsequent loads
-        var cachedfirstComment = window['firstComment'+columnNum];
-        if (!(cachedfirstComment == data[1].data.children[0].data.name)) {
-            var newComments = new Fn().takeWhile(data[1].data.children, cachedfirstComment, function(x, commentName){
+        var firstComment = window['firstComment'+columnNum];
+        if (!(firstComment == data[1].data.children[0].data.name)) {
+            var newComments = new Fn().takeWhile(data[1].data.children, firstComment, function(x, commentName){
                 return !document.getElementById(x.data.name) && x.data.name != commentName;
             });
             $(".frame-content[data-column="+columnNum+"]").prepend(buildCommentHtmlString(newComments, true, true));
@@ -1151,7 +1168,7 @@ function buildRedditConfigObjByThreads(children) {
     configObj.threads = threads;
     return configObj;
 }
-function buildColumn(configObj, num) {
+function buildColumn(configObj, num, fromCache) {
     $(".item[data-column="+num+"]").remove();
     var frameContent = tmpl('tmpl_i', {num:num}),
         icons = tmpl('tmpl_j', {num:num}),
@@ -1169,7 +1186,7 @@ function buildColumn(configObj, num) {
     buildColumnToUI(item, num);
     buildColumnOptions(configObj, num, 'column');
     if (configObj.type=='reddit') {
-        getCommentsForColumn(configObj, num);
+        getCommentsForColumn(configObj, num, fromCache);
         toggleRefresh(num);
     }
     contentResizeEvent();
@@ -1251,7 +1268,7 @@ function buildConfigToUI(deleteFlag) {
         if ($('.carousel-inner').children().length === 0 || deleteFlag) {
             if (deleteFlag) $('.carousel-inner').children().remove();
             for (var i = 0, len = config.length; i < len; i++) {
-                buildColumn(config[i], i);
+                buildColumn(config[i], i, true);
             }
         }
     }
@@ -1650,10 +1667,12 @@ function bindWatchSave() {
 }
 function bindDeleteColumn() {
     var fn = new Fn(),
-        config = fn.getFromStorage('config');
+        config = fn.getFromStorage('config'),
+        columnNum = $(this).data('column');
     config.forEach(function(obj, i){ deleteRefresh(i); });
-    fn.remove(config, $(this).data('column'));
+    fn.remove(config, columnNum);
     fn.setInStorage('config', config);
+    delete window['firstComment'+columnNum];
     buildConfigToUI(true);
     $('#delete-column-modal').modal('hide');
 }
@@ -1681,7 +1700,10 @@ function bindRedditSearchRadio() {
 function bindSaveChanges() {
     var newColumnAdded = addColumnToConfig();
     newColumnAdded 
-        ? function() { buildConfigToUI(true); makeItemActive(new Fn().getFromStorage('config').length-1); }()
+        ? function() { 
+            buildConfigToUI(true); 
+            makeItemActive(new Fn().getFromStorage('config').length-1); 
+        }()
         : buildConfigToUI();
     $('.sub-group-controls').remove();
 }
