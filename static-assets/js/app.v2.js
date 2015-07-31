@@ -1786,3 +1786,6 @@ function bindDeleteColumnButton(columnNum) {
     $('#column-to-delete').text(new Fn().getFromStorage('config')[columnNum].settings.name);
     $('#delete-column-modal').modal();
 }
+function bindHelpModal() {
+    $('#help-modal').modal('show');
+}
