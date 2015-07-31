@@ -453,7 +453,7 @@ function submissionsSearchAPI(obj) {
                     popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));
             } else {
                 $(obj.errorLoc).launchPopOver(3000,
-                    popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));    
+                    popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));
             }
         }
         if (obj.callback) obj.callback();
@@ -472,13 +472,12 @@ function subredditsSearchAPI(obj) {
                 copyToAllRedditSearches(obj.query, obj);
                 $('#watch-threads .list-group.contain').children().length === 0 ? watchList() : void 0;
                 $('#headingOne').launchPopOver(3000,
-                    popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));    
+                    popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));
             } else {
                 $(obj.errorLoc).launchPopOver(3000,
-                    popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));    
+                    popOverOptions('bottom','','There were no results found for "'+obj.query+'"'));
             }
         }
-        if (obj.callback) obj.callback();
     }, undefined, undefined, false, obj.errorLoc, obj);
 }
 function threadsOfSubreddit(query, callback) {
@@ -1724,33 +1723,10 @@ function bindRedditSearch(callback) {
             sorted_by = $(this.form).find('select.sorted-by').val(),
             links_from = $(this.form).find('select.links-from').val();
         radio == "subreddits"
-            ? subredditsSearchAPI({query: query, errorLoc:$(this.form).find('.reddit-search-input.tt-input'), callback: callback})
+            ? subredditsSearchAPI({query: query, errorLoc:$(this.form).find('.reddit-search-input.tt-input')})
             : submissionsSearchAPI({query: query, sorted_by:sorted_by, links_from:links_from, errorLoc:$(this.form).find('.reddit-search-input.tt-input'), callback: callback});
     }
     fn.getBlurred();
-}
-function bindBackButton() {
-    event.preventDefault();
-    $('#control-panel-buttons .list-group a').removeClass('active').addClass('non-active');
-    $('#reddit, #twitter, #accounts, #delete-columns, #search-control-panel').removeClass('active');
-    $('#panel-help').addClass('active');
-    $(this).addClass('hide');
-}
-function bindLeftButtons() {
-    event.preventDefault();
-    var $allButtons = $('#control-panel-buttons .list-group a'),
-        $allPanels = $('#accounts, #twitter, #reddit, #delete-columns, #search-control-panel'),
-        id = this.id;
-    $allButtons.removeClass('active non-active'); 
-    $allPanels.removeClass('active');
-    $('#back-button').removeClass('hide');
-    $('#panel-help').removeClass('active');
-    $(this).addClass('active');
-    if (id=='reddit-button') { $('#reddit').addClass('active');
-    } else if (id=='twitter-button') { $('#twitter').addClass('active');
-    } else if (id=='accounts-button') { $('#accounts').addClass('active');
-    } else if (id=='search-button') { $('#search-control-panel').addClass('active');
-    } else if (id=='remove-button') { $('#delete-columns').addClass('active') }
 }
 function bindRefreshCommentSwitch(columnNum) {
     event.preventDefault();

@@ -377,18 +377,56 @@
         </div>
         <div class="col-lg-12 col-md-12">
             <div class="panel panel-green">
-                <div class="panel-heading">
+                <div class="panel-heading" data-toggle="collapse" data-target="#search-control-panel">
                     <div class="row">
                         <div class="col-xs-3">
                             <i class="fa fa-search fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">13</div>
-                            <div>Searches</div>
+                            <div class="huge">&nbsp;</div>
+                            <div>Search</div>
                         </div>
                     </div>
                 </div>
-                <a href="#">
+                <div id="search-control-panel" class="panel-body collapse">
+                  <form class='reddit-search' role='form' action='javascript:void(0)'>
+                    <div class="form-group">
+                      <label>Search</label>
+                        <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
+                      </div>
+                      <div class="form-group">
+                          <label class="radio-inline">
+                              <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits" {{pressType}}="bindRedditSearchRadio.call(this)">Subreddits
+                          </label>
+                          <label class="radio-inline">
+                              <input class='radio-submissions' name='search-type' type="radio" value="submissions" {{pressType}}="bindRedditSearchRadio.call(this)">Submissions
+                          </label>  
+                      </div>
+                      <div class="form-group">
+                          <label>Sorted By</label>
+                          <select disabled class="form-control sorted-by">
+                              <option value='relevance'>Relevance</option>
+                              <option value='new'>New</option>
+                              <option value='hot'>Hot</option>
+                              <option value='top'>Top</option>
+                              <option value='comments'>Comments</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label>Links From</label>
+                          <select disabled class="form-control links-from">
+                              <option value='all'>All Time</option>
+                              <option value='hour'>Past Hour</option>
+                              <option value='day'>Past 24 Hours</option>
+                              <option value='week'>Past Week</option>
+                              <option value='year'>Past Year</option>    
+                          </select>
+                      </div>
+                      <button type="submit" class="reddit-search-submit btn btn-default" {{pressType}}="bindRedditSearch.call(this)">Submit</button>
+                      <input class='reddit-search-submit hide' type='submit' {{pressType}}="bindRedditSearch.call(this)">                          
+                  </form>
+                </div>
+                <a href="javascript:void(0)" data-toggle="collapse" data-target="#search-control-panel">
                     <div class="panel-footer">
                         <span class="pull-left">Search Platforms</span>
                         <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
@@ -400,232 +438,6 @@
       </div>
     </div>
     <div id='reddit-uri' data-subredditURI='{{reddit.subredditURI}}' data-threadidURI='{{reddit.threadidURI}}' data-threadidsURI='{{reddit.threadidsURI}}'></div>
-  </div>
-  <div class="modal fade" id="controlModal" tabindex="-1" role="dialog" aria-labelledby="controlModalTitle" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h6 class="modal-title" id="controlModalTitle">Control Panel</h6>
-        </div>
-        <div class="modal-body">
-          <div id='control-panel-buttons' class='col-sm-4'>
-            <div class="list-group">
-              <a href="javascript:void(0);" class="list-group-item non-active" id='reddit-button' onclick="bindLeftButtons.call(this)">
-                 <h4 class="list-group-item-heading">Build Reddit Column</h4>
-                 <p class="list-group-item-text">Add any number of threads.</p>
-              </a>
-              <a disabled href="javascript:void(0);" class="list-group-item non-active" id='twitter-button' onclick="bindLeftButtons.call(this)">
-                 <h4 class="list-group-item-heading">Build Twitter Column</h4>
-                 <p class="list-group-item-text">Add any number of twitter search terms.</p>
-              </a>
-              <a href="javascript:void(0);" class="list-group-item non-active" id='accounts-button' onclick="bindLeftButtons.call(this)">
-                <h4 class="list-group-item-heading">Accounts</h4>
-                <p class="list-group-item-text">Your active reddit and twitter accounts while using Blenddit.com</p>
-              </a>
-              <a href="javascript:void(0);" class="list-group-item non-active" id='search-button' onclick="bindLeftButtons.call(this)">
-                <h4 class="list-group-item-heading">Search</h4>
-                <p class="list-group-item-text">Find subreddits with live threads or twitter searches.</p>
-              </a>
-              <a href="javascript:void(0);" class="list-group-item non-active" id='remove-button' onclick="bindLeftButtons.call(this)">
-                <h4 class="list-group-item-heading">Delete</h4>
-                <p class="list-group-item-text">Delete all of a specified column type.</p>
-              </a>
-            </div>      
-          </div>
-          <div id='control-panel-panels' class='col-sm-8'>
-            <div id='panel-help' class='active'>
-                <img height='78' width='234' src='static-assets/imgs/text.png' alt='error'>
-                <h5>Select an option from the left.</h5>
-            </div>
-            {{!-- <div id='reddit'>
-              <div class='btn-group column-control-buttons'>
-                <a class="add-thread-button btn btn-lg btn-block btn-primary" onclick="bindAddThreadButton.call(this, '#reddit','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls')">Add Thread</a>
-              </div>
-              <form role='form' action='javascript:void(0)'>
-                <div class="column-settings form-group hide">
-                  <div class="form-group">
-                    <label for='column-name'>Column Name</label>
-                    <input id='column-name' class='form-control' maxlength='25' placeholder='Enter column name' value='My Column'>
-                  </div>
-                  <div class="form-group">
-                    <label for='refresh'>Refresh Rate</label>
-                    <select id='refresh' class='form-control'>
-                      <option value='10'>10 seconds</option>
-                      <option value='15'>15 seconds</option>
-                      <option value='20'>20 seconds</option>
-                      <option value='25'>25 seconds</option>
-                      <option value='30'>30 seconds</option>
-                      <option value='35'>35 seconds</option>
-                      <option value='40'>40 seconds</option>
-                      <option value='45'>45 seconds</option>
-                      <option value='50'>50 seconds</option>
-                      <option value='55'>55 seconds</option>
-                      <option selected value='60'>60 seconds</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for='limit'>Limit Posts</label>
-                    <select id='limit' class='form-control'>
-                      <option value='25'>25</option>
-                      <option selected value='50'>50</option>
-                      <option value='100'>100</option>
-                      <option value=''>No Limit</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for='sortBy'>Sort By</label>
-                    <select id='sortBy' class='form-control'>
-                      <option selected value='new'>New</option>
-                      <option disabled value='confidence'>Best</option>
-                      <option disabled value='top'>Top</option>
-                      <option disabled value='controversial'>Controversial</option>
-                      <option disabled value='hot'>Hot</option>
-                      <option disabled value='old'>Old</option>
-                    </select>
-                  </div>
-                </div>
-                <input id='config' type='submit' class='hide'>
-              </form>
-            </div> --}}
-            <div id='twitter'>
-              <div class='twitter-wrapper'>
-                <div class="alert alert-info">
-                  Twitter integration is still under development. You can encourage development of this feature by donating. <a href="javascript:void(0);" onclick="document.getElementById('donate').submit();">Support Blenddit by donating!</a>
-                </div>
-              </div>
-            </div>
-            {{!-- <div id='accounts'>
-                <div class='list-group' data-reddituser='{{reddit.redditUser}}'>
-                  {{#if reddit.redditUserExists}}
-                    <div class="media" id="reddit-logout" {{pressType}}="bindAccounts.call(this)">
-                        <a href="#" class="pull-left">
-                          <span class='text-warning'><i class="fa fa-reddit" style="font-size:2.2em;"></i></span>    
-                        </a>
-                        <div class="media-body">
-                            <h4 class="media-heading"><span class="text-warning">{{reddit.redditUser}}</span></h4>
-                            <p>Click here to sign out of Reddit.</p>
-                        </div>
-                    </div>
-                  {{else}}
-                    <div class="media" {{pressType}}="document.location='/auth/reddit';">
-                      <a href="javascript:void(0);" class="pull-left">
-                        <span class='text-warning'><i class="fa fa-reddit" style="font-size:2.2em;"></i></span>
-                      </a>
-                      <div class="media-body">
-                        <h4 class="media-heading"><span class="text-warning">Sign in to Reddit</span></h4>
-                        <p>Follow this link to connect your Reddit account to Blenddit.</p>
-                      </div>
-                    </div>
-                  {{/if}}
-                  {{#if twitter.twitterUserExists}}
-                    <div class="media">
-                        <a href="#" class="pull-left">
-                            <img src="{{twitter.userAvatar}}" class="media-object img-thumbnail" alt="Sample Image">
-                        </a>
-                        <div class="media-body">
-                            <h4 class="media-heading"><span class="text-primary">@{{twitter.twitterUser}}</span></h4>
-                            <p>Click here to sign out of Twitter.</p>
-                        </div>
-                    </div>
-                  {{else}}
-                      <div class="media" {{pressType}}="document.location='/auth/twitter';">
-                          <a href="javascript:void(0);" class="pull-left">
-                              <i class="fa fa-twitter fa-3x"></i>
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-primary">Sign in to Twitter</span></h4>
-                              <p>Follow this link to connect your Twitter account to Blenddit.</p>
-                          </div>
-                      </div>
-                  {{/if}}
-                </div>
-            </div> --}}
-            {{!-- <div id='delete-columns'>
-                <div class='list-group'>
-                    <a {{pressType}}="bindDeleteColumns.call(this)" class="list-group-item" id='delete-reddit-columns'>
-                        <h5 class="list-group-item-heading">Delete Reddit Columns</h5>
-                        <p class="list-group-item-text">Delete your saved Reddit columns.</p>
-                    </a>
-                    <a {{pressType}}="bindDeleteColumns.call(this)" href="javascript:void(0)" class="list-group-item" id='delete-twitter-columns'>
-                        <h5 class="list-group-item-heading">Delete Twitter Columns</h5>
-                        <p class="list-group-item-text">Delete your saved Twitter columns.</p>
-                    </a>
-                    <a {{pressType}}="bindDeleteColumns.call(this)" href="javascript:void(0)" class="list-group-item" id='delete-all-columns'>
-                        <h5 class="list-group-item-heading">Delete All Columns</h5>
-                        <p class="list-group-item-text">Delete all of your saved Reddit and Twitter Columns</p>
-                    </a>
-                </div>
-            </div> --}}
-            <div id='search-control-panel'>
-                <div class="panel-group" role="tablist" aria-multiselectable="true">
-                    <div class="panel panel-default">
-                        <div data-toggle="collapse" href="#reddit-modal-collapse" class="panel-heading text-center" role="tab">
-                            <h4 class="panel-title white"><i class='fa fa-search'></i>&nbsp;Search Reddit</h4>
-                        </div>
-                        <div id="reddit-modal-collapse" class="panel-collapse collapse" role="tabpanel" aria-expanded="true">
-                            <div class="panel-body">
-                                <form class='reddit-search' role='form' action='javascript:void(0)'>
-                                    <div class="form-group">
-                                        <label>Search</label>
-                                        <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="radio-inline">
-                                            <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits" {{pressType}}="bindRedditSearchRadio.call(this)">Subreddits
-                                        </label>
-                                        <label class="radio-inline">
-                                            <input class='radio-submissions' name='search-type' type="radio" value="submissions" {{pressType}}="bindRedditSearchRadio.call(this)">Submissions
-                                        </label>  
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Sorted By</label>
-                                        <select disabled class="form-control sorted-by">
-                                            <option value='relevance'>Relevance</option>
-                                            <option value='new'>New</option>
-                                            <option value='hot'>Hot</option>
-                                            <option value='top'>Top</option>
-                                            <option value='comments'>Comments</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Links From</label>
-                                        <select disabled class="form-control links-from">
-                                            <option value='all'>All Time</option>
-                                            <option value='hour'>Past Hour</option>
-                                            <option value='day'>Past 24 Hours</option>
-                                            <option value='week'>Past Week</option>
-                                            <option value='year'>Past Year</option>    
-                                        </select>
-                                    </div>
-                                    <button type="submit" class="reddit-search-submit btn btn-default" {{pressType}}="bindRedditSearch.call(this, hideControlModal)">Submit</button>
-                                    <input class='reddit-search-submit hide' type='submit' {{pressType}}="bindRedditSearch.call(this, hideControlModal)">                          
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-group" role="tablist" aria-multiselectable="true">
-                    <div class="panel panel-default">
-                        <div data-toggle="collapse" href="#twitter-modal-collapse" class="panel-heading text-center" role="tab">
-                            <h4 class="panel-title"><i class='fa fa-search'></i>&nbsp;Search Twitter</h4>
-                        </div>
-                        <div id="twitter-modal-collapse" class="panel-collapse collapse" role="tabpanel" aria-expanded="true">
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <div>
-            <button id='back-button' type="button" class='btn btn-default hide' onclick="bindBackButton.call(this)"><i class='fa fa-chevron-left'></i>&nbsp;Back</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <button id='save-changes' type="button" class="btn btn-primary" {{pressType}}="bindSaveChanges.call(this)">Save</button>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
   <div class="modal fade" id="delete-column-modal" tabindex="-1" role="dialog" aria-labelledby="delete-column-modal" aria-hidden="true">
     <div class="modal-dialog">
