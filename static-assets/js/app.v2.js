@@ -362,23 +362,24 @@ function startBlending() {
 }
 function redditNamesFn() {
     return new Bloodhound({
-          datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
-          queryTokenizer: Bloodhound.tokenizers.whitespace,
-          remote: {
-              url : '/search-reddit-names?query=%QUERY',
-              filter: function(data) {
-                  var keyValues = [];
-                  if (data.names) {
-                      data.names.forEach(function(name) {
-                          var keyValueObj = {};
-                          keyValueObj.value = name;
-                          keyValues.push(keyValueObj);
-                      });
-                  }
-                  return keyValues;
-              }
-          }
-    });
+        datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                rateLimitWait : 0,
+                url : '/search-reddit-names?query=%QUERY',
+                filter: function(data) {
+                    var keyValues = [];
+                    if (data.names) {
+                        data.names.forEach(function(name) {
+                            var keyValueObj = {};
+                            keyValueObj.value = name;
+                            keyValues.push(keyValueObj);
+                        });
+                    }
+                    return keyValues;
+                }
+            }
+        });
 }
 function sidebarTrigger() {
     $('#sidebarTrigger').unbind('click').on('click',function(e) { // sidebar toggle
