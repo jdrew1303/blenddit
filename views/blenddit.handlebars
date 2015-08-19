@@ -206,237 +206,6 @@
         </div>
       </div>
     </div>
-    <div id="controls" class="container content-padding nopacity hide">
-      <div class="row">
-        <div class="col-lg-12 col-md-12">
-          <div class="panel panel-red">
-              <div class="panel-heading" data-toggle="collapse" data-target="#reddit-column">
-                  <div class="row">
-                      <div class="col-xs-3">
-                          <i class="fa fa-reddit-square fa-5x"></i>
-                      </div>
-                      <div class="col-xs-9 text-right">
-                          <div class="huge">3</div>
-                          <div>Reddit Columns</div>
-                      </div>
-                  </div>
-              </div>
-              <div id="reddit-column" class="panel-body collapse">
-                <ul class="list-group controls edit-button-group">
-                  <li class="list-group-item controls">
-                    <div class="btn-group">
-                      <a class="add-thread-button btn btn-lg" onclick="bindAddThreadButton.call(this, '#reddit-column','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls')"><i class="fa fa-plus-circle fa-2x"></i></a>
-                      <a id='save-changes' type="button" class="btn btn-lg" {{pressType}}="bindSaveChanges.call(this)"><i class="fa fa-save fa-2x"></i></a>
-                    </div>
-                  </li>
-                </ul>
-                <form role='form' action='javascript:void(0)'>
-                <div class="column-settings form-group hide">
-                  <div class="form-group">
-                    <label for='column-name'>Column Name</label>
-                    <input id='column-name' class='form-control' maxlength='25' placeholder='Enter column name' value='My Column'>
-                  </div>
-                  <div class="form-group">
-                    <label for='refresh'>Refresh Rate</label>
-                    <select id='refresh' class='form-control'>
-                      <option value='10'>10 seconds</option>
-                      <option value='15'>15 seconds</option>
-                      <option value='20'>20 seconds</option>
-                      <option value='25'>25 seconds</option>
-                      <option value='30'>30 seconds</option>
-                      <option value='35'>35 seconds</option>
-                      <option value='40'>40 seconds</option>
-                      <option value='45'>45 seconds</option>
-                      <option value='50'>50 seconds</option>
-                      <option value='55'>55 seconds</option>
-                      <option selected value='60'>60 seconds</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for='limit'>Limit Posts</label>
-                    <select id='limit' class='form-control'>
-                      <option value='25'>25</option>
-                      <option selected value='50'>50</option>
-                      <option value='100'>100</option>
-                      <option value=''>No Limit</option>
-                    </select>
-                  </div>
-                  <div class="form-group">
-                    <label for='sortBy'>Sort By</label>
-                    <select id='sortBy' class='form-control'>
-                      <option selected value='new'>New</option>
-                      <option disabled value='confidence'>Best</option>
-                      <option disabled value='top'>Top</option>
-                      <option disabled value='controversial'>Controversial</option>
-                      <option disabled value='hot'>Hot</option>
-                      <option disabled value='old'>Old</option>
-                    </select>
-                  </div>
-                </div>
-                <input id='config' type='submit' class='hide'>
-              </form>
-              </div>
-              <a href="javascript:void(0)" data-toggle="collapse" data-target="#reddit-column">
-                  <div class="panel-footer">
-                      <span class="pull-left">Create Column</span>
-                      <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
-                      <div class="clearfix"></div>
-                  </div>
-              </a>
-          </div>
-        </div>
-        <div class="col-lg-12 col-md-12">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-twitter-square fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">0</div>
-                            <div>Twitter Columns</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer">
-                        <span class="pull-left">Create Column</span>
-                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-12 col-md-12">
-            <div class="panel panel-yellow">
-                <div class="panel-heading" data-toggle="collapse" data-target="#linked-accounts">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-user fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">0</div>
-                            <div>Linked Accounts</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="linked-accounts" class="panel-body collapse">
-                  <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
-                    {{#if reddit.redditUserExists}}
-                      <div class="media" id="reddit-logout" {{pressType}}="bindRedditSignOut.call(this)">
-                          <a href="javascript:void(0)" class="pull-left">
-                            <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-red">{{reddit.redditUser}}</span></h4>
-                              <p>Click here to sign out of Reddit.</p>
-                          </div>
-                      </div>
-                    {{else}}
-                      <div class="media" {{pressType}}="bindRedditLogIn.call(this)">
-                        <a href="javascript:void(0);" class="pull-left">
-                          <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
-                        </a>
-                        <div class="media-body">
-                          <h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
-                          <p>Follow this link to connect your Reddit account to Blenddit.</p>
-                        </div>
-                      </div>
-                    {{/if}}
-                    {{#if twitter.twitterUserExists}}
-                      <div class="media" id="twitter-logout" {{pressType}}="bindTwitterSignOut.call(this)">
-                          <a href="javascript:void(0)" class="pull-left">
-                              <img src="{{twitter.userAvatar}}" class="media-object img-rounded" alt="Sample Image">
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-primary">@{{twitter.twitterUser}}</span></h4>
-                              <p>Click here to sign out of Twitter.</p>
-                          </div>
-                      </div>
-                    {{else}}
-                      <div class="media" {{pressType}}="bindTwitterLogIn.call(this)">
-                          <a href="javascript:void(0);" class="pull-left">
-                              <span class="text-primary"><i class="fa fa-twitter-square fa-4x"></i></span>
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-primary">Sign in to Twitter</span></h4>
-                              <p>Follow this link to connect your Twitter account to Blenddit.</p>
-                          </div>
-                      </div>
-                    {{/if}}
-                  </div>
-                </div>
-                <a href="javascript:void(0)" data-toggle="collapse" data-target="#linked-accounts">
-                    <div class="panel-footer">
-                        <span class="pull-left">Link Accounts</span>
-                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-12 col-md-12">
-            <div class="panel panel-green">
-                <div class="panel-heading" data-toggle="collapse" data-target="#search-control-panel">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-search fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">&nbsp;</div>
-                            <div>Search</div>
-                        </div>
-                    </div>
-                </div>
-                <div id="search-control-panel" class="panel-body collapse">
-                  <form class='reddit-search' role='form' action='javascript:void(0)'>
-                    <div class="form-group">
-                      <label>Search</label>
-                        <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
-                      </div>
-                      <div class="form-group">
-                          <label class="radio-inline">
-                              <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits" onclick="bindRedditSearchRadio.call(this)">Subreddits
-                          </label>
-                          <label class="radio-inline">
-                              <input class='radio-submissions' name='search-type' type="radio" value="submissions" onclick="bindRedditSearchRadio.call(this)">Submissions
-                          </label>  
-                      </div>
-                      <div class="form-group">
-                          <label>Sorted By</label>
-                          <select disabled class="form-control sorted-by">
-                              <option value='relevance'>Relevance</option>
-                              <option value='new'>New</option>
-                              <option value='hot'>Hot</option>
-                              <option value='top'>Top</option>
-                              <option value='comments'>Comments</option>
-                          </select>
-                      </div>
-                      <div class="form-group">
-                          <label>Links From</label>
-                          <select disabled class="form-control links-from">
-                              <option value='all'>All Time</option>
-                              <option value='hour'>Past Hour</option>
-                              <option value='day'>Past 24 Hours</option>
-                              <option value='week'>Past Week</option>
-                              <option value='year'>Past Year</option>    
-                          </select>
-                      </div>
-                      <button type="submit" class="reddit-search-submit btn btn-default" {{pressType}}="bindRedditSearch.call(this)">Submit</button>
-                      <input class='reddit-search-submit hide' type='submit' {{pressType}}="bindRedditSearch.call(this)">                          
-                  </form>
-                </div>
-                <a href="javascript:void(0)" data-toggle="collapse" data-target="#search-control-panel">
-                    <div class="panel-footer">
-                        <span class="pull-left">Search Platforms</span>
-                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-      </div>
-    </div>
     <div id='reddit-uri' data-subredditURI='{{reddit.subredditURI}}' data-threadidURI='{{reddit.threadidURI}}' data-threadidsURI='{{reddit.threadidsURI}}'></div>
   </div>
   <div class="modal fade" id="delete-column-modal" tabindex="-1" role="dialog" aria-labelledby="delete-column-modal" aria-hidden="true">
@@ -517,6 +286,243 @@
         </div>
       </div>
     </div>
+  </div>
+  <div class="modal fade" id="controls" tabindex="-1" role="dialog" aria-labelledby="help-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h6 class="modal-title">Configuration</h6>
+        </div>
+        <div class="modal-body">
+          <div class="panels">
+            <div class="panel panel-red">
+                <div class="panel-heading" data-toggle="collapse" data-target="#reddit-column">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-reddit-square fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">3</div>
+                            <div>Reddit Columns</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="reddit-column" class="panel-body collapse">
+                  <ul class="list-group controls edit-button-group">
+                    <li class="list-group-item controls">
+                      <div class="btn-group">
+                        <a class="add-thread-button btn btn-lg" onclick="bindAddThreadButton.call(this, '#reddit-column','column-settings', 'sub-group-controls', 'subreddit-controls', 'thread-controls', 'delete-controls', 'info-controls')"><i class="fa fa-plus-circle fa-2x"></i></a>
+                        <a id='save-changes' type="button" class="btn btn-lg" {{pressType}}="bindSaveChanges.call(this)"><i class="fa fa-save fa-2x"></i></a>
+                      </div>
+                    </li>
+                  </ul>
+                  <form role='form' action='javascript:void(0)'>
+                  <div class="column-settings form-group hide">
+                    <div class="form-group">
+                      <label for='column-name'>Column Name</label>
+                      <input id='column-name' class='form-control' maxlength='25' placeholder='Enter column name' value='My Column'>
+                    </div>
+                    <div class="form-group">
+                      <label for='refresh'>Refresh Rate</label>
+                      <select id='refresh' class='form-control'>
+                        <option value='10'>10 seconds</option>
+                        <option value='15'>15 seconds</option>
+                        <option value='20'>20 seconds</option>
+                        <option value='25'>25 seconds</option>
+                        <option value='30'>30 seconds</option>
+                        <option value='35'>35 seconds</option>
+                        <option value='40'>40 seconds</option>
+                        <option value='45'>45 seconds</option>
+                        <option value='50'>50 seconds</option>
+                        <option value='55'>55 seconds</option>
+                        <option selected value='60'>60 seconds</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for='limit'>Limit Posts</label>
+                      <select id='limit' class='form-control'>
+                        <option value='25'>25</option>
+                        <option selected value='50'>50</option>
+                        <option value='100'>100</option>
+                        <option value=''>No Limit</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for='sortBy'>Sort By</label>
+                      <select id='sortBy' class='form-control'>
+                        <option selected value='new'>New</option>
+                        <option disabled value='confidence'>Best</option>
+                        <option disabled value='top'>Top</option>
+                        <option disabled value='controversial'>Controversial</option>
+                        <option disabled value='hot'>Hot</option>
+                        <option disabled value='old'>Old</option>
+                      </select>
+                    </div>
+                  </div>
+                  <input id='config' type='submit' class='hide'>
+                </form>
+                </div>
+                <a href="javascript:void(0)" data-toggle="collapse" data-target="#reddit-column">
+                    <div class="panel-footer">
+                        <span class="pull-left">Create Column</span>
+                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-twitter-square fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">0</div>
+                            <div>Twitter Columns</div>
+                        </div>
+                    </div>
+                </div>
+                <a href="#">
+                    <div class="panel-footer">
+                        <span class="pull-left">Create Column</span>
+                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>            
+            <div class="panel panel-yellow">
+                <div class="panel-heading" data-toggle="collapse" data-target="#linked-accounts">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-user fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">0</div>
+                            <div>Linked Accounts</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="linked-accounts" class="panel-body collapse">
+                  <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
+                    {{#if reddit.redditUserExists}}
+                      <div class="media" id="reddit-logout" {{pressType}}="bindRedditSignOut.call(this)">
+                          <a href="javascript:void(0)" class="pull-left">
+                            <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+                          </a>
+                          <div class="media-body">
+                              <h4 class="media-heading"><span class="text-red">{{reddit.redditUser}}</span></h4>
+                              <p>Click here to sign out of Reddit.</p>
+                          </div>
+                      </div>
+                    {{else}}
+                      <div class="media" {{pressType}}="bindRedditLogIn.call(this)">
+                        <a href="javascript:void(0);" class="pull-left">
+                          <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+                        </a>
+                        <div class="media-body">
+                          <h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
+                          <p>Follow this link to connect your Reddit account to Blenddit.</p>
+                        </div>
+                      </div>
+                    {{/if}}
+                    {{#if twitter.twitterUserExists}}
+                      <div class="media" id="twitter-logout" {{pressType}}="bindTwitterSignOut.call(this)">
+                          <a href="javascript:void(0)" class="pull-left">
+                              <img src="{{twitter.userAvatar}}" class="media-object img-rounded" alt="Sample Image">
+                          </a>
+                          <div class="media-body">
+                              <h4 class="media-heading"><span class="text-primary">@{{twitter.twitterUser}}</span></h4>
+                              <p>Click here to sign out of Twitter.</p>
+                          </div>
+                      </div>
+                    {{else}}
+                      <div class="media" {{pressType}}="bindTwitterLogIn.call(this)">
+                          <a href="javascript:void(0);" class="pull-left">
+                              <span class="text-primary"><i class="fa fa-twitter-square fa-4x"></i></span>
+                          </a>
+                          <div class="media-body">
+                              <h4 class="media-heading"><span class="text-primary">Sign in to Twitter</span></h4>
+                              <p>Follow this link to connect your Twitter account to Blenddit.</p>
+                          </div>
+                      </div>
+                    {{/if}}
+                  </div>
+                </div>
+                <a href="javascript:void(0)" data-toggle="collapse" data-target="#linked-accounts">
+                    <div class="panel-footer">
+                        <span class="pull-left">Link Accounts</span>
+                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>            
+            <div class="panel panel-green">
+                <div class="panel-heading" data-toggle="collapse" data-target="#search-control-panel">
+                    <div class="row">
+                        <div class="col-xs-3">
+                            <i class="fa fa-search fa-5x"></i>
+                        </div>
+                        <div class="col-xs-9 text-right">
+                            <div class="huge">&nbsp;</div>
+                            <div>Search</div>
+                        </div>
+                    </div>
+                </div>
+                <div id="search-control-panel" class="panel-body collapse">
+                  <form class='reddit-search' role='form' action='javascript:void(0)'>
+                    <div class="form-group">
+                      <label>Search</label>
+                        <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
+                      </div>
+                      <div class="form-group">
+                          <label class="radio-inline">
+                              <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits" onclick="bindRedditSearchRadio.call(this)">Subreddits
+                          </label>
+                          <label class="radio-inline">
+                              <input class='radio-submissions' name='search-type' type="radio" value="submissions" onclick="bindRedditSearchRadio.call(this)">Submissions
+                          </label>  
+                      </div>
+                      <div class="form-group">
+                          <label>Sorted By</label>
+                          <select disabled class="form-control sorted-by">
+                              <option value='relevance'>Relevance</option>
+                              <option value='new'>New</option>
+                              <option value='hot'>Hot</option>
+                              <option value='top'>Top</option>
+                              <option value='comments'>Comments</option>
+                          </select>
+                      </div>
+                      <div class="form-group">
+                          <label>Links From</label>
+                          <select disabled class="form-control links-from">
+                              <option value='all'>All Time</option>
+                              <option value='hour'>Past Hour</option>
+                              <option value='day'>Past 24 Hours</option>
+                              <option value='week'>Past Week</option>
+                              <option value='year'>Past Year</option>    
+                          </select>
+                      </div>
+                      <button type="submit" class="reddit-search-submit btn btn-default" {{pressType}}="bindRedditSearch.call(this)">Submit</button>
+                      <input class='reddit-search-submit hide' type='submit' {{pressType}}="bindRedditSearch.call(this)">                          
+                  </form>
+                </div>
+                <a href="javascript:void(0)" data-toggle="collapse" data-target="#search-control-panel">
+                    <div class="panel-footer">
+                        <span class="pull-left">Search Platforms</span>
+                        <span class="pull-right"><i class="fa fa-folder-open fa-lg"></i></span>
+                        <div class="clearfix"></div>
+                    </div>
+                </a>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+    
   </div>
 </div>
 {{> templates}}

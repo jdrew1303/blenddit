@@ -4,7 +4,7 @@
     var
     require = function(files, callback, errorFn, type) {
         for (var i = 0; i < files.length; i++) {
-            type == 'script' 
+            type == 'script'
                 ? writeScript(files[i], callback, errorFn) 
                 : writeLink(files[i], callback, errorFn);
         }
@@ -650,7 +650,7 @@ function frame_content_height(columnNum, optInt) {
     }
 }
 function launchControls() {    
-    showFeature('#controls');
+    $('#controls').modal('toggle');
     updateControlsView();
 }
 function updateControlsView() {
@@ -702,7 +702,6 @@ function showFeature(feature) {
     hideAllFeatures();
     fadeIn($(feature).removeClass('hide'),100);
     if (feature == '#greeting') $('.home-button').addClass('active-feature');
-    if (feature == '#controls') $('.open-controls').addClass('active-feature');
     if (feature == '#content-container') {
         var configArr = new Fn().getFromStorage('config');
         $('html, body').addClass('noverflow');
@@ -715,7 +714,7 @@ function showFeature(feature) {
 }
 function hideAllFeatures() {
     autoRefresh(false);
-    $('#controls, #main-loader-container, #content-container, #greeting, #search-results-container')
+    $('#main-loader-container, #content-container, #greeting, #search-results-container')
         .removeClass('faded').addClass('hide');
     $('.home-button, .columns-button, .open-controls').removeClass('active-feature');
     $('.carousel-control').addClass('hide');
@@ -1706,6 +1705,7 @@ function bindSaveChanges() {
         }()
         : buildConfigToUI();
     $('.sub-group-controls').remove();
+    $('#controls').modal('hide');
 }
 function bindPreventEnterButton() {
     if (event.which == 13) {
@@ -1720,6 +1720,7 @@ function bindRedditSearch(callback) {
     var query = $(this.form).find('.reddit-search-input.tt-input').val(), 
         fn = new Fn();
     if (query) {
+        $('#controls').modal('hide');
         var radio = $(this.form).find('input[type=radio]:checked').val(),
             sorted_by = $(this.form).find('select.sorted-by').val(),
             links_from = $(this.form).find('select.links-from').val();

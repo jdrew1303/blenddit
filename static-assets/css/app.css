@@ -517,33 +517,6 @@ blockquote, blockquote p {
     color: #fff;
     background: none;
 }
-
-@media(min-width:768px) {
-    #wrapper {
-        padding-left: 250px;
-    }
-
-    #wrapper.toggled {
-        padding-left: 0;
-    }
-
-    #sidebar-wrapper {
-        width: 250px;
-    }
-
-    #wrapper.toggled #sidebar-wrapper {
-        width: 0;
-    }
-
-    #page-content-wrapper {
-        padding: 20px;
-    }
-
-    #wrapper.toggled #page-content-wrapper {
-        position: relative;
-        margin-right: 0;
-    }
-}
 .framework {
   height: 100vh;
   padding: 2px 2px 50px 2px;
@@ -642,7 +615,7 @@ span.twitter-typeahead {
   width:100%;
 }
 .modal .modal-body {
-  max-height: 420px !important;
+  max-height: 400px !important;
   overflow-y: auto !important;
 }
 .transparent { 
@@ -761,6 +734,9 @@ span.twitter-typeahead {
 }
 .panel-red a {
   color: #d9534f;
+}
+.panels .panel:last-child {
+  margin-bottom: 0;
 }
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {
