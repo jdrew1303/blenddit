@@ -18,9 +18,9 @@ html, body {
 .icon-eagles, .icon-steelers, .icon-Chargers,
 .icon-Seahawks, .icon-StLouisRams, .icon-buccaneers,
 .icon-Tennesseetitans, .icon-Redskins {
-  background-image: url("../imgs/teamlogos.jpg");
+  /*background-image: url("../imgs/teamlogos.jpg");
   width: 49px;
-  height: 58px;
+  height: 58px;*/
 }
 .icon-49ers {background-position: -365px -65px;}
 .icon-AZCardinals {background-position: -365px -5px;}
