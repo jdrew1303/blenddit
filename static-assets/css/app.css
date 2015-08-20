@@ -67,7 +67,7 @@ html, body {
 .reply-buttons button { margin-left: 5px !important;}
 .reply-buttons { text-align: right;}
 .thumb {
-  margin: 5px 5px 0 5px !important;
+  margin: 5px 10px 0 5px !important;
   padding-right:0px !important;
   border-radius: 4px;
 }
