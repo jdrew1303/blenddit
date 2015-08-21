@@ -132,8 +132,9 @@ blockquote, blockquote p {
   padding-right:0;
 }
 .flair {
-  border-top-right-radius: 0;
-  border-bottom-right-radius: 0;
+  cursor: default;
+  border-top-left-radius: 4px !important;
+  border-bottom-left-radius: 4px !important;
   top:6px;
   position: absolute !important;
   background-color: #545454;
@@ -149,7 +150,13 @@ blockquote, blockquote p {
 .score.btn {
   padding-right: 0!important;
 }
-.author {font-size: medium;}
+.author {
+  font-size: medium;
+  margin-right: 2px;
+}
+.author:hover {
+  text-decoration: underline;
+}
 .time-elapsed {
   padding-left: 0 !important;
 }
@@ -174,7 +181,7 @@ blockquote, blockquote p {
 }
 .from-sub {
   font-size: x-small;
-  padding: 6px 5px 0 0 !important;
+  margin: 4px 2px 0 0;
 }
 #refreshNumber {
   display: inline;
