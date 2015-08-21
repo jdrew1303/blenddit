@@ -184,31 +184,37 @@
 </script>
 <script type="text/html" id="tmpl_ae">
 	<footer data-id="<%=comment.data.name%>" class="comment-footer">
-	<div class="links-container btn-group">
-		<a data-created-utc="<%=comment.data.created_utc%>" class="btn time-elapsed white"><%=timeElapsed%></a>
-		<a class="btn reply-switch" <%=getPressEvent()%>="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
-		<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
-		<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" <%=getPressEvent()%>="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
-		<%=expander%>
-	</div>
-	<%=replyForm%>
+		<div class="links-container btn-group">
+			<a class="btn reply-switch" <%=getPressEvent()%>="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
+			<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
+			<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" <%=getPressEvent()%>="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
+		</div>
+		<%=replyForm%>
 	</footer>
 </script>
 <script type="text/html" id="tmpl_af">
-	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="btn reply" <%=getPressEvent()%>="bindShowReply.call(this)">
-		<span class="reply-num text-warning"><%=replyLength%></span>
-		<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
+	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)">
+		<span class="reply-num"><%=replyLength%></span><span> <%=replyText%></span>
 	</a>
 </script>
 <script type="text/html" id="tmpl_ag">
-	<div class="media-heading btn-group">
-		<a data-id="<%=comment.data.name%>" class="btn vote up" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-up"></i></a>
-		<a data-id="<%=comment.data.name%>" class="score btn"><%=comment.data.score%></a>
-		<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down"></i></a>
-		<a class="btn from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>
-		<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
-		<%=flair%>
-	</div><%=text%>
+	<header class="comment-header">
+		<div class="btn-group">
+			<a data-id="<%=comment.data.name%>" class="btn vote up" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-up fa-lg"></i></a>
+			<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down fa-lg"></i></a>
+		</div>
+	</header>
+	<div class="reddit-metadata">
+		<div class="media-heading btn-group">
+			<%=flair%>
+			<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
+		</div>
+		<div class="line2-container">
+			<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span> points <span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span> ago in <a class="from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
+		</div>
+		<div class="reply-container" data-id="<%=comment.data.name%>"><%=replies%></div>
+	</div>
+	<%=text%>
 </script>
 <script type="text/html" id="tmpl_ah">
 	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" <%=getPressEvent()%>="bindRefreshComment.call(this)">
@@ -219,7 +225,7 @@
 	<div class="media-body"><%=heading%></div>
 </script>
 <script type="text/html" id="tmpl_aj">
-	<div class="thumb pull-left <%=icon%>"></div>
+	<div class="thumb* pull-left <%=icon%>"></div>
 </script>
 <script type="text/html" id="tmpl_ak">
 	<div data-parentid="<%=comment.data.parent_id%>" data-linkid="<%=comment.data.link_id%>" data-icon="<%=icon%>" id="<%=comment.data.name%>" class="media <%=parent%> <%=opacity%>">

@@ -956,7 +956,7 @@ function updateCreatedUTC(columnNum) {
     var frameContent = document.getElementsByDataAttribute('.frame-content', 'data-column', columnNum)[0],
         collection = frameContent.getElementsByClassName('time-elapsed');
     collection.forEach(function(node) {
-       node.text = getTimeElapsed(node.getAttribute('data-created-utc'));
+       node.innerHTML = getTimeElapsed(node.getAttribute('data-created-utc'));
     });
 }
 function updateCommentStats(comments) {
@@ -964,16 +964,16 @@ function updateCommentStats(comments) {
         var replies = comment.kind!='more' && comment.data.replies.hasOwnProperty('data')
             ? comment.data.replies.data.children : [], replyLength = replies.length,
             commentId = '#'+comment.data.name,
-            commentFooter = commentId+' .comment-footer[data-id='+comment.data.name+']';
+            replyContainer = commentId+' .reply-container[data-id='+comment.data.name+']';
         typeof comment.data.score !== 'undefined' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : void 0;
-        newCommentsOnRefresh(replyLength, comment.data.name, commentFooter);
+        // newCommentsOnRefresh(replyLength, comment.data.name, replyContainer);
         updateCommentStats(replies);
     });
 }
-function newCommentsOnRefresh(replyLength, name, commentFooter) {
+function newCommentsOnRefresh(replyLength, name, replyContainer) {
     var $preloadedReplies = $('#'+name+' .media[data-parentid='+name+']'),
-        $replySwitch = $(commentFooter+' .reply'),
-        $replyNum = $(commentFooter+' .reply .reply-num'),
+        $replySwitch = $(replyContainer+' .reply'),
+        $replyNum = $(replyContainer+' .reply .reply-num'),
         newRepliesNum = replyLength - $preloadedReplies.length,
         newButton = tmpl('tmpl_ab', {newRepliesNum:newRepliesNum}),
         optionalExpander = tmpl('tmpl_ac', {replyLength:replyLength});
@@ -1200,19 +1200,19 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
                 ? tmpl('tmpl_ae', {
                     comment:comment, 
                     replyLength:replyLength,
-                    timeElapsed:getTimeElapsed(comment.data.created_utc),
                     permalink:getPermalink(comment.data.link_id,comment.data.id),
-                    replyForm:buildReplyForm(comment.data.name, comment.data.author),
-                    expander: replyLength!==0?tmpl('tmpl_af',{comment:comment,replyLength:replyLength}):""
+                    replyForm:buildReplyForm(comment.data.name, comment.data.author)
                 }) : "",
             text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
             heading = comment.kind!='more'
                 ? tmpl('tmpl_ag', {
                     comment: comment,
                     text: text,
+                    timeElapsed:getTimeElapsed(comment.data.created_utc),
                     href: window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit,
                     author: window.location.protocol+"//www.reddit.com/u/"+comment.data.author,
-                    flair: comment.data.author_flair_css_class ? '<a class="flair btn">'+comment.data.author_flair_css_class+"</a>" : "&nbsp;"
+                    flair: comment.data.author_flair_css_class ? '<a class="flair btn">'+comment.data.author_flair_css_class+"</a>" : "&nbsp;",
+                    replies: replyLength!==0?tmpl('tmpl_af',{comment:comment,replyLength:replyLength,replyText:replyLength>1?'replies':'reply'}):""
                 })
                 : tmpl('tmpl_ah', {comment:comment, text:text}),
             body = tmpl('tmpl_ai', {heading:heading}),
@@ -1579,13 +1579,10 @@ function bindReplySwitch() {
 function bindShowReply(){
     event.preventDefault();
     var name = $(this).data('name'),
-        $replies = $('#'+name+' .media[data-parentid='+name+']'),
-        $icon = $(this).find('.expand');
-    if ($icon.hasClass('fa-plus-square')) {
-        $icon.removeClass('fa-plus-square').addClass('fa-minus-square');
+        $replies = $('#'+name+' .media[data-parentid='+name+']');
+    if ($replies.hasClass('hide')) {
         fadeIn($replies.removeClass('hide'), 100);
     } else {
-        $icon.removeClass('fa-minus-square').addClass('fa-plus-square');
         $replies.removeClass('faded').addClass('hide');
     }
 }

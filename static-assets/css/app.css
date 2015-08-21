@@ -59,7 +59,7 @@ html, body {
 .md h1 { font-size: 20px; }
 .md h2 { font-size: 18px; }
 .md h3 { font-size: 15px; }
-.reply-form {margin-top: 5px;}
+.reply-form {margin: 5px 0 5px 0;}
 .reply-form.isTopLevel textarea {
   min-height: 150px;
 }
@@ -85,6 +85,18 @@ html, body {
 #watch-matching .btn, #watch-threads .btn, .from-sub {
   color: white;
   opacity: .5;
+}
+.reddit-metadata {
+  margin-bottom:10px;
+}
+.reddit-metadata .line2-container {
+  margin-top:3px;
+}
+.reddit-metadata .line2-container .line2 {
+  font-size:small;
+}
+.from-sub:hover {
+  color:white;
 }
 .popover {
   border: 1px solid white !important;
@@ -133,35 +145,31 @@ blockquote, blockquote p {
 }
 .flair {
   cursor: default;
-  border-top-left-radius: 4px !important;
-  border-bottom-left-radius: 4px !important;
+  border-radius: 4px !important;
+  margin-right:2px;
   top:6px;
-  position: absolute !important;
   background-color: #545454;
   text-align: center;
   font-size: x-small;
   padding: 0 !important;
 }
-.vote.down { margin-right: 5px; }
-.vote.btn {
-  padding-left: 3px !important;
-  padding-right: 3px !important;
-}
+
 .score.btn {
   padding-right: 0!important;
 }
 .author {
+  line-height: 4px;
+  margin-top: 8px;
   font-size: medium;
-  margin-right: 2px;
 }
 .author:hover {
   text-decoration: underline;
 }
-.time-elapsed {
+.reply-switch, .vote.up {
   padding-left: 0 !important;
 }
 .media-heading {
-  margin: 0 0 10px 0;
+  margin: 0;
 }
 .media-heading .btn {
   padding: 2px 2px 2px 0;
@@ -178,10 +186,6 @@ blockquote, blockquote p {
 }
 .media-more li {
   padding: 10px;
-}
-.from-sub {
-  font-size: x-small;
-  margin: 4px 2px 0 0;
 }
 #refreshNumber {
   display: inline;
@@ -210,7 +214,7 @@ blockquote, blockquote p {
 }
 .frame-content .media, .media-results .media {
   border-radius: 5px;
-  padding: 5px 5px 5px 0;
+  padding: 5px;
   background-color: rgb(32,32,32);
 }
 #accounts .media {
@@ -286,7 +290,10 @@ blockquote, blockquote p {
   -moz-transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;
 }
-.media-body {padding-top: 5px;}
+.media-body {
+  padding-top: 5px;
+  position: relative;
+}
 .parent .media-body {padding-top: 0;}
 .nopacity { opacity: 0; }
 .white { color: white;}
@@ -745,11 +752,11 @@ span.twitter-typeahead {
 .panels .panel:last-child {
   margin-bottom: 0;
 }
-.links-container .btn {
-  padding: 2px 15px 2px 15px;
-}
 .media footer {
-  margin: 5px 0 5px 0;
+  /*margin-top: 5px;*/
+}
+.media header {
+  /*margin-bottom: 5px;*/
 }
 .media {
   margin-top:0;  
