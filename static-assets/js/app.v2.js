@@ -966,7 +966,7 @@ function updateCommentStats(comments) {
             commentId = '#'+comment.data.name,
             replyContainer = commentId+' .reply-container[data-id='+comment.data.name+']';
         typeof comment.data.score !== 'undefined' ? $('.score[data-id='+comment.data.name+']').text(comment.data.score) : void 0;
-        // newCommentsOnRefresh(replyLength, comment.data.name, replyContainer);
+        newCommentsOnRefresh(replyLength, comment.data.name, replyContainer);
         updateCommentStats(replies);
     });
 }
@@ -975,29 +975,29 @@ function newCommentsOnRefresh(replyLength, name, replyContainer) {
         $replySwitch = $(replyContainer+' .reply'),
         $replyNum = $(replyContainer+' .reply .reply-num'),
         newRepliesNum = replyLength - $preloadedReplies.length,
-        newButton = tmpl('tmpl_ab', {newRepliesNum:newRepliesNum}),
-        optionalExpander = tmpl('tmpl_ac', {replyLength:replyLength});
+        newLink = tmpl('tmpl_ab', {newRepliesNum:newRepliesNum}),
+        optionalExpander = tmpl('tmpl_ac', {replyLength:replyLength, replyText:replyLength>1?'replies':'reply'});
     if (replyLength > 0 && $replySwitch.length>0 && replyLength > $replySwitch.data('replylength')) { // replies exist already
         $replySwitch.data('replylength', replyLength);
         $replyNum.text(replyLength);
-        if (newRepliesNum > 0 && $(commentFooter+' .new-comment').length===0) {
-            $(newButton).insertAfter(commentFooter+' .reply');
+        if (newRepliesNum > 0 && $(replyContainer+' .new-comment').length===0) {
+            $(newLink).insertAfter(replyContainer+' .reply');
         } else {
-            if (!$('footer[data-id='+name+'] .reply').children().length && $preloadedReplies.length>0) {
-                $('footer[data-id='+name+'] .reply').append(optionalExpander);
-                $('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square');
+            if (!$replySwitch.children().length && $preloadedReplies.length>0) {
+                $replySwitch.append(optionalExpander);
+                $(replyContainer+'.reply .expander').html('&#8722;');
             }
-            newRepliesNum <= 0 ? void 0 : $(commentFooter+' .new-comment .diff').text(newRepliesNum+' new');
+            newRepliesNum <= 0 ? void 0 : $(replyContainer+' .new-comment .diff').text(newRepliesNum+' new');
         }
     } else if (replyLength > 0 && $replySwitch.length===0) { // replies don't exist until now
         var existingRepls = tmpl('tmpl_ad', {name:name, replyLength:replyLength});
-        $(existingRepls).insertAfter(commentFooter+' .refresh-comment');
+        $(replyContainer).append(existingRepls);
         if (newRepliesNum > 0) {
-            $(newButton).insertAfter(commentFooter+' .reply');
+            $(newLink).insertAfter(replyContainer+' .reply');
         }
         if ($preloadedReplies.hasClass('faded')) {
-            $('footer[data-id='+name+'] .reply').append(optionalExpander);
-            $('footer[data-id='+name+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square');
+            $(replyContainer+' .reply').append(optionalExpander);
+            $(replyContainer+' .reply .expander').html('&#8722;');
         }
     }
 }
@@ -1318,7 +1318,7 @@ function buildColumnOptions(configObj, columnNum) {
 }
 function bindNewComment() {
     event.preventDefault();
-    bindRefreshComment.call($(this).parent().parent().find('.refresh-comment'));
+    bindRefreshComment.call($(this).parent().parent().parent().find('.refresh-comment'));
 }
 function bindLoadMore(after, type, objParam, resetCount) {
     event.preventDefault();
@@ -1579,10 +1579,13 @@ function bindReplySwitch() {
 function bindShowReply(){
     event.preventDefault();
     var name = $(this).data('name'),
-        $replies = $('#'+name+' .media[data-parentid='+name+']');
+        $replies = $('#'+name+' .media[data-parentid='+name+']'),
+        $icon = $(this).find('.expander');
     if ($replies.hasClass('hide')) {
+        $icon.html('&#8722;');
         fadeIn($replies.removeClass('hide'), 100);
     } else {
+        $icon.html('&#43;');
         $replies.removeClass('faded').addClass('hide');
     }
 }
@@ -1599,7 +1602,7 @@ function bindRefreshComment() {
             $('#'+id).addClass('parent');
             $('#'+id).children(':first').addClass($('#'+id).data('icon'));
         }
-        $('footer[data-id='+id+'] .reply .expand').toggleClass('fa-plus-square fa-minus-square');
+        $('.reply[data-name='+id+'] .expander').html('&#8722;');
         $('#'+id+' .media[data-parentid='+$('#'+id).attr('id')+']').removeClass('hide').addClass('faded');
         $('#'+id).addClass('nopacity');
         fadeIn($('#'+id), 100);

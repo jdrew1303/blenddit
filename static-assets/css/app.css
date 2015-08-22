@@ -137,10 +137,11 @@ blockquote, blockquote p {
   top: 0;
   right: 1px;
 }
-.new-comment {
-  padding-left: 0;
+.reply-container {
+  line-height: 10px;
 }
 .reply {
+  font-size: small;
   padding-right:0;
 }
 .flair {
@@ -353,7 +354,7 @@ blockquote, blockquote p {
 .fa-bars, .delete-edit, .info-edit, .delete-controls, .info-controls, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
 #watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more,
-.panel-heading, #accounts .media, #linked-accounts * {
+.panel-heading, #accounts .media, #linked-accounts *, .diff {
   cursor: pointer;
 }
 .open-controls, .columns-button, .home-button {

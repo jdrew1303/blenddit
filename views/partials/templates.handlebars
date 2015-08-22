@@ -173,17 +173,16 @@
 	</div>
 </script>
 <script type="text/html" id="tmpl_ab">
-	<a class="btn new-comment" <%=getPressEvent()%>="bindNewComment.call(this)"><span class="text-primary diff"><%=newRepliesNum%> new</span></a>
+	<a  class="new-comment" <%=getPressEvent()%>="bindNewComment.call(this)"><span class="diff"><%=newRepliesNum%> new</span></a>
 </script>
 <script type="text/html" id="tmpl_ac">
-	<span class="reply-num text-warning"><%=replyLength%></span>
-	<span class="text-warning">&nbsp;<i class="fa expand fa-plus-square"></i>&nbsp;</span>
+	<span class="reply-num"><%=replyLength%></span><span>&nbsp;<%=replyText%>&nbsp;</span><span class="expander">&#43;</span>
 </script>
 <script type="text/html" id="tmpl_ad">
-	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="btn reply" <%=getPressEvent()%>="bindShowReply.call(this)"></a>
+	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)"></a>
 </script>
 <script type="text/html" id="tmpl_ae">
-	<footer data-id="<%=comment.data.name%>" class="comment-footer">
+	<footer data-id="<%=comment.data.name%>" class="comment-footer hide">
 		<div class="links-container btn-group">
 			<a class="btn reply-switch" <%=getPressEvent()%>="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
 			<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
@@ -194,11 +193,11 @@
 </script>
 <script type="text/html" id="tmpl_af">
 	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)">
-		<span class="reply-num"><%=replyLength%></span><span> <%=replyText%></span>
+		<span class="reply-num"><%=replyLength%></span><span>&nbsp;<%=replyText%>&nbsp;</span><span class="expander">&#43;</span>
 	</a>
 </script>
 <script type="text/html" id="tmpl_ag">
-	<header class="comment-header">
+	<header class="comment-header hide">
 		<div class="btn-group">
 			<a data-id="<%=comment.data.name%>" class="btn vote up" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-up fa-lg"></i></a>
 			<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down fa-lg"></i></a>
@@ -210,7 +209,7 @@
 			<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
 		</div>
 		<div class="line2-container">
-			<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span> points <span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span> ago in <a class="from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
+			<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span>&nbsp;points&nbsp;<span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span>&nbsp;ago&nbsp;in&nbsp;<a class="from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
 		</div>
 		<div class="reply-container" data-id="<%=comment.data.name%>"><%=replies%></div>
 	</div>
