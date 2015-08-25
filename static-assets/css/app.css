@@ -145,7 +145,6 @@ blockquote, blockquote p {
   padding-right:0;
 }
 .flair {
-  cursor: default;
   border-radius: 4px !important;
   margin-right:2px;
   top:6px;
@@ -354,7 +353,7 @@ blockquote, blockquote p {
 .fa-bars, .delete-edit, .info-edit, .delete-controls, .info-controls, .reply, .open-controls, .reply-switch, 
 .refresh-comment, #reddit-logout, .load-comments, #watch-threads .list-group-item, 
 #watch-subreddits .input-group-addon, #watch-matching .input-group-addon, .frame-header, .help, .media-results, .media-more,
-.panel-heading, #accounts .media, #linked-accounts *, .diff {
+.panel-heading, #accounts .media, #linked-accounts *, .diff, .target {
   cursor: pointer;
 }
 .open-controls, .columns-button, .home-button {

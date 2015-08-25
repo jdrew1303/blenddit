@@ -926,6 +926,7 @@ function insertReplyIntoDOM(objArray, additionalData) {
 }
 function externalLinks(selector) {
     $(selector).each(function(index, el) {
+        el.onclick = stopProp;
         $(el).attr('target','_blank');
         $(el).attr('href').substring(0,3)=='/u/' || $(el).attr('href').substring(0,3)=='/r/'
             ? $(el).attr('href', window.location.protocol+'//www.reddit.com'+$(el).attr('href')) : '';
@@ -1318,6 +1319,7 @@ function buildColumnOptions(configObj, columnNum) {
 }
 function bindNewComment() {
     event.preventDefault();
+    event.stopPropagation();
     bindRefreshComment.call($(this).parent().parent().parent().find('.refresh-comment'));
 }
 function bindLoadMore(after, type, objParam, resetCount) {
@@ -1578,6 +1580,7 @@ function bindReplySwitch() {
 }
 function bindShowReply(){
     event.preventDefault();
+    event.stopPropagation();
     var name = $(this).data('name'),
         $replies = $('#'+name+' .media[data-parentid='+name+']'),
         $icon = $(this).find('.expander');
@@ -1790,4 +1793,15 @@ function bindDeleteColumnButton(columnNum) {
 }
 function bindHelpModal() {
     $('#help-modal').modal('show');
+}
+function bindToggleCommentOptions() {
+    var extensions = $(this).parents('.media-body:first').find('header:first, footer:first'),
+        isHide = extensions.hasClass('hide');
+    $('.media-body header, .media-body footer').addClass('hide');
+    if (isHide) {
+        extensions.removeClass('hide');
+    }
+}
+function stopProp(event) {
+    event.stopPropagation();
 }

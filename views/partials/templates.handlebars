@@ -182,6 +182,7 @@
 	<a data-name="<%=name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)"></a>
 </script>
 <script type="text/html" id="tmpl_ae">
+	</div>
 	<footer data-id="<%=comment.data.name%>" class="comment-footer hide">
 		<div class="links-container btn-group">
 			<a class="btn reply-switch" <%=getPressEvent()%>="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
@@ -203,17 +204,18 @@
 			<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down fa-lg"></i></a>
 		</div>
 	</header>
-	<div class="reddit-metadata">
-		<div class="media-heading btn-group">
-			<%=flair%>
-			<a class="btn author" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
+	<div class="target" <%=getPressEvent()%>="bindToggleCommentOptions.call(this)">
+		<div class="reddit-metadata">
+			<div class="media-heading btn-group">
+				<%=flair%>
+				<a class="btn author" <%=getPressEvent()%>="stopProp.call(this,event)" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
+			</div>
+			<div class="line2-container">
+				<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span>&nbsp;points&nbsp;<span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span>&nbsp;ago&nbsp;in&nbsp;<a class="from-sub" <%=getPressEvent()%>="stopProp.call(this,event)" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
+			</div>
+			<div class="reply-container" data-id="<%=comment.data.name%>"><%=replies%></div>
 		</div>
-		<div class="line2-container">
-			<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span>&nbsp;points&nbsp;<span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span>&nbsp;ago&nbsp;in&nbsp;<a class="from-sub" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
-		</div>
-		<div class="reply-container" data-id="<%=comment.data.name%>"><%=replies%></div>
-	</div>
-	<%=text%>
+		<%=text%>
 </script>
 <script type="text/html" id="tmpl_ah">
 	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" <%=getPressEvent()%>="bindRefreshComment.call(this)">
