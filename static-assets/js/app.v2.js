@@ -1320,7 +1320,9 @@ function buildColumnOptions(configObj, columnNum) {
 function bindNewComment() {
     event.preventDefault();
     event.stopPropagation();
-    bindRefreshComment.call($(this).parent().parent().parent().find('.refresh-comment'));
+    var id = $(this).parents('.media').attr('id'),
+        refreshComment = $('.refresh-comment[data-id='+id+']');
+    bindRefreshComment.call(refreshComment);
 }
 function bindLoadMore(after, type, objParam, resetCount) {
     event.preventDefault();
