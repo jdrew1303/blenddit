@@ -1202,7 +1202,8 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
                     comment:comment, 
                     replyLength:replyLength,
                     permalink:getPermalink(comment.data.link_id,comment.data.id),
-                    replyForm:buildReplyForm(comment.data.name, comment.data.author)
+                    replyForm:buildReplyForm(comment.data.name, comment.data.author),
+                    replies: replyLength!==0?tmpl('tmpl_af',{comment:comment,replyLength:replyLength,replyText:replyLength>1?'replies':'reply'}):""
                 }) : "",
             text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
             heading = comment.kind!='more'
@@ -1212,8 +1213,7 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
                     timeElapsed:getTimeElapsed(comment.data.created_utc),
                     href: window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit,
                     author: window.location.protocol+"//www.reddit.com/u/"+comment.data.author,
-                    flair: comment.data.author_flair_css_class ? '<a class="flair btn">'+comment.data.author_flair_css_class+"</a>" : "&nbsp;",
-                    replies: replyLength!==0?tmpl('tmpl_af',{comment:comment,replyLength:replyLength,replyText:replyLength>1?'replies':'reply'}):""
+                    flair: comment.data.author_flair_css_class ? '<a class="flair btn">'+comment.data.author_flair_css_class+"</a>" : "&nbsp;"
                 })
                 : tmpl('tmpl_ah', {comment:comment, text:text}),
             body = tmpl('tmpl_ai', {heading:heading}),

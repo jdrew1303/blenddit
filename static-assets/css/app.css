@@ -140,7 +140,7 @@ blockquote, blockquote p {
   right: 1px;
 }
 .reply-container {
-  line-height: 10px;
+  text-align: center;
 }
 .reply {
   font-size: small;
@@ -223,8 +223,14 @@ blockquote, blockquote p {
 #accounts .media:hover {
   background-color: #484848;
 }
-.frame-content .media:not(:first-child) {
+.frame-content .media.parent:not(:first-child) {
   border-top: 1px solid #303236 !important;
+}
+.frame-content .media:not(.parent) {
+  border-radius: 0;
+  margin-left: 5px;
+  padding-left: 10px;
+  border-left: 1px solid #303236 !important;
 }
 
 #content-container {
@@ -383,11 +389,6 @@ blockquote, blockquote p {
   margin-bottom: 2px;
   border-radius: 0px !important;
   background-color: #424242 !important;
-}
-.parent {
-  margin-top:0 !important;
-  border-left: 1px solid rgb(32,32,32);
-  border-right: 1px solid rgb(32,32,32);
 }
 .bookmark {
   position: absolute;
