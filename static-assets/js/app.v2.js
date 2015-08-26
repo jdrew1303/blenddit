@@ -18,20 +18,20 @@
         }
     },
     successEvent = function(elem, successFn) {
-        elem.addEventListener('load', function successEvent(e) { 
+        elem.addEventListener('load', function successEvent(e) {
             if (successFn) successFn(e);
             elem.removeEventListener('load', successEvent, 'false');
         }, false);
     },
     failEvent  = function(elem, failFn) {
-        elem.addEventListener('error', function failEvent(e) { 
+        elem.addEventListener('error', function failEvent(e) {
             if (failFn) failFn(e);
             elem.removeEventListener('error', failEvent, 'false');
         }, false);
     },
     writeLink = function(href, success, fail) {
         var l = document.createElement('link'),
-            head = document.getElementsByTagName('head')[0]; 
+            head = document.getElementsByTagName('head')[0];
         l.type = 'text/css';
         l.rel = 'stylesheet';
         successEvent(l, success);
@@ -52,7 +52,7 @@
     getMetaValue = function(name) {
         var nodeList = document.getElementsByTagName('meta');
         for (var i = 0, len = nodeList.length; i < len; i++) {
-            if (nodeList[i].getAttribute('name') == name) 
+            if (nodeList[i].getAttribute('name') == name)
                 return nodeList[i].getAttribute('content');
         } return "";
     },
@@ -70,7 +70,7 @@
                     typeof jQuery.fn.emulateTransitionEnd !== 'undefined' && // Bootstrap
                     typeof Bloodhound !== 'undefined'; // typeahead
         if (ready) {
-            (function app_extensions() { 
+            (function app_extensions() {
                 $.fn.launchPopOver = function(closeTime, options) {
                     var that = this, popoverState = $(this).data('bs.popover');
                     if (typeof popoverState === 'undefined' || !popoverState.enabled) {
@@ -82,7 +82,7 @@
                     }
                     popoverState = $(this).data('bs.popover');
                     if (typeof popoverState.timeoutId !== 'undefined') {
-                        clearTimeout(popoverState.timeoutId);    
+                        clearTimeout(popoverState.timeoutId);
                     }
                     $(this).popover('show');
                     popoverState.timeoutId = setTimeout(function(){
@@ -97,15 +97,15 @@
                 document.getElementsByDataAttribute = function(className, dataAttr, dataValue) {
                     var nodeList = document.querySelectorAll(className), nodeArray = [];
                     nodeList.forEach(function(node) {
-                        if (node.getAttribute(dataAttr)==dataValue) nodeArray.push(node);    
-                    })
+                        if (node.getAttribute(dataAttr)==dataValue) nodeArray.push(node);
+                    });
                     return nodeArray;
-                }
+                };
                 NodeList.prototype.forEach = HTMLCollection.prototype.forEach = function(callback) {
                     for (var i = 0, len = this.length; i < len; i++) {
                         if (callback) callback(this[i], i);
                     }
-                }
+                };
             })();
             init();
         }
@@ -141,7 +141,7 @@
         'jqueryLocal' : 'static-assets/js/jquery-2.1.3.min.js',
         'bootstrapLocal' : 'static-assets/js/bootstrap.min.js',
         'pjaxLocal' : 'static-assets/js/jquery.pjax.min.js',
-        'typeaheadLocal' : 'static-assets/js/typeahead.bundle.min.js' 
+        'typeaheadLocal' : 'static-assets/js/typeahead.bundle.min.js'
     },
     styles = {
         'app' : 'static-assets/css/'+(getMetaValue('debug')=='true' ? 'app.css' : 'all.css')+'?v='+getMetaValue('version'),
@@ -194,7 +194,7 @@ Fn.prototype = {
         for(var i=0; i<ca.length; i++) {
             var c = ca[i];
             while (c.charAt(0)==' ') c = c.substring(1);
-            if (c.indexOf(name) === 0) 
+            if (c.indexOf(name) === 0)
                 return decodeURIComponent(c.substring(name.length,c.length));
         }
         return "";
@@ -202,7 +202,7 @@ Fn.prototype = {
     cookieExists : function(cname) {
         return this.getCookie(cname) ? true : false;
     },
-    getFromStorage : function(item) { 
+    getFromStorage : function(item) {
         if (item == 'config') {
             return localStorage
                 ? localStorage.getItem(item)
@@ -223,7 +223,7 @@ Fn.prototype = {
             localStorage.setItem(name, item);
             this.cookieExists(name) ? this.deleteCookie(name) : void 0;
         } else {
-            this.setCookie(name, item);    
+            this.setCookie(name, item);
         }
     },
     brokenImage : function(img) {
@@ -233,7 +233,7 @@ Fn.prototype = {
         document.activeElement.blur();
         $('input').blur();
     }
-}
+};
 
 // tmpl loads templates from the templates.handlebars script tags and pushes
 // data into them using the <%=%> syntax
@@ -351,7 +351,7 @@ function startBlending() {
                             ? addToConfigObj(buildRedditConfigObjByThreads(children))
                             : void 0
                         : void 0;
-                }, 
+                },
                 function(){
                     if (threadIds.length == children.length) configObjAction();
                 }, false, undefined, threadId);
@@ -414,7 +414,7 @@ function visibilityChange(){
       function autoRefreshStateSwitch(bool) {
           window.autoRefreshState = bool;
           autoRefresh(bool);
-          contentResizeEvent(); 
+          contentResizeEvent();
       }
     if(document[hidden] !== undefined)
         onchange({type: document[hidden] ? "blur" : "focus"});
@@ -430,7 +430,7 @@ function autoRefresh(bool, exceptNum) {
     } else {
         new Fn().getFromStorage('config').forEach(function(obj, i) {
             var frameContentExists = $('.frame-content[data-column='+i+']').length > 0;
-            if (frameContentExists && typeof window['r'+i] === 'undefined') toggleRefresh(i, true); 
+            if (frameContentExists && typeof window['r'+i] === 'undefined') toggleRefresh(i, true);
         }); // turn on all column auto refresh (if toggled on)
     }
 }

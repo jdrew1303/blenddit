@@ -204,7 +204,7 @@
 			<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down fa-lg"></i></a>
 		</div>
 	</header>
-	<div class="target" <%=getPressEvent()%>="bindToggleCommentOptions.call(this)">
+	<div class="target" onclick="bindToggleCommentOptions.call(this)">
 		<div class="reddit-metadata">
 			<div class="media-heading btn-group">
 				<%=flair%>

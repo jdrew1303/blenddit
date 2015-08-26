@@ -59,7 +59,9 @@ html, body {
 .md h1 { font-size: 20px; }
 .md h2 { font-size: 18px; }
 .md h3 { font-size: 15px; }
-.reply-form {margin: 5px 0 5px 0;}
+.reply-form {
+  margin: 5px 0 5px 0;
+}
 .reply-form.isTopLevel textarea {
   min-height: 150px;
 }
@@ -164,9 +166,6 @@ blockquote, blockquote p {
 }
 .author:hover {
   text-decoration: underline;
-}
-.reply-switch, .vote.up {
-  padding-left: 0 !important;
 }
 .media-heading {
   margin: 0;
@@ -752,15 +751,13 @@ span.twitter-typeahead {
 .panels .panel:last-child {
   margin-bottom: 0;
 }
-.media footer {
-  /*margin-top: 5px;*/
-}
-.media header {
-  /*margin-bottom: 5px;*/
-}
 .media {
   margin-top:0;  
 }
+.target {
+  border-radius: 4px;
+}
+
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {
     content: ' ';
