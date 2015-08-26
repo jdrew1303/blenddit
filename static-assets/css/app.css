@@ -139,9 +139,6 @@ blockquote, blockquote p {
   top: 0;
   right: 1px;
 }
-.reply-container {
-  text-align: center;
-}
 .reply {
   font-size: small;
   padding-right:0;
