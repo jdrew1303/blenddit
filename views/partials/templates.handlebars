@@ -173,7 +173,7 @@
 	</div>
 </script>
 <script type="text/html" id="tmpl_ab">
-	<a  class="new-comment" <%=getPressEvent()%>="bindNewComment.call(this)"><span class="diff"><%=newRepliesNum%> new</span></a>
+	<button class="new-comment text-primary" <%=getPressEvent()%>="bindNewComment.call(this)"><span class="diff"><%=newRepliesNum%> new</span></button>
 </script>
 <script type="text/html" id="tmpl_ac">
 	<span class="reply-num"><%=replyLength%></span><span>&nbsp;<%=replyText%>&nbsp;</span><span class="expander">&#43;</span>
@@ -194,9 +194,9 @@
 	</footer>
 </script>
 <script type="text/html" id="tmpl_af">
-	<a data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)">
+	<button data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)">
 		<span class="reply-num"><%=replyLength%></span><span>&nbsp;<%=replyText%>&nbsp;</span><span class="expander">&#43;</span>
-	</a>
+	</button>
 </script>
 <script type="text/html" id="tmpl_ag">
 	<header class="comment-header hide">

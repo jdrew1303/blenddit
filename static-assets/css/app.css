@@ -141,7 +141,13 @@ blockquote, blockquote p {
 }
 .reply {
   font-size: small;
-  padding-right:0;
+  margin-right:2px;
+}
+.reply, .new-comment {
+  border:0;
+  background-color:transparent;
+  outline: none;
+  padding:0;
 }
 .flair {
   border-radius: 4px !important;
