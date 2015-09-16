@@ -255,6 +255,32 @@
       </div>
     </div>
   </div>
+  <div class="modal fade" id="reply-modal" tabindex="-1" role="dialog" aria-labelledby="reply-modal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h6 class="modal-title" id="reply-title">Reply to StewardDC8</h6>
+        </div>
+        <div class="modal-body">
+          <form action="javascript:void(0)">
+            <div class='form-group'>
+              <div id="original-comment">
+                This is a comment by StewardDC8
+              </div>
+            </div>
+            <div class='form-group'>
+              <input id="reply-thing" type="hidden" name="thing_id" value="{{!-- t1_cv31ydi-0-0 --}}">
+              <textarea id="reply-textarea" name="text" class="form-control textarea-reply" placeholder="Reply to StewartDC8" onfocus="bindTextAreaReply.call(this)"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="cancel-reply btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="save-reply btn btn-primary" onclick="bindSaveReply.call(this)">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="modal fade" id="help-modal" tabindex="-1" role="dialog" aria-labelledby="help-modal" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -522,7 +548,6 @@
         </div>
       </div>
     </div>
-    
   </div>
 </div>
 {{> templates}}

@@ -761,6 +761,12 @@ span.twitter-typeahead {
 .target {
   border-radius: 4px;
 }
+.textarea-reply {
+  min-height: 150px;
+}
+.vote.up, .reply-switch {
+  padding-left: 0;
+}
 
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {

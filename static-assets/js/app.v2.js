@@ -1248,7 +1248,7 @@ function buildReplyForm(thing_id, author, isTopLevel) {
         parentInput = tmpl('tmpl_y', {thing_id:thing_id}),
         textarea = tmpl('tmpl_z', {
             label:isTopLevel?"<label>Comment</label>":"",
-            placeholder:isTopLevel?"Write a comment":"Reply to "+author}),
+            placeholder:isTopLevel?"Write a comment":"Reply to "+author+"..."}),
         form = tmpl('tmpl_aa', {
             className:isTopLevel?'isTopLevel':'nopacity hide',
             submitting:isTopLevel?'<b><span class="black">Submitting...</span></b>' : "Submitting...",
@@ -1559,7 +1559,10 @@ function bindSaveReply() {
 }
 function bindTextAreaReply() {
     event.preventDefault();
-    !isRedditUserLoggedIn() ? $('#login-reddit-modal').modal() : void 0;
+    !isRedditUserLoggedIn() 
+        ? function(){ 
+            $('#reply-modal').modal('toggle'); $('#login-reddit-modal').modal(); 
+        }() : void 0;
 }
 function bindCancelReply(){
     event.preventDefault();
@@ -1570,15 +1573,18 @@ function bindCancelReply(){
 }
 function bindReplySwitch() {
     event.preventDefault();
-    var $replyForm = $(this).parent().parent().find('.reply-form');
-    if ($replyForm.hasClass('hide')) {
-        $replyForm.removeClass('hide');
-        $replyForm.find('form').removeClass('hide');
-        $replyForm.find('.submitting').removeClass('faded').addClass('hide');
-        fadeIn($replyForm, 100);
-    } else {
-        $replyForm.removeClass('faded').addClass('hide');
-    }
+    $('#reply-modal').modal('toggle');
+    $('#reply-thing').val($(this).parent().parent().data('id'));
+
+    // var $replyForm = $(this).parent().parent().find('.reply-form');
+    // if ($replyForm.hasClass('hide')) {
+    //     $replyForm.removeClass('hide');
+    //     $replyForm.find('form').removeClass('hide');
+    //     $replyForm.find('.submitting').removeClass('faded').addClass('hide');
+    //     fadeIn($replyForm, 100);
+    // } else {
+    //     $replyForm.removeClass('faded').addClass('hide');
+    // }
 }
 function bindShowReply(){
     event.preventDefault();
