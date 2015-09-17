@@ -182,7 +182,7 @@
 	<button data-name="<%=name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)"></button>
 </script>
 <script type="text/html" id="tmpl_ae">
-	</div>
+	</div></div>
 	<div class="reply-container" data-id="<%=comment.data.name%>"><%=replies%></div>
 	<footer data-id="<%=comment.data.name%>" class="comment-footer hide">
 		<div class="links-container btn-group">
@@ -190,7 +190,6 @@
 			<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
 			<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" <%=getPressEvent()%>="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
 		</div>
-		<%=replyForm%>
 	</footer>
 </script>
 <script type="text/html" id="tmpl_af">
@@ -209,13 +208,13 @@
 		<div class="reddit-metadata">
 			<div class="media-heading btn-group">
 				<%=flair%>
-				<a class="btn author" <%=getPressEvent()%>="stopProp.call(this,event)" href="<%=author%>" target="_blank"><%=comment.data.author%></a>
+				<a class="btn author" <%=getPressEvent()%>="stopProp.call(this,event)" href="<%=authorLink%>" target="_blank"><%=comment.data.author%></a>
 			</div>
 			<div class="line2-container">
 				<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span>&nbsp;points&nbsp;<span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span>&nbsp;ago&nbsp;in&nbsp;<a class="from-sub" <%=getPressEvent()%>="stopProp.call(this,event)" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
 			</div>
 		</div>
-		<%=text%>
+		<div data-author="<%=author%>" data-id="<%=comment.data.name%>" class="reddit-html"><%=text%>
 </script>
 <script type="text/html" id="tmpl_ah">
 	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" <%=getPressEvent()%>="bindRefreshComment.call(this)">

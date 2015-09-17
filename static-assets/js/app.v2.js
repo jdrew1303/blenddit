@@ -894,31 +894,27 @@ function isRedditUserLoggedIn() {
     return $('[data-reddituser]').data('reddituser') ? true : false;
 }
 function replyLevelCommentFail(additionalData) {
-    var $form = $(additionalData.postPane).find('form'),
-        $submitting = $(additionalData.postPane).find('.submitting');
-    $form.removeClass('hide');
-    $submitting.removeClass('hide').addClass('hide');
-    $form.launchPopOver(3000, popOverOptions('top','','There was a problem posting your reply. Try again!'));
+    $('#reply-textarea, #reply-save').removeAttr('disabled');
+    $($('#reply-textarea')[0].form)
+        .launchPopOver(3000, popOverOptions('top','','There was a problem posting your reply. Try again!'));
 }
 function topLevelCommentFail(additionalData) {
-    var $form = $(additionalData.postPane).find('form'),
-        $submitting = $(additionalData.postPane).find('.submitting');
-    $submitting.removeClass('faded').addClass('hide');
-    $form.removeClass('hide');
+    var $form = $(additionalData.postPane).find('form');
     frame_content_height(additionalData.columnNum);
     $form.find('.textarea-reply').launchPopOver(3000, popOverOptions('top','','There was a problem posting your comment. Try again!'));
 }
 function postTopLevelComment(objArray, additionalData) {
     var $form = $(additionalData.postPane).find('form'),
-        $submitting = $(additionalData.postPane).find('.submitting');
-    $form.find('.textarea-reply').val('');
-    $submitting.removeClass('faded').addClass('hide');
-    $form.removeClass('hide');
+        $textarea = $form.find('.textarea-reply');
+    $textarea.val('').removeAttr('disabled');
+    $form.find('.save-reply').removeAttr('disabled');
     frame_content_height(additionalData.columnNum);
     bindColumnBars.call($('.column-bars[data-column='+additionalData.columnNum+'] > a'), additionalData.columnNum);
     bindGetCommentsForColumn.call($('.frame[data-column='+additionalData.columnNum+'] .frame-header'), additionalData.columnNum);
 }
 function insertReplyIntoDOM(objArray, additionalData) {
+    $('#reply-textarea, #reply-save').removeAttr('disabled');
+    $('#reply-modal').modal('toggle');
     $(buildCommentHtmlString(appendColNumAndThreadNum(objArray, additionalData.columnNum, additionalData.threadNum),true))
         .insertAfter('#'+objArray[0].data.parent_id+' .comment-footer:first');
     externalLinks('.md a');
@@ -1202,7 +1198,6 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
                     comment:comment, 
                     replyLength:replyLength,
                     permalink:getPermalink(comment.data.link_id,comment.data.id),
-                    replyForm:buildReplyForm(comment.data.name, comment.data.author),
                     replies: replyLength!==0?tmpl('tmpl_af',{comment:comment,replyLength:replyLength,replyText:replyLength>1?'replies':'reply'}):""
                 }) : "",
             text = $("<div/>").html(comment.data.body_html).text()+footer+buildCommentHtmlString(replies, true, false, true),
@@ -1212,7 +1207,8 @@ function buildCommentHtmlString(commentsArray, optionalNopacity, isParent, hide)
                     text: text,
                     timeElapsed:getTimeElapsed(comment.data.created_utc),
                     href: window.location.protocol+"//www.reddit.com/r/"+comment.data.subreddit,
-                    author: window.location.protocol+"//www.reddit.com/u/"+comment.data.author,
+                    authorLink: window.location.protocol+"//www.reddit.com/u/"+comment.data.author,
+                    author: comment.data.author,
                     flair: comment.data.author_flair_css_class ? '<a class="flair btn">'+comment.data.author_flair_css_class+"</a>" : "&nbsp;"
                 })
                 : tmpl('tmpl_ah', {comment:comment, text:text}),
@@ -1519,7 +1515,9 @@ function bindVoteCast() {
 function bindSaveReply() {
     event.preventDefault();
     var $postPane = $(this).parents('.write-comment'),
-        thing_id_raw = this.form.thing_id.value,
+        thing_id_raw = this.form 
+            ? this.form.thing_id.value
+            : $(this).parents('.modal-content').find('form')[0].thing_id.value,
         thing_id = thing_id_raw.split('-')[0] || 't3_'+$postPane.find('.post-thread option:selected').data('threadid'),
         additionalData = {
             columnNum: thing_id_raw.split('-')[1] || $postPane.data('column'),
@@ -1527,13 +1525,16 @@ function bindSaveReply() {
             postPane: $postPane.length > 0 ? $postPane : $(this).parents('.comment-footer'),
             timeout: 99999
         },
-        text = this.form.text.value,
-        $submitting = $(this.form.previousSibling);
+        text = this.form 
+            ? this.form.text.value
+            : $(this).parents('.modal-content').find('form')[0].text.value
     if (text.length===0) return;
-    $(this.form).addClass('hide');
-    fadeIn($submitting.removeClass('hide'), 100);
-    $postPane.length > 0 ? frame_content_height(additionalData.columnNum) : void 0;
+    
+    this.form 
+        ? function(){ $(this.form.text).attr('disabled','disabled'); $(this).attr('disabled','disabled')}.call(this)
+        : $('#reply-textarea, #reply-save').attr('disabled','disabled');
 
+    $postPane.length > 0 ? frame_content_height(additionalData.columnNum) : void 0;
     var done = $postPane.length > 0
         ? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
             data && data.needsLogin ? $('#login-reddit-modal').modal()
@@ -1542,8 +1543,8 @@ function bindSaveReply() {
                         : postTopLevelComment(data.json.data.things, additionalData);
         }
         : function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply
-            data && data.needsLogin ? $('#login-reddit-modal').modal()
-                : data.statusCode ? console.log(data.statusCode)
+            data && data.needsLogin ? function(){ $('.reply-modal').modal();$('#login-reddit-modal').modal() }()
+                : data.statusCode ? replyLevelCommentFail(additionalData)
                     : data.json && data.json.errors.length > 0 ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
                         : insertReplyIntoDOM(data.json.data.things, additionalData);
         };
@@ -1561,8 +1562,9 @@ function bindTextAreaReply() {
     event.preventDefault();
     !isRedditUserLoggedIn() 
         ? function(){ 
-            $('#reply-modal').modal('toggle'); $('#login-reddit-modal').modal(); 
-        }() : void 0;
+            if (!$(this).parent().parent().hasClass('isTopLevel')) $('#reply-modal').modal('toggle'); 
+            $('#login-reddit-modal').modal(); 
+        }.call(this) : void 0;
 }
 function bindCancelReply(){
     event.preventDefault();
@@ -1573,18 +1575,15 @@ function bindCancelReply(){
 }
 function bindReplySwitch() {
     event.preventDefault();
+    $('#original-comment').children().remove();
+    var id = $(this).parent().parent().data('id'),
+        $comment = $(".reddit-html[data-id="+id+"]").clone();
+        author = $comment.data('author');
     $('#reply-modal').modal('toggle');
-    $('#reply-thing').val($(this).parent().parent().data('id'));
-
-    // var $replyForm = $(this).parent().parent().find('.reply-form');
-    // if ($replyForm.hasClass('hide')) {
-    //     $replyForm.removeClass('hide');
-    //     $replyForm.find('form').removeClass('hide');
-    //     $replyForm.find('.submitting').removeClass('faded').addClass('hide');
-    //     fadeIn($replyForm, 100);
-    // } else {
-    //     $replyForm.removeClass('faded').addClass('hide');
-    // }
+    $('#reply-thing').val(id);
+    $('#original-comment').html($comment);
+    $('#reply-title').text(author+' wrote:');
+    $('#reply-textarea').attr('placeholder', 'Reply to '+author+'...');
 }
 function bindShowReply(){
     event.preventDefault();

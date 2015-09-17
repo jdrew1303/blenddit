@@ -259,24 +259,22 @@
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
-          <h6 class="modal-title" id="reply-title">Reply to StewardDC8</h6>
+          <h6 class="modal-title" id="reply-title"></h6>
         </div>
         <div class="modal-body">
           <form action="javascript:void(0)">
             <div class='form-group'>
-              <div id="original-comment">
-                This is a comment by StewardDC8
-              </div>
+              <div id="original-comment"></div>
             </div>
             <div class='form-group'>
-              <input id="reply-thing" type="hidden" name="thing_id" value="{{!-- t1_cv31ydi-0-0 --}}">
-              <textarea id="reply-textarea" name="text" class="form-control textarea-reply" placeholder="Reply to StewartDC8" onfocus="bindTextAreaReply.call(this)"></textarea>
+              <input id="reply-thing" type="hidden" name="thing_id" value="">
+              <textarea id="reply-textarea" name="text" class="form-control textarea-reply" onfocus="bindTextAreaReply.call(this)"></textarea>
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button class="cancel-reply btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="save-reply btn btn-primary" onclick="bindSaveReply.call(this)">Save</button>
+          <button id="reply-save" type="submit" class="save-reply btn btn-primary" onclick="bindSaveReply.call(this)">Save</button>
         </div>
       </div>
     </div>
