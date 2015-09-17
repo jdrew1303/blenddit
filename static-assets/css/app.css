@@ -233,6 +233,7 @@ blockquote, blockquote p {
 .frame-content .media:not(.parent) {
   border-radius: 0;
   margin-left: 5px;
+  margin-top: 2px;
   padding-left: 10px;
   border-left: 1px solid #303236 !important;
 }
