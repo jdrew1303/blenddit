@@ -140,15 +140,12 @@ blockquote, blockquote p {
   top: 0;
   right: 1px;
 }
-.reply {
-  font-size: small;
-  margin-right:2px;
-}
 .reply, .new-comment {
+  font-size: small;
   border:0;
   background-color:transparent;
   outline: none;
-  padding:0;
+  padding:3px;
 }
 .flair {
   border-radius: 4px !important;
@@ -763,7 +760,7 @@ span.twitter-typeahead {
 .textarea-reply {
   min-height: 150px;
 }
-.target, .reply-container {
+.target {
   padding:3px;
 }
 .comment-header, .comment-footer {
