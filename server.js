@@ -2,7 +2,7 @@
 // Vendor
 var express = require('express'),
     passport = require('passport')
-    exphbs  = require('express3-handlebars'),
+    exphbs  = require('express-handlebars'),
     util = require('util'),
     colors = require('colors'),
     pjax = require('express-pjax'),
