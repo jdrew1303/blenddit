@@ -47,16 +47,16 @@ KUtil.prototype = {
 		var jsFiles = assetArray('js',this);
 		var cssFiles = assetArray('css',this);
 		new compress.minify({
-		    type: 'gcc',
-		    fileIn: jsFiles,
-		    fileOut: path+'/js/all.js',
-		    callback: function(err){ if (err) console.log(err);}
+			type: 'gcc',
+			fileIn: jsFiles,
+			fileOut: path+'/js/all.js',
+			callback: function(err){ if (err) console.log(err);}
 		});
 		new compress.minify({
-		    type: 'sqwish',
-		    fileIn: cssFiles,
-		    fileOut: path+'/css/all.css',
-		    callback: function(err){ if (err) console.log(err); }
+			type: 'sqwish',
+			fileIn: cssFiles,
+			fileOut: path+'/css/all.css',
+			callback: function(err){ if (err) console.log(err); }
 		});
 		function assetArray(type,ctx){ 
 			var arr = [];
@@ -67,13 +67,13 @@ KUtil.prototype = {
 		}
 	},
 	buildAuthReqObj : function(url, req) {
-	    var options = {
-          url: url,
-          headers: {
-              'User-Agent': 'request',
-              'Authorization':'bearer '+req.session.reddit.redditAccessToken,
-              'Content-Type':'application/x-www-form-urlencoded'
-          }
+		var options = {
+			url: url,
+			headers: {
+				'User-Agent': 'request',
+				'Authorization':'bearer '+req.session.reddit.redditAccessToken,
+				'Content-Type':'application/x-www-form-urlencoded'
+			}
         };
         return options;
 	},
