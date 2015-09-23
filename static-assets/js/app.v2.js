@@ -307,8 +307,6 @@ function blenddit() {
         !$('.navbar-fixed-top').hasClass('hide') ? $('.navbar-fixed-top').addClass('hide'):void 0;
         $('[data-toggle="tooltip"]').tooltip();
         $('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse({'toggle': false});
-        var fn = new Fn();
-        fn.setInStorage('session', btoa(fn.getCookie('session')));
         window.autoRefreshState = true;
         bindAutoRefreshActive();
         visibilityChange();
@@ -322,10 +320,9 @@ function blenddit() {
     }
 }
 function startBlending() {
-    var session = JSON.parse(atob(new Fn().getFromStorage('session'))),
-        subredditURI = session.reddit.subredditURI,
-        threadIdURI = session.reddit.threadidURI,
-        threadIdsURI = session.reddit.threadidsURI;
+    var fn = new Fn();
+    fn.setInStorage('ruser', redditUser);
+    fn.setInStorage('tuser', twitterUser);
     if (subredditURI && threadIdURI) { // user arrived from /r/subreddit/comments/linkid*
         getThreadById(threadIdURI, function(data) {
             if (typeof data.data.children !== 'undefined') {
@@ -1114,7 +1111,7 @@ function buildRedditMedia(data, type, loadMore) {
                 obj: thread,
                 permalink: thread.data.permalink.split('?')[0],
                 timeElapsed: getTimeElapsed(thread.data.created_utc),
-                thumbnail: thread.data.thumbnail && thread.data.thumbnail != 'self'
+                thumbnail: thread.data.thumbnail && thread.data.thumbnail != 'self' && thread.data.thumbnail != 'default'
                     ? tmpl('tmpl_ao0', {src: window.location.protocol+thread.data.thumbnail.substr(5)}) 
                     : tmpl('tmpl_ap', {})
             }));

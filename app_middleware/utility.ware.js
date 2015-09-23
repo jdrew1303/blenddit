@@ -77,23 +77,44 @@ KUtil.prototype = {
         };
         return options;
 	},
-	buildSessionObject : function(req) {
-		var json = {},
-			hasRedditSession = req.session.reddit ? true : false;
-		json.reddit = {
-			redditUser : hasRedditSession ? req.session.reddit.name : null,
-			accessToken : hasRedditSession ? req.session.reddit.redditAccessToken : null,
-			expires : hasRedditSession ? req.session.reddit.redditAccessTokenExpireTime : null,
-			subredditURI : req.session.subreddit ? req.session.subreddit : null,
-			threadidURI : req.session.threadid ? req.session.threadid : null,
-			threadidsURI : req.session.threadids ? req.session.threadids : null
-		};
-		json.twitter = {
-			twitterUserExists : req.session.twitter ? true : false,
-			twitterUser : req.session.twitter ? req.session.twitter.username : null,
-			userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : null
-		};
+	buildSessionObject : function(req, type) {
+		var json = {};
+		if (req.session.reddit && type == 'reddit' && req.protocol == 'https') {
+			json.reddit = {
+				redditUser : req.session.reddit.name,
+				accessToken : req.session.reddit.redditAccessToken,
+				expires : req.session.reddit.redditAccessTokenExpireTime
+			};
+			req.session.redditRefreshToken = req.session.reddit.redditRefreshToken;
+		} else {
+			if (req.session.twitter && req.protocol == 'https') {
+				json.twitter = {
+					twitterUser : req.session.twitter ? req.session.twitter.username : null,
+					userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : null
+				};
+			}
+		}
 		return json;
+	},
+	isEmptySession : function(sessionObj) {
+		var isEmpty = true;
+		Object.keys(sessionObj).forEach(function(feature) {
+			if (isEmpty == false) return;
+			Object.keys(sessionObj[feature]).forEach(function(property) {
+				if (sessionObj[feature][property] != null) {
+					isEmpty = false; return;
+				}
+			});
+		});
+		return isEmpty;	
+	},
+	deleteSessionProperties : function(req) {
+		delete req.session.state;
+		delete req.session.subreddit;
+		delete req.session.threadid;
+		delete req.session.threadids;
+		delete req.session.reddit;
+		delete req.session.passport;
 	},
 	getPressType : function(userAgent) {
 		var check = false;

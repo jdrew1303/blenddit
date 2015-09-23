@@ -9,15 +9,17 @@ module.exports = function(app, globalware, elseware, kutil) {
 		all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/', gware.nowww, function(req, res){
-		// this is getting hit twice when hitting /r/ or /comments/ because of redirect
-		// setting cookie twice
-		var session = kutil.buildSessionObject(req);
-		res.cookie('session', JSON.stringify(session), {secure: true});
+		var redditSession = new Buffer(encodeURIComponent(JSON.stringify(kutil.buildSessionObject(req, 'reddit')))).toString('base64'),
+			twitterSession = new Buffer(encodeURIComponent(JSON.stringify(kutil.buildSessionObject(req, 'twitter')))).toString('base64');
 		res.renderPjax('blenddit', {
-			pressType : kutil.getPressType(req.headers['user-agent'])
+			pressType : kutil.getPressType(req.headers['user-agent']),
+			redditSession : redditSession,
+			twitterSession : twitterSession,
+			subredditURI : req.session.subreddit ? req.session.subreddit : '',
+			threadidURI : req.session.threadid ? req.session.threadid : '',
+			threadidsURI : req.session.threadids ? req.session.threadids : ''
 		});
-		// you need to delete everything on the session except for refresh token
-		req.session.subreddit = req.session.threadid = req.session.threadids = null;
+		kutil.deleteSessionProperties(req);
 	});
 	
     app.get('/comments/:threadids*', gware.nowww, function(req, res) {
@@ -34,15 +36,6 @@ module.exports = function(app, globalware, elseware, kutil) {
 	app.get('/r/:subreddit*', gware.nowww, function(req, res) {
 		req.session.subreddit = req.params.subreddit;
 		res.redirect('/');
-	});
-	
-	app.get('/lists', function(req, res) {
-		var json = {};
-		fs.readFile(require('path').dirname(require.main.filename)+'/listsjs.json', 'utf8', function (err, data) {
-			if (err) { return console.log(err); }
-			json.listsJSON = JSON.parse(data);
-			res.renderPjax('lists', json);
-		});
 	});
 	
 	app.get('/auth/reddit', function(req, res, next){
