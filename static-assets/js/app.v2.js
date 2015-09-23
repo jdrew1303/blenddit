@@ -307,6 +307,8 @@ function blenddit() {
         !$('.navbar-fixed-top').hasClass('hide') ? $('.navbar-fixed-top').addClass('hide'):void 0;
         $('[data-toggle="tooltip"]').tooltip();
         $('#reddit-results-collapse, #reddit-greeting-collapse, #reddit-modal-collapse').collapse({'toggle': false});
+        var fn = new Fn();
+        fn.setInStorage('session', btoa(fn.getCookie('session')));
         window.autoRefreshState = true;
         bindAutoRefreshActive();
         visibilityChange();
@@ -320,9 +322,10 @@ function blenddit() {
     }
 }
 function startBlending() {
-    var subredditURI = $('#reddit-uri').data('subreddituri'),
-        threadIdURI = $('#reddit-uri').data('threadiduri'),
-        threadIdsURI = $('#reddit-uri').data('threadidsuri');
+    var session = JSON.parse(atob(new Fn().getFromStorage('session'))),
+        subredditURI = session.reddit.subredditURI,
+        threadIdURI = session.reddit.threadidURI,
+        threadIdsURI = session.reddit.threadidsURI;
     if (subredditURI && threadIdURI) { // user arrived from /r/subreddit/comments/linkid*
         getThreadById(threadIdURI, function(data) {
             if (typeof data.data.children !== 'undefined') {

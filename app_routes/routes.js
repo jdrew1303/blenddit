@@ -9,8 +9,14 @@ module.exports = function(app, globalware, elseware, kutil) {
 		all = gware.methods.concat(kutil.getMethods(mware));
 	
 	app.get('/', gware.nowww, function(req, res){
+		// this is getting hit twice when hitting /r/ or /comments/ because of redirect
+		// setting cookie twice
 		var session = kutil.buildSessionObject(req);
-		res.renderPjax('blenddit', session);
+		res.cookie('session', JSON.stringify(session), {secure: true});
+		res.renderPjax('blenddit', {
+			pressType : kutil.getPressType(req.headers['user-agent'])
+		});
+		// you need to delete everything on the session except for refresh token
 		req.session.subreddit = req.session.threadid = req.session.threadids = null;
 	});
 	

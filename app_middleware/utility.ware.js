@@ -78,20 +78,21 @@ KUtil.prototype = {
         return options;
 	},
 	buildSessionObject : function(req) {
-		var json = {};
+		var json = {},
+			hasRedditSession = req.session.reddit ? true : false;
 		json.reddit = {
-			redditUserExists : req.session.reddit ? true : false,
-			redditUser : req.session.reddit ? req.session.reddit.name : '',
-			subredditURI : req.session.subreddit,
-			threadidURI : req.session.threadid,
-			threadidsURI : req.session.threadids
+			redditUser : hasRedditSession ? req.session.reddit.name : null,
+			accessToken : hasRedditSession ? req.session.reddit.redditAccessToken : null,
+			expires : hasRedditSession ? req.session.reddit.redditAccessTokenExpireTime : null,
+			subredditURI : req.session.subreddit ? req.session.subreddit : null,
+			threadidURI : req.session.threadid ? req.session.threadid : null,
+			threadidsURI : req.session.threadids ? req.session.threadids : null
 		};
 		json.twitter = {
 			twitterUserExists : req.session.twitter ? true : false,
-			twitterUser : req.session.twitter ? req.session.twitter.username : '',
-			userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : ''
+			twitterUser : req.session.twitter ? req.session.twitter.username : null,
+			userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : null
 		};
-		json.pressType = this.getPressType(req.headers['user-agent']);
 		return json;
 	},
 	getPressType : function(userAgent) {
