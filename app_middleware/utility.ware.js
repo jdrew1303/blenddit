@@ -80,7 +80,7 @@ KUtil.prototype = {
 	buildSessionObject : function(req, type) {
 		var json = {};
 		if (req.session.reddit && type == 'reddit' && req.protocol == 'https') {
-			json.reddit = {
+			json = {
 				redditUser : req.session.reddit.name,
 				accessToken : req.session.reddit.redditAccessToken,
 				expires : req.session.reddit.redditAccessTokenExpireTime
@@ -88,7 +88,7 @@ KUtil.prototype = {
 			req.session.redditRefreshToken = req.session.reddit.redditRefreshToken;
 		} else {
 			if (req.session.twitter && req.protocol == 'https') {
-				json.twitter = {
+				json = {
 					twitterUser : req.session.twitter ? req.session.twitter.username : null,
 					userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : null
 				};
@@ -99,9 +99,9 @@ KUtil.prototype = {
 	isEmptySession : function(sessionObj) {
 		var isEmpty = true;
 		Object.keys(sessionObj).forEach(function(feature) {
-			if (isEmpty == false) return;
+			if (isEmpty === false) return;
 			Object.keys(sessionObj[feature]).forEach(function(property) {
-				if (sessionObj[feature][property] != null) {
+				if (sessionObj[feature][property] !== null) {
 					isEmpty = false; return;
 				}
 			});

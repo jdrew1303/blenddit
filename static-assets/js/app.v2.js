@@ -137,7 +137,7 @@
         'jqueryCDN' : window.location.protocol+'//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js',
         'bootstrapCDN' : window.location.protocol+'//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
         'pjaxCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js',
-        'typeaheadCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js',
+        'typeaheadCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js',
         'jqueryLocal' : 'static-assets/js/jquery-2.1.3.min.js',
         'bootstrapLocal' : 'static-assets/js/bootstrap.min.js',
         'pjaxLocal' : 'static-assets/js/jquery.pjax.min.js',
@@ -218,7 +218,7 @@ Fn.prototype = {
         }
     },
     setInStorage : function(name, item) {
-        var item = JSON.stringify(item);
+        var item = typeof item === "string" ? item : JSON.stringify(item);
         if (localStorage) {
             localStorage.setItem(name, item);
             this.cookieExists(name) ? this.deleteCookie(name) : void 0;
@@ -232,6 +232,13 @@ Fn.prototype = {
     getBlurred : function() {
         document.activeElement.blur();
         $('input').blur();
+    },
+    setUserSession : function(name, data) {
+        var isEmptyObject = Object.keys(JSON.parse(decodeURIComponent(atob(data)))).length === 0;
+        if (!isEmptyObject) this.setInStorage(name, data);
+    },
+    getUserSession : function(name) {
+        return JSON.parse(decodeURIComponent(atob(localStorage.getItem(name))));
     }
 };
 
@@ -321,8 +328,8 @@ function blenddit() {
 }
 function startBlending() {
     var fn = new Fn();
-    fn.setInStorage('ruser', redditUser);
-    fn.setInStorage('tuser', twitterUser);
+    fn.setUserSession('ruser', redditUser);
+    fn.setUserSession('tuser', twitterUser);
     if (subredditURI && threadIdURI) { // user arrived from /r/subreddit/comments/linkid*
         getThreadById(threadIdURI, function(data) {
             if (typeof data.data.children !== 'undefined') {
@@ -364,22 +371,32 @@ function redditNamesFn() {
     return new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
         queryTokenizer: Bloodhound.tokenizers.whitespace,
-            remote: {
-                rateLimitWait : 0,
-                url : '/search-reddit-names?query=%QUERY',
-                filter: function(data) {
-                    var keyValues = [];
-                    if (data.names) {
-                        data.names.forEach(function(name) {
-                            var keyValueObj = {};
-                            keyValueObj.value = name;
-                            keyValues.push(keyValueObj);
-                        });
-                    }
-                    return keyValues;
+        remote: {
+            rateLimitWait : 0,
+            url : 'https://oauth.reddit.com/api/search_reddit_names',
+            prepare : function(query, settings) {
+                var ruser = new Fn().getUserSession('ruser');
+                settings.headers = {
+                    'Authorization' : 'bearer '+ruser.accessToken
+                };
+                settings.type = 'POST';
+                settings.hasContent = true;
+                settings.data = $.param({query: query});
+                return settings;
+            },
+            filter: function(data) {
+                var keyValues = [];
+                if (data.names) {
+                    data.names.forEach(function(name) {
+                        var keyValueObj = {};
+                        keyValueObj.value = name;
+                        keyValues.push(keyValueObj);
+                    });
                 }
+                return keyValues;
             }
-        });
+        }
+    });
 }
 function sidebarTrigger() {
     $('#sidebarTrigger').unbind('click').on('click',function(e) { // sidebar toggle
@@ -1056,6 +1073,22 @@ function byTimeCreated(a,b) {
     if (a.data.created_utc > b.data.created_utc) return -1;
     return 0;
 }
+function errorPop(errorMsgLoc, errorThrown) {
+    if (typeof errorMsgLoc !== 'undefined') {
+        if (errorThrown=='timeout') {
+            $(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));
+        } else {
+            $(errorMsgLoc).launchPopOver(3000,
+                popOverOptions('bottom','Generic Error', 'There was an error processing this request. Reddit servers could not be reached or are busy. Try refreshing.'));
+        }
+    }
+}
+function oauthPost(url, headers, data, done, fail, always) {
+    $.ajax({ type:'POST', url : url, headers : headers, data : data })
+    .done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR);})
+    .fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
+    .always(function() { if (always) always(data, textStatus, jqXHR); });
+}
 function genericGet(url, done, fail, always, cacheBool, errorMsgLoc, additionalData) {
     $.ajax({ url: url, type: "GET", timeout:7000, cache: cacheBool || false })
     .done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData); })
@@ -1073,16 +1106,6 @@ function genericPost(url, data, done, fail, always, additionalData, errorMsgLoc)
         errorPop(errorMsgLoc, errorThrown);
     })
     .always(function() { if (always) always(); });
-}
-function errorPop(errorMsgLoc, errorThrown) {
-    if (typeof errorMsgLoc !== 'undefined') {
-        if (errorThrown=='timeout') {
-            $(errorMsgLoc).launchPopOver(3000, popOverOptions('bottom','Servers Busy', 'Reddit servers are busy.'));
-        } else {
-            $(errorMsgLoc).launchPopOver(3000,
-                popOverOptions('bottom','Generic Error', 'There was an error processing this request. Reddit servers could not be reached or are busy. Try refreshing.'));
-        }
-    }
 }
 function getPosts(path, sort, limit, obj){
     $.ajax({

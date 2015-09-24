@@ -20,7 +20,7 @@ passport.use(new RedditStrategy({
     clientID: reddit_key,
     clientSecret: reddit_sec,
     callbackURL: reddit_redirect_uri,
-    scope : ['submit','vote']
+    scope : ['submit','vote', 'read']
   },
   function(accessToken, refreshToken, profile, done) {
     profile.redditAccessToken = accessToken;
