@@ -238,7 +238,19 @@ Fn.prototype = {
         if (!isEmptyObject) this.setInStorage(name, data);
     },
     getUserSession : function(name) {
-        return JSON.parse(decodeURIComponent(atob(localStorage.getItem(name))));
+        return localStorage.getItem(name)
+            ? JSON.parse(decodeURIComponent(atob(localStorage.getItem(name)))) : undefined
+    },
+    getRuserAt : function(ruser) {
+        var at = undefined;
+        if (ruser) {
+            if (new Date() > new Date(ruser.ex)) {
+
+            } else {
+                at = ruser.at;                
+            }
+        }
+        return at;
     }
 };
 
@@ -276,36 +288,12 @@ function pjx() {
         } else if ($('#blenddit').length>0) { blenddit();
         } else {
             $('.teams').hide();
-            $('#sidebarTrigger').hide();
             $('.navbar-fixed-top').show();
             $('.navbar-brand > .text-warning').text('kurtlocker.org');
             $('.social').show();
             $('html, body').removeClass('noverflow');
         }
     });
-}
-function listsjs() {
-    if ($('#listsjs').length>0) {
-        sidebarTrigger();
-        $('#sidebarTrigger').show();
-        $('.navbar-brand > .text-warning').text('[ l [ i [ s ] t ] s ]');
-        $('div.js').each(function(i, block) { // code hightlight
-            $(block).text($(block).text().trim());
-             hljs.highlightBlock(block);
-        });
-        $('.sidebarFunc').unbind('click').on('click',function() {
-            $('.sidebarFunc').removeClass('blue-dotted');
-            $(this).addClass('blue-dotted');
-            $('.nav-tabs').removeClass('blue-dotted');
-            $('#function-'+$(this).attr('num')).addClass('blue-dotted');
-            $("html, body").animate({ scrollTop: $('#function-'+$(this).attr('num')).offset().top-60 }, 500);
-            if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
-        });
-        $('#page-content-wrapper').unbind('click').on('click',function() {
-            if ($('#wrapper').hasClass('toggled')) $("#wrapper").toggleClass("toggled");
-        });
-        $('.navbar-fixed-top, .navbar-fixed-bottom').removeClass('hide');
-    }
 }
 function blenddit() {
     if ($('#blenddit').length>0) {
@@ -375,10 +363,10 @@ function redditNamesFn() {
             rateLimitWait : 0,
             url : 'https://oauth.reddit.com/api/search_reddit_names',
             prepare : function(query, settings) {
-                var ruser = new Fn().getUserSession('ruser');
-                settings.headers = {
-                    'Authorization' : 'bearer '+ruser.accessToken
-                };
+                var fn = new Fn(), 
+                    at = fn.getRuserAt(fn.getUserSession('ruser'));
+                if (at) { settings.headers = {'Authorization' : 'bearer '+at} }
+                else { return; }
                 settings.type = 'POST';
                 settings.hasContent = true;
                 settings.data = $.param({query: query});
@@ -396,12 +384,6 @@ function redditNamesFn() {
                 return keyValues;
             }
         }
-    });
-}
-function sidebarTrigger() {
-    $('#sidebarTrigger').unbind('click').on('click',function(e) { // sidebar toggle
-        e.preventDefault();
-        $("#wrapper").toggleClass("toggled");
     });
 }
 function visibilityChange(){
@@ -509,7 +491,7 @@ function threadsOfSubreddit(query, callback) {
 }
 function copyToAllRedditSearches(query, obj) {
     $('#reddit-search-results .reddit-search-input.tt-input, form.reddit-search .reddit-search-input.tt-input, #control-panel-panels .reddit-search-input.tt-input')
-        .typeahead('val', query);
+        .val(query);
     if (obj && obj.errorLoc !== window && obj.errorLoc !== null) {
         var $form = obj.errorLoc.parents('form'),
             radioType = $form.find('input[type=radio]:checked').val(),

@@ -81,9 +81,9 @@ KUtil.prototype = {
 		var json = {};
 		if (req.session.reddit && type == 'reddit' && req.protocol == 'https') {
 			json = {
-				redditUser : req.session.reddit.name,
-				accessToken : req.session.reddit.redditAccessToken,
-				expires : req.session.reddit.redditAccessTokenExpireTime
+				ru : req.session.reddit.name,
+				at : req.session.reddit.redditAccessToken,
+				ex : req.session.reddit.redditAccessTokenExpireTime
 			};
 			req.session.redditRefreshToken = req.session.reddit.redditRefreshToken;
 		} else {
