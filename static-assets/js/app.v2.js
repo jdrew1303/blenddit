@@ -365,8 +365,8 @@ function redditNamesFn() {
             prepare : function(query, settings) {
                 var fn = new Fn(), 
                     at = fn.getRuserAt(fn.getUserSession('ruser'));
-                if (at) { settings.headers = {'Authorization' : 'bearer '+at} }
-                else { return; }
+                if (at) { settings.headers = {'Authorization' : 'bearer '+at} 
+                } else { return; }
                 settings.type = 'POST';
                 settings.hasContent = true;
                 settings.data = $.param({query: query});
