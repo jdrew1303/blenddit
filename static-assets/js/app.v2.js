@@ -363,10 +363,9 @@ function redditNamesFn() {
             rateLimitWait : 0,
             url : 'https://oauth.reddit.com/api/search_reddit_names',
             prepare : function(query, settings) {
-                var fn = new Fn(), 
+                var fn = new Fn(),
                     at = fn.getRuserAt(fn.getUserSession('ruser'));
-                if (at) { settings.headers = {'Authorization' : 'bearer '+at} 
-                } else { return; }
+                if (at) { settings.headers = {'Authorization' : 'bearer '+at} }
                 settings.type = 'POST';
                 settings.hasContent = true;
                 settings.data = $.param({query: query});
@@ -533,7 +532,8 @@ function typeAheadReddit(inputSelector, completeFn) {
     $(inputSelector).typeahead(null, {
       name: 'reddit-names',
       displayKey: 'value',
-      source: redditNames.ttAdapter()
+      source: redditNames.ttAdapter(),
+      limit:20
     }).on('typeahead:selected typeahead:autocompleted', function(){
         if (completeFn) completeFn(this);
     });
