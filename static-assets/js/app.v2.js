@@ -251,6 +251,14 @@ Fn.prototype = {
             }
         }
         return at;
+    },
+    getRedditAuthHeader : function() {
+        var headerObj = undefined,
+            ruser = this.getUserSession('ruser');
+        if (ruser) {
+            headerObj = {'Authorization':'bearer '+ruser.at}
+        }
+        return headerObj;
     }
 };
 
@@ -362,10 +370,22 @@ function redditNamesFn() {
         remote: {
             rateLimitWait : 0,
             url : 'https://oauth.reddit.com/api/search_reddit_names',
+            transport : function(url, success, error) {
+                var auth = new Fn().getRedditAuthHeader();
+                if (!auth) return;
+                url.headers = auth;
+                $.ajax(url)
+                .done(function(data, textStatus, jqXHR) {
+                    success(data);    
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    error(errorThrown)
+                })
+                .always(function(data, textStatus, jqXHR) {
+                    console.log('hi');
+                });
+            },
             prepare : function(query, settings) {
-                var fn = new Fn(),
-                    at = fn.getRuserAt(fn.getUserSession('ruser'));
-                if (at) { settings.headers = {'Authorization' : 'bearer '+at} }
                 settings.type = 'POST';
                 settings.hasContent = true;
                 settings.data = $.param({query: query});
