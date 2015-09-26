@@ -134,7 +134,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		var options = {
 			url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',
 			headers: {
-				'User-Agent': 'request',
+				'User-Agent': 'nodejs:www.blenddit.com:v0.0.1 (by /u/kurtlocker)',
 				'Content-Type':'application/x-www-form-urlencoded'
 			}
 		};
@@ -144,6 +144,24 @@ module.exports = function(app, globalware, elseware, kutil) {
 				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
 			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
 		}).form({'query':req.query.query, 'include_over_18':'true'});
+	});
+
+	app.get('/refresh-access-token', function(req, res, next) {
+		var options = {
+			url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/v1/access_token',
+			headers: {
+				'User-Agent': 'nodejs:www.blenddit.com:v0.0.1 (by /u/kurtlocker)',
+				'Content-Type':'application/x-www-form-urlencoded'
+			}
+		};
+		require('request').post(options, function callback(error, response, body) {
+			res.setHeader('Content-Type', 'application/json');
+			!error && response.statusCode == 200 
+				? res.send(JSON.parse(body))
+				: error 
+					? res.send({statusCode: 'error', error: JSON.parse(error)})
+					: res.send({statusCode: response.statusCode, body: JSON.parse(body)});
+		}).form({'grant_type':'refresh_token', 'refresh_token':req.session.redditRefreshToken});
 	});
 
 	app.get('/*', function(req,res) {

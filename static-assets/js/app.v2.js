@@ -259,6 +259,14 @@ Fn.prototype = {
             headerObj = {'Authorization':'bearer '+ruser.at}
         }
         return headerObj;
+    },
+    setRateLimit : function(jqXHR, type) {
+        if (type=='ruser') {
+            var ruser = this.getUserSession(type);
+            ruser.rate_limit_left = parseInt(jqXHR.getResponseHeader('x-ratelimit-remaining'));
+            ruser.rate_limit_reset = parseInt(jqXHR.getResponseHeader('x-ratelimit-reset'));
+            this.setUserSession(type, btoa(encodeURIComponent(JSON.stringify(ruser))));
+        }
     }
 };
 
@@ -363,6 +371,23 @@ function startBlending() {
         configObjAction();
     }
 }
+function checkAccessToken(type){ // returns a deferred ajax call to be used with $.when
+    var fn = new Fn(),
+        session = fn.getUserSession(type);
+    if (session && type=='ruser' && new Date() > new Date(session.ex)) { // needs token refreshed
+        return $.ajax('/refresh-access-token')
+        .done(function(data, textStatus, jqXHR){
+            if (jqXHR.status==200 && data.access_token) {
+                console.log('store new access token and expire time in ruser');
+            } else {
+                $('#login-reddit-modal').modal();
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown){
+            $('#login-reddit-modal').modal();
+        });
+    }
+}
 function redditNamesFn() {
     return new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -374,16 +399,11 @@ function redditNamesFn() {
                 var auth = new Fn().getRedditAuthHeader();
                 if (!auth) return;
                 url.headers = auth;
-                $.ajax(url)
-                .done(function(data, textStatus, jqXHR) {
-                    success(data);    
-                })
-                .fail(function(jqXHR, textStatus, errorThrown) {
-                    error(errorThrown)
-                })
-                .always(function(data, textStatus, jqXHR) {
-                    console.log('hi');
-                });
+                $.ajax(url).done(success).fail(error).always(
+                    function(data, textStatis, jqXHR){
+                        new Fn().setRateLimit(jqXHR, 'ruser');
+                    }
+                );
             },
             prepare : function(query, settings) {
                 settings.type = 'POST';

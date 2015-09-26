@@ -23,7 +23,7 @@ module.exports = function(module) {
 				var options = {
 				    url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/v1/access_token',
 				    headers: {
-				        'User-Agent': 'request',
+				        'User-Agent': 'web:www.blenddit.com:v0.0.1 (by /u/kurtlocker)',
 				        'Content-Type':'application/x-www-form-urlencoded'
 				    }
 			  	};
