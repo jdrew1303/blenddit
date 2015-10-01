@@ -370,39 +370,35 @@ function startBlending() {
         configObjAction();
     }
 }
-function checkAccessToken(type){ // returns a deferred ajax call to be used with $.when
+function checkAccessToken(type, required){ // returns a deferred ajax call to be used with $.when
     var fn = new Fn(),
-        session = fn.getUserSession(type);
-    if (session && type=='ruser' && new Date() > new Date(session.ex) || true) { // needs token refreshed
-        return $.ajax('/refresh-access-token').then(function(data, textStatus, jqXHR) {
-            var deferred = $.Deferred();
-            if (jqXHR.status==200 && data.access_token) {
-                fn.setUserSessionAttributes('ruser', 
-                    {   
-                        'at': data.access_token, 
-                        'ex': (function() { 
-                            var now = new Date(), oneHourFromNow = new Date(now);
-                            oneHourFromNow.setMinutes(now.getMinutes()+55);
-                            return oneHourFromNow;
-                        })()
-                    });
-                deferred.resolve(jqXHR, data, '').promise();
-            } else {
-                deferred.reject(jqXHR, data, data.statusCode).promise();
-            }
-            return deferred;
-            
-        })
-        // .done(function(data, textStatus, jqXHR){
-        //     if (jqXHR.status==200 && data.access_token) {
-        //         console.log('store new access token and expire time in ruser');
-        //     } else {
-        //         return $.Deferred().reject(jqXHR, data, 'error').promise();
-        //     }
-        // })
-        // .fail(function(jqXHR, textStatus, errorThrown){
-        //     $('#login-reddit-modal').modal();
-        // });
+        session = fn.getUserSession(type),
+        expired = session ? new Date() > new Date(session.ex) : undefined,
+        deferred = $.Deferred();
+    if (type=='ruser' && required) {
+        if (session && expired) { // needs token refreshed
+            return $.ajax('/refresh-access-token').then(function(data, textStatus, jqXHR) {
+                if (jqXHR.status==200 && data.access_token) {
+                    fn.setUserSessionAttributes('ruser', 
+                        {   
+                            'at': data.access_token, 
+                            'ex': (function() { 
+                                var now = new Date(), oneHourFromNow = new Date(now);
+                                oneHourFromNow.setMinutes(now.getMinutes()+55);
+                                return oneHourFromNow;
+                            })()
+                        });
+                    deferred.resolve(jqXHR, data, '').promise();
+                } else {
+                    deferred.reject(jqXHR, data, data.statusCode).promise();
+                }
+                return deferred;
+            })
+        }
+    } else if (session && !required && !expired) {
+        return deferred.resolve({}, {}, 'pass').promise();
+    } else {
+        return deferred.reject({}, {}, 'fail').promise();
     }
 }
 function redditNamesFn() {
@@ -414,22 +410,27 @@ function redditNamesFn() {
             url : 'https://oauth.reddit.com/api/search_reddit_names',
             transport : function(url, success, error) {
                 $.when(
-                    checkAccessToken('ruser')
+                    checkAccessToken('ruser', false)
                 ).then(
                 function() {
-                    console.log('success!');
+                    // check rate limit
+                    var auth = new Fn().getRedditAuthHeader();
+                    if (!auth) return;
+                    url.headers = auth;
+                    $.ajax(url).done(success).fail(error).always(
+                        function(data, textStatus, jqXHR){
+                            if (jqXHR.status==200 && typeof jqXHR.getResponseHeader === 'function') {
+                                new Fn().setUserSessionAttributes('ruser',{
+                                    'x-ratelimit-remaining' : jqXHR.getResponseHeader('x-ratelimit-remaining'),
+                                    'x-ratelimit-reset' : jqXHR.getResponseHeader('x-ratelimit-reset')
+                                })
+                            }
+                        }
+                    );
                 },
                 function(jqXHR, data, msg) { // failed
                     console.log(msg);
                 });
-                // var auth = new Fn().getRedditAuthHeader();
-                // if (!auth) return;
-                // url.headers = auth;
-                // $.ajax(url).done(success).fail(error).always(
-                //     function(data, textStatis, jqXHR){
-                //         new Fn().setRateLimit(jqXHR, 'ruser');
-                //     }
-                // );
             },
             prepare : function(query, settings) {
                 settings.type = 'POST';
