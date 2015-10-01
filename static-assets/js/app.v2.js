@@ -241,21 +241,14 @@ Fn.prototype = {
         return localStorage.getItem(name)
             ? JSON.parse(decodeURIComponent(atob(localStorage.getItem(name)))) : undefined
     },
-    getRuserAt : function(ruser) {
-        var at = undefined;
-        if (ruser) {
-            if (new Date() > new Date(ruser.ex)) {
-
-            } else {
-                at = ruser.at;                
-            }
-        }
-        return at;
-    },
     getRedditAuthHeader : function() {
         var headerObj = undefined,
-            ruser = this.getUserSession('ruser');
-        if (ruser) {
+            ruser = this.getUserSession('ruser'),
+            ratelimit = ruser.x_ratelimit_remaining 
+                ? parseInt(ruser.x_ratelimit_remaining) > 0 || parseInt(ruser.x_ratelimit_reset) <= 0
+                    ? true : false
+                : true
+        if (ruser && ratelimit) {
             headerObj = {'Authorization':'bearer '+ruser.at}
         }
         return headerObj;
@@ -394,6 +387,8 @@ function checkAccessToken(type, required){ // returns a deferred ajax call to be
                 }
                 return deferred;
             })
+        } else {
+            return deferred.resolve({}, {}, 'pass').promise();
         }
     } else if (session && !required && !expired) {
         return deferred.resolve({}, {}, 'pass').promise();
@@ -410,10 +405,9 @@ function redditNamesFn() {
             url : 'https://oauth.reddit.com/api/search_reddit_names',
             transport : function(url, success, error) {
                 $.when(
-                    checkAccessToken('ruser', false)
+                    checkAccessToken('ruser', true)
                 ).then(
                 function() {
-                    // check rate limit
                     var auth = new Fn().getRedditAuthHeader();
                     if (!auth) return;
                     url.headers = auth;
@@ -421,16 +415,15 @@ function redditNamesFn() {
                         function(data, textStatus, jqXHR){
                             if (jqXHR.status==200 && typeof jqXHR.getResponseHeader === 'function') {
                                 new Fn().setUserSessionAttributes('ruser',{
-                                    'x-ratelimit-remaining' : jqXHR.getResponseHeader('x-ratelimit-remaining'),
-                                    'x-ratelimit-reset' : jqXHR.getResponseHeader('x-ratelimit-reset')
+                                    x_ratelimit_remaining : jqXHR.getResponseHeader('x-ratelimit-remaining'),
+                                    x_ratelimit_reset : jqXHR.getResponseHeader('x-ratelimit-reset')
                                 })
                             }
                         }
                     );
                 },
-                function(jqXHR, data, msg) { // failed
-                    console.log(msg);
-                });
+                function(jqXHR, data, msg) {} // fail: do nothing
+                );
             },
             prepare : function(query, settings) {
                 settings.type = 'POST';
