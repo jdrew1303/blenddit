@@ -363,34 +363,30 @@ function startBlending() {
         configObjAction();
     }
 }
-function checkAccessToken(type, required){ // returns a deferred ajax call to be used with $.when
+function checkAccessToken(type){ // returns a deferred ajax call to be used with $.when
     var fn = new Fn(),
         session = fn.getUserSession(type),
         expired = session ? new Date() > new Date(session.ex) : undefined,
         deferred = $.Deferred();
-    if (type=='ruser' && required) {
-        if (session && expired) { // needs token refreshed
-            return $.ajax('/refresh-access-token').then(function(data, textStatus, jqXHR) {
-                if (jqXHR.status==200 && data.access_token) {
-                    fn.setUserSessionAttributes('ruser', 
-                        {   
-                            'at': data.access_token, 
-                            'ex': (function() { 
-                                var now = new Date(), oneHourFromNow = new Date(now);
-                                oneHourFromNow.setMinutes(now.getMinutes()+55);
-                                return oneHourFromNow;
-                            })()
-                        });
-                    deferred.resolve(jqXHR, data, '').promise();
-                } else {
-                    deferred.reject(jqXHR, data, data.statusCode).promise();
-                }
-                return deferred;
-            })
-        } else {
-            return deferred.resolve({}, {}, 'pass').promise();
-        }
-    } else if (session && !required && !expired) {
+    if (type=='ruser' && session && expired) {
+        return $.ajax('/refresh-access-token').then(function(data, textStatus, jqXHR) {
+            if (jqXHR.status==200 && data.access_token) {
+                fn.setUserSessionAttributes('ruser', 
+                    {   
+                        'at': data.access_token, 
+                        'ex': (function() { 
+                            var now = new Date(), oneHourFromNow = new Date(now);
+                            oneHourFromNow.setMinutes(now.getMinutes()+55);
+                            return oneHourFromNow;
+                        })()
+                    });
+                deferred.resolve(jqXHR, data, '').promise();
+            } else {
+                deferred.reject(jqXHR, data, data.statusCode).promise();
+            }
+            return deferred;
+        })
+    } else if (session && !expired) {
         return deferred.resolve({}, {}, 'pass').promise();
     } else {
         return deferred.reject({}, {}, 'fail').promise();
@@ -405,9 +401,9 @@ function redditNamesFn() {
             url : 'https://oauth.reddit.com/api/search_reddit_names',
             transport : function(url, success, error) {
                 $.when(
-                    checkAccessToken('ruser', true)
+                    checkAccessToken('ruser')
                 ).then(
-                function() {
+                function() { // pass: get stuff
                     var auth = new Fn().getRedditAuthHeader();
                     if (!auth) return;
                     url.headers = auth;
@@ -417,7 +413,7 @@ function redditNamesFn() {
                                 new Fn().setUserSessionAttributes('ruser',{
                                     x_ratelimit_remaining : jqXHR.getResponseHeader('x-ratelimit-remaining'),
                                     x_ratelimit_reset : jqXHR.getResponseHeader('x-ratelimit-reset')
-                                })
+                                });
                             }
                         }
                     );
