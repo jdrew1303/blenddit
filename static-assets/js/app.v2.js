@@ -704,13 +704,15 @@ function frame_content_height(columnNum, optInt) {
         $frame_content.removeAttr('style').css('height', window.innerHeight-(107+localOffset+overFlowed));
     }
 }
-function launchControls() {    
+function launchControls() {
     $('#controls').modal('toggle');
     updateControlsView();
 }
 function updateControlsView() {
-    var configArr = new Fn().getFromStorage('config'),
-        redditAcc = $('[data-reddituser]').data('reddituser') ? 1 : 0,
+    var fn = new Fn(), 
+        configArr = fn.getFromStorage('config'),
+        ruser = fn.getUserSession('ruser'),
+        redditAcc = ruser && ruser.ru ? 1 : 0,
         twitterAcc = $('[data-twitteruser]').data('twitteruser') ? 1 : 0;
     $('.panel-red .huge').text(getColumnCount(configArr, 'reddit'));
     $('.panel-primary .huge').text(getColumnCount(configArr, 'twitter'));
