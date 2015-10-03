@@ -709,11 +709,14 @@ function launchControls() {
     updateControlsView();
 }
 function updateControlsView() {
-    var fn = new Fn(), 
+    var fn = new Fn(),
         configArr = fn.getFromStorage('config'),
         ruser = fn.getUserSession('ruser'),
         redditAcc = ruser && ruser.ru ? 1 : 0,
         twitterAcc = $('[data-twitteruser]').data('twitteruser') ? 1 : 0;
+    redditAcc
+        ? $('.reddit-account').replaceWith(tmpl('tmpl_ar', {title: ruser.ru}))
+        : $('.reddit-account').replaceWith(tmpl('tmpl_as', {}))
     $('.panel-red .huge').text(getColumnCount(configArr, 'reddit'));
     $('.panel-primary .huge').text(getColumnCount(configArr, 'twitter'));
     $('.panel-yellow .huge').text(redditAcc+twitterAcc);
@@ -1443,11 +1446,10 @@ function bindWatchThreads() {
 }
 function bindRedditSignOut() {
     event.preventDefault();
-    genericGet('/reddit-logout', function(html) {
-        $('[data-reddituser]').data('reddituser',null);
-        $('#reddit-logout').replaceWith(html);
-        updateControlsView();
-    });
+    if (localStorage) {
+        localStorage.removeItem('ruser');
+    }
+    updateControlsView();
 }
 function bindTwitterSignOut() {
     event.preventDefault();

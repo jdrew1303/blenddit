@@ -276,3 +276,25 @@
 		</div>
 	</li>
 </script>
+<script type="text/html" id="tmpl_ar">
+	<div class="media reddit-account" {{pressType}}="bindRedditSignOut.call(this)">
+		<a href="javascript:void(0)" class="pull-left">
+			<span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-red"><%=title%></span></h4>
+			<p>Click here to sign out of Reddit.</p>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tmpl_as">
+	<div class="media reddit-account" {{pressType}}="bindRedditLogIn.call(this)">
+		<a href="javascript:void(0);" class="pull-left">
+			<span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
+			<p>Follow this link to connect your Reddit account to Blenddit.</p>
+		</div>
+	</div>
+</script>

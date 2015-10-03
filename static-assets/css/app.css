@@ -770,7 +770,11 @@ select:focus, textarea:focus, input:focus {
 .twitter-typeahead {
   width: 100%;
 }
-
+.v-align {
+    float: none;
+    display: inline-block;
+    vertical-align: middle;
+}
 @media (min-width: 0px) and (max-width: 640px) {
   #content-container:before, #main-loader-container:before {
     content: ' ';

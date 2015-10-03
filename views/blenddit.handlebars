@@ -13,12 +13,15 @@
         </form>
       </div>
       <div class='bookmark'><a data-toggle="tooltip" data-placement="bottom" title="Drag this bookmarklet onto your bookmarks toolbar and click to use on the comment section of a reddit thread to instantly build a column." href="javascript:(function(){var l=window.location;if (l.host+l.pathname.substr(0,3)=='www.reddit.com/r/'){l.href='http://blenddit.com'+l.pathname;}})();" class="btn btn-default"><i class='fa fa-bookmark'></i>&nbsp;blenddit</a></div>
-      <div class="jumbotron">
+      <div class="jumbotro">
         <div class='text-center'>
-          <img class='logo-responsive' src='static-assets/imgs/logo.png' alt='error'></img>
-          <p class="lead">Build columns of live reddit threads or twitter feeds. <a href="javascript:void(0);" {{pressType}}="bindHelpModal.call(this)">See how</a>.</p>
+          <div class="v-align"><img class='logo-responsive' src='static-assets/imgs/logo.png' alt='error'></img></div>
+          <div class="v-align"><a class="twitter-timeline" href="https://twitter.com/twitterapi" data-widget-id="650120037009743872" data-tweet-limit="3" data-link-color="#2a9fd6" data-chrome="noheader nofooter noborders noscrollbar transparent"  data-related="twitterapi,twitter" data-aria-polite="assertive" width="300" height="250" lang="EN">Tweets by @BlendditDotCom</a></div>
         </div>
-        <div class='row'>
+        <div class='text-center'> 
+          <div style="padding:10px;" class="v-align"><p class="lead">Build columns of live reddit threads or twitter feeds. <a href="javascript:void(0);" {{pressType}}="bindHelpModal.call(this)">See how</a>.</p></div>
+        </div>
+        {{!-- <div class='row'>
           <div class='col-sm-6'>
             <div class="panel-group" role="tablist" aria-multiselectable="true">
                 <div class="panel panel-default">
@@ -84,7 +87,7 @@
                 </div>
             </div>
           </div>
-        </div>
+        </div> --}}
       </div>
       <div class="row">
         <div class="col-lg-12">
@@ -429,27 +432,7 @@
                 </div>
                 <div id="linked-accounts" class="panel-body collapse">
                   <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
-                    {{#if reddit.redditUserExists}}
-                      <div class="media" id="reddit-logout" {{pressType}}="bindRedditSignOut.call(this)">
-                          <a href="javascript:void(0)" class="pull-left">
-                            <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-red">{{reddit.redditUser}}</span></h4>
-                              <p>Click here to sign out of Reddit.</p>
-                          </div>
-                      </div>
-                    {{else}}
-                      <div class="media" {{pressType}}="bindRedditLogIn.call(this)">
-                        <a href="javascript:void(0);" class="pull-left">
-                          <span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
-                        </a>
-                        <div class="media-body">
-                          <h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
-                          <p>Follow this link to connect your Reddit account to Blenddit.</p>
-                        </div>
-                      </div>
-                    {{/if}}
+                    <div class='reddit-account'></div>
                     {{#if twitter.twitterUserExists}}
                       <div class="media" id="twitter-logout" {{pressType}}="bindTwitterSignOut.call(this)">
                           <a href="javascript:void(0)" class="pull-left">
