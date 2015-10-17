@@ -15,11 +15,11 @@ var express = require('express'),
     http = require('http'),
     https = require('https'),
 // Middleware
-    kutil = require('./app_middleware/utility.ware'),
-    globalware = require('./app_middleware/global.ware')(kutil),
-    auth = require('./app_middleware/auth.ware'),
+    kutil = require('./middleware/utility.ware'),
+    globalware = require('./middleware/global.ware')(kutil),
+    auth = require('./middleware/auth.ware'),
 // Routes
-    routes = require('./app_routes/routes');
+    routes = require('./routes/routes');
 // Server Configuration
 nconf.add('config',{type: 'file', file:'config.json'});
 nconf.add('package',{type: 'file', file:'package.json'});
@@ -55,11 +55,15 @@ http.createServer(app).listen(nconf.get('port_http'));
 
 // Create an application server instance on HTTPS port 8443 (443)
 nconf.get('debug')
-    ? https.createServer({key:fs.readFileSync('key.pem'), cert:fs.readFileSync('cert.pem')}, app).listen(nconf.get('port_https'))
+    ? https.createServer({key:fs.readFileSync('certs/src/key.pem'), 
+                          cert:fs.readFileSync('certs/src/cert.pem')}, 
+                         app).listen(nconf.get('port_https'))
     : https.createServer(
         {
-            ca: [fs.readFileSync('comodo/bundle0.crt'), fs.readFileSync('comodo/bundle1.crt'), fs.readFileSync('comodo/bundle2.crt')],
-            key: fs.readFileSync('comodo/key.pem'),
+            ca: [fs.readFileSync('certs/dist/comodo/bundle0.crt'), 
+                 fs.readFileSync('certs/dist/comodo/bundle1.crt'), 
+                 fs.readFileSync('certs/dist/comodo/bundle2.crt')],
+            key: fs.readFileSync('certs/dist/comodo/key.pem'),
             cert: fs.readFileSync('comodo/www.blenddit.com.crt')
         }, 
         app).listen(nconf.get('port_https'));
@@ -67,10 +71,8 @@ nconf.get('debug')
 kutil.serverOut();
 
 // Generating a self signed certificate that works.
-// openssl genrsa -out key.pem
-// openssl req -new -key key.pem -out csr.pem
-// openssl x509 -req -days 9999 -in csr.pem -signkey key.pem -out cert.pem
-// rm csr.pem
+// openssl genrsa 1024 > key.pem
+// openssl req -x509 -new -key key.pem > cert.pem
 
 // iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 8080 (used this in live)
 // iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080

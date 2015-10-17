@@ -1,5 +1,6 @@
 {
-  "name": "kurtlocker.org",
+  "name": "blenddit.com",
+  "author": "kurtlocker",
   "description": "Node Web Server",
   "version": "0.0.1",
   "private": true,
@@ -20,5 +21,14 @@
     "compression":"*",
     "request":"*",
     "colors":"*"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-concat": "^0.5.1",
+    "grunt-contrib-copy": "^0.8.0",
+    "grunt-contrib-less": "^1.0.1",
+    "grunt-contrib-uglify": "^0.9.1",
+    "grunt-contrib-watch": "^0.6.1"
   }
 }
