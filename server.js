@@ -1,4 +1,4 @@
-/*kurtlocker.og  node server*/
+/*blenddit.com server*/
 // Vendor
 var express = require('express'),
     passport = require('passport')
@@ -55,18 +55,18 @@ http.createServer(app).listen(nconf.get('port_http'));
 
 // Create an application server instance on HTTPS port 8443 (443)
 nconf.get('debug')
-    ? https.createServer({key:fs.readFileSync('certs/src/key.pem'), 
-                          cert:fs.readFileSync('certs/src/cert.pem')}, 
-                         app).listen(nconf.get('port_https'))
-    : https.createServer(
-        {
-            ca: [fs.readFileSync('certs/dist/comodo/bundle0.crt'), 
-                 fs.readFileSync('certs/dist/comodo/bundle1.crt'), 
-                 fs.readFileSync('certs/dist/comodo/bundle2.crt')],
-            key: fs.readFileSync('certs/dist/comodo/key.pem'),
-            cert: fs.readFileSync('comodo/www.blenddit.com.crt')
-        }, 
-        app).listen(nconf.get('port_https'));
+    ? https.createServer({
+        key:fs.readFileSync('certs/src/key.pem'), 
+        cert:fs.readFileSync('certs/src/cert.pem')
+    }, app).listen(nconf.get('port_https'))
+    : https.createServer({
+        ca: [fs.readFileSync('certs/dist/comodo/bundle0.crt'), 
+             fs.readFileSync('certs/dist/comodo/bundle1.crt'), 
+             fs.readFileSync('certs/dist/comodo/bundle2.crt')],
+        key: fs.readFileSync('certs/dist/comodo/key.pem'),
+        cert: fs.readFileSync('comodo/www.blenddit.com.crt')
+    }, 
+    app).listen(nconf.get('port_https'));
 
 kutil.serverOut();
 
