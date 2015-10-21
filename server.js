@@ -70,7 +70,7 @@ isDebug
              fs.readFileSync('certs/dist/comodo/bundle1.crt'), 
              fs.readFileSync('certs/dist/comodo/bundle2.crt')],
         key: fs.readFileSync('certs/dist/comodo/key.pem'),
-        cert: fs.readFileSync('comodo/www.blenddit.com.crt')
+        cert: fs.readFileSync('certs/dist/comodo/www.blenddit.com.crt')
     }, 
     app).listen(nconf.get('port_https'));
 
