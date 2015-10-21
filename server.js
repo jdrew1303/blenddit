@@ -43,9 +43,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(globalware.requireHTTPS);
 app.use(pjax());
-app.use("/src/static-assets/css/", express.static(__dirname + '/src/static-assets/css/',{maxAge:31536000000}));
-app.use("/src/static-assets/js/", express.static(__dirname + '/src/static-assets/js/',{maxAge:31536000000}));
-app.use("/src/static-assets/imgs/", express.static(__dirname + '/src/static-assets/imgs/',{maxAge:31536000000}));
+app.use("/src/assets/css/", express.static(__dirname + '/src/assets/css/',{maxAge:31536000000}));
+app.use("/src/assets/js/", express.static(__dirname + '/src/assets/js/',{maxAge:31536000000}));
+app.use("/src/assets/img/", express.static(__dirname + '/src/assets/img/',{maxAge:31536000000}));
 
 /* 
 	Instantiate routes ware with airity 4 

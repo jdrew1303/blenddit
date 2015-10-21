@@ -138,13 +138,13 @@
         'bootstrapCDN' : window.location.protocol+'//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js',
         'pjaxCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/jquery.pjax/1.9.6/jquery.pjax.min.js',
         'typeaheadCDN' : window.location.protocol+'//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js',
-        'jqueryLocal' : '/src/static-assets/js/jquery-2.1.3.min.js',
-        'bootstrapLocal' : '/src/static-assets/js/bootstrap.min.js',
-        'pjaxLocal' : '/src/static-assets/js/jquery.pjax.min.js',
-        'typeaheadLocal' : '/src/static-assets/js/typeahead.bundle.min.js'
+        'jqueryLocal' : '/src/assets/js/jquery-2.1.3.min.js',
+        'bootstrapLocal' : '/src/assets/js/bootstrap.min.js',
+        'pjaxLocal' : '/src/assets/js/jquery.pjax.min.js',
+        'typeaheadLocal' : '/src/assets/js/typeahead.bundle.min.js'
     },
     styles = {
-        'app' : '/src/static-assets/css/'+(getMetaValue('debug')=='true' ? 'app.css' : 'all.css')+'?v='+getMetaValue('version'),
+        'app' : '/src/assets/css/'+(getMetaValue('debug')=='true' ? 'app.css' : 'all.css')+'?v='+getMetaValue('version'),
         'fontawesomeCDN' : window.location.protocol+'//netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css',
         'googleFont' : window.location.protocol+'//fonts.googleapis.com/css?family=Roboto:400,700'
     };
