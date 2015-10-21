@@ -19,17 +19,20 @@ var express = require('express'),
     globalware = require('./middleware/global.ware')(kutil),
     auth = require('./middleware/auth.ware'),
 // Routes
-    routes = require('./routes/routes');
+    routes = require('./routes/routes'),
 // Server Configuration
+    isDebug = nconf.get('debug'),
+    views = isDebug ? 'src/views/' : 'dist/views/';
 nconf.add('config',{type: 'file', file:'config.json'});
 nconf.add('package',{type: 'file', file:'package.json'});
 kutil.configure(nconf);
 app = express();
 app.enable('strict routing');
-hbs = exphbs.create({defaultLayout: 'main'});
-kutil.compressAssets(__dirname+'/static-assets');
+app.set('views', views);
+hbs = exphbs.create({defaultLayout: 'main', layoutsDir: views+'layouts', partialsDir: views+'partials'});
+//kutil.compressAssets(__dirname+'/static-assets');
 app.use(compression());
-app.locals={ debug : nconf.get('debug'), version : new Date().getTime()};
+app.locals={ debug : isDebug, version : new Date().getTime()};
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.use(cookieParser());
@@ -40,9 +43,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(globalware.requireHTTPS);
 app.use(pjax());
-app.use("/static-assets/css/", express.static(__dirname + '/static-assets/css/',{maxAge:31536000000}));
-app.use("/static-assets/js/", express.static(__dirname + '/static-assets/js/',{maxAge:31536000000}));
-app.use("/static-assets/imgs/", express.static(__dirname + '/static-assets/imgs/',{maxAge:31536000000}));
+app.use("/src/static-assets/css/", express.static(__dirname + '/src/static-assets/css/',{maxAge:31536000000}));
+app.use("/src/static-assets/js/", express.static(__dirname + '/src/static-assets/js/',{maxAge:31536000000}));
+app.use("/src/static-assets/imgs/", express.static(__dirname + '/src/static-assets/imgs/',{maxAge:31536000000}));
 
 /* 
 	Instantiate routes ware with airity 4 
@@ -54,7 +57,7 @@ routes(app, globalware, [], kutil);
 http.createServer(app).listen(nconf.get('port_http'));
 
 // Create an application server instance on HTTPS port 8443 (443)
-nconf.get('debug')
+isDebug
     ? https.createServer({
         key:fs.readFileSync('certs/src/key.pem'), 
         cert:fs.readFileSync('certs/src/cert.pem')
