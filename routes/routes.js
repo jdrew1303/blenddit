@@ -11,7 +11,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 	app.get('/', gware.nowww, function(req, res){
 		var redditSession = new Buffer(encodeURIComponent(JSON.stringify(kutil.buildSessionObject(req, 'reddit')))).toString('base64'),
 			twitterSession = new Buffer(encodeURIComponent(JSON.stringify(kutil.buildSessionObject(req, 'twitter')))).toString('base64');
-		res.renderPjax('blenddit', {
+		res.renderPjax('blenddit_new', {
 			pressType : kutil.getPressType(req.headers['user-agent']),
 			redditSession : redditSession,
 			twitterSession : twitterSession,

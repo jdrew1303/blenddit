@@ -9,7 +9,6 @@
     "express-handlebars": "*",
     "express-pjax": "*",
     "nconf": "*",
-    "node-minify" : "*",
     "oauth" : "*",
     "passport": "*",
     "passport-reddit": "*",

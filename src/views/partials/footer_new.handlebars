@@ -1,0 +1,15 @@
+{{#if debug}}
+	<script src="{{assets}}js/core/jquery.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/bootstrap.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/jquery.slimscroll.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/jquery.scrollLock.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/jquery.appear.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/jquery.countTo.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/jquery.placeholder.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/core/js.cookie.min.js?v={{version}}"></script>
+    <script src="{{assets}}js/app.js?v={{version}}"></script>
+{{else}}
+	<!-- OneUI Core JS: jQuery, Bootstrap, slimScroll, scrollLock, Appear, CountTo, Placeholder, Cookie and App.js -->
+	<script src="{{assets}}js/oneui.min.js?v={{version}}" async defer></script>
+	<!-- Page JS Plugins + Page JS Code -->
+{{/if}}

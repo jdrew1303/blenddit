@@ -22,17 +22,17 @@ var express = require('express'),
     routes = require('./routes/routes'),
 // Server Configuration
     isDebug = nconf.get('debug'),
-    views = isDebug ? 'src/views/' : 'dist/views/';
+    views = isDebug ? 'src/views/' : 'dist/views/',
+    assets = isDebug ? 'src/assets/' : 'dist/assets/'
 nconf.add('config',{type: 'file', file:'config.json'});
 nconf.add('package',{type: 'file', file:'package.json'});
 kutil.configure(nconf);
 app = express();
 app.enable('strict routing');
 app.set('views', views);
-hbs = exphbs.create({defaultLayout: 'main', layoutsDir: views+'layouts', partialsDir: views+'partials'});
-//kutil.compressAssets(__dirname+'/static-assets');
+hbs = exphbs.create({defaultLayout: 'main_new', layoutsDir: views+'layouts', partialsDir: views+'partials'});
 app.use(compression());
-app.locals={ debug : isDebug, version : new Date().getTime()};
+app.locals={ debug : isDebug, version : new Date().getTime(), assets: assets};
 app.engine('handlebars', hbs.engine);
 app.set('view engine', 'handlebars');
 app.use(cookieParser());
@@ -43,9 +43,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(globalware.requireHTTPS);
 app.use(pjax());
-app.use("/src/assets/css/", express.static(__dirname + '/src/assets/css/',{maxAge:31536000000}));
-app.use("/src/assets/js/", express.static(__dirname + '/src/assets/js/',{maxAge:31536000000}));
-app.use("/src/assets/img/", express.static(__dirname + '/src/assets/img/',{maxAge:31536000000}));
+app.use("/"+assets+"css/", express.static(__dirname + "/"+assets+"css/",{maxAge:31536000000}));
+app.use("/"+assets+"css/themes/", express.static(__dirname + "/"+assets+"css/themes/",{maxAge:31536000000}));
+app.use("/"+assets+"js/", express.static(__dirname + "/"+assets+"js/",{maxAge:31536000000}));
+app.use("/"+assets+"img/", express.static(__dirname + "/"+assets+"img/",{maxAge:31536000000}));
+app.use("/"+assets+"img/favicons/", express.static(__dirname + "/"+assets+"img/favicons/",{maxAge:31536000000}));
+app.use("/"+assets+"fonts/", express.static(__dirname + "/"+assets+"fonts/",{maxAge:31536000000}));
 
 /* 
 	Instantiate routes ware with airity 4 
