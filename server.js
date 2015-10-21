@@ -30,7 +30,7 @@ kutil.configure(nconf);
 app = express();
 app.enable('strict routing');
 app.set('views', views);
-hbs = exphbs.create({defaultLayout: 'main_new', layoutsDir: views+'layouts', partialsDir: views+'partials'});
+hbs = exphbs.create({defaultLayout: 'main', layoutsDir: views+'layouts', partialsDir: views+'partials'});
 app.use(compression());
 app.locals={ debug : isDebug, version : new Date().getTime(), assets: assets};
 app.engine('handlebars', hbs.engine);
