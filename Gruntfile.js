@@ -63,6 +63,20 @@ module.exports = function (grunt) {
                 }
             }
         },
+        cssmin: {
+            options: {
+                shorthandCompacting: false,
+                roundingPrecision: -1
+            },
+            legacy: {
+                files: {
+                   '<%= pathBuild %>/<%= pathAssets %>/css/legacy.blenddit.min.css' : [
+                       '<%= pathDev %>/<%= pathAssets %>/css/legacy.bootstrap.min.css', 
+                       '<%= pathDev %>/<%= pathAssets %>/css/legacy.blenddit.css'
+                    ]
+                }
+            }
+        },
         concat: {
             options: {
                 separator: ';'
@@ -80,6 +94,13 @@ module.exports = function (grunt) {
                     '<%= pathDev %>/<%= pathAssets %>/js/app.js'
                 ],
                 dest: '<%= pathBuild %>/<%= pathAssets %>/js/oneui.min.js'
+            },
+            legacy: {
+                src: [
+                    '<%= pathDev %>/<%= pathAssets %>/js/legacy.blenddit.js',
+                    '<%= pathDev %>/<%= pathAssets %>/js/ga.js'
+                ],
+                dest: '<%= pathBuild %>/<%= pathAssets %>/js/legacy.blenddit.min.js'
             }
         },
         uglify: {
@@ -89,6 +110,11 @@ module.exports = function (grunt) {
             build: {
                 files: {
                     '<%= pathBuild %>/<%= pathAssets %>/js/oneui.min.js': ['<%= pathBuild %>/<%= pathAssets %>/js/oneui.min.js']
+                }
+            },
+            legacy: {
+                files: {
+                    '<%= pathBuild %>/<%= pathAssets %>/js/legacy.blenddit.min.js': ['<%= pathBuild %>/<%= pathAssets %>/js/legacy.blenddit.min.js']
                 }
             }
         },
@@ -127,6 +153,7 @@ module.exports = function (grunt) {
     // Load tasks
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -135,4 +162,5 @@ module.exports = function (grunt) {
     // Register Tasks
     grunt.registerTask('default', ['watch']);
     grunt.registerTask('build', ['clean:build', 'less:build', 'concat:build', 'uglify:build', 'copy:build']);
+    grunt.registerTask('legacy', ['concat:legacy', 'uglify:legacy', 'cssmin:legacy']);
 };
