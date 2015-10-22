@@ -1,0 +1,300 @@
+<script>
+  var redditUser = "{{redditSession}}";
+  var twitterUser = '{{twitterSession}}';
+  var subredditURI = '{{subredditURI}}';
+  var threadIdURI = '{{threadidURI}}';
+  var threadIdsURI = '{{threadidsURI}}';
+</script>
+<script type="text/html" id="tmpl_a">
+	<li class="list-group-item">
+        <div class="input-group">
+        	<input class="form-control" type="text" value="<%=thing%>"></input>
+        	<span class="input-group-addon" <%=getPressEvent()%>="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
+    	</div>
+    </li>
+</script>
+<script type="text/html" id="tmpl_b">
+	<li data-subid="<%=thing.subreddit_id%>" data-subreddit="<%=thing.subreddit%>" data-thread="<%=thing.permalink%>" data-threadid="<%=thing.id%>" class="list-group-item nopacity" onclick="bindWatchThreads.call(this)">
+		<%=thing.title%>
+		<span class="text-primary">in /r/<%=thing.subreddit%></span>
+        <span class="badge pull-right"><%=thing.timeElapsed%></span>
+    </li>
+</script>
+<script type="text/html" id="tmpl_c0">
+	<a class="btn <%=arrPos0%>" <%=arrPos2%>><i class="fa fa-<%=arrPos1%> fa-2x"></i></a>
+</script>
+<script type="text/html" id="tmpl_c">
+	<ul class="list-group controls <%=ulClass%>">
+		<li class="list-group-item controls">
+			<div class="btn-group">
+				<%=buttons%>
+            </div>
+        </li>
+    </ul>
+</script>
+<script type="text/html" id="tmpl_d">
+	<div class="form-group">			
+		<label class="control-label label-width">Thread 
+			<span class="info-edit label label-default pull-right" <%=getPressEvent()%>="bindInfoThread.call(this)">Info</span>
+		</label>
+		<select data-column="<%=columnNum%>" class="form-control thread-edit"></select>
+	</div>
+</script>
+<script type="text/html" id="tmpl_e">
+	<div class="form-group">
+		<label class="control-label label-width">Subreddit 
+			<span class="label label-danger delete-edit pull-right" <%=getPressEvent()%>="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
+		</label>
+		<input type="text" class="form-control subreddit-edit" placeholder="Enter a subreddit" onchange="bindFetchThreadValue.call(this, <%=columnNum%>)" onkeypress="bindPreventEnterButton.call(this)">
+	</div>
+</script>
+<script type="text/html" id="tmpl_f">
+	<div class="subreddit-group-edit"><%=subreddit%><%=threads%></div>
+</script>
+<script type="text/html" id="tmpl_g">
+	<form action="javascript:void(0);" class="edit-column-settings">
+		<%=settings%>
+		<input type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this, <%=columnNum%>)">
+	</form>
+</script>
+<script type="text/html" id="tmpl_am">
+	<div class="form-group">
+		<label>Thread</label>
+		<select class="form-control post-thread"></select>
+	</div>
+</script>
+<script type="text/html" id="tmpl_i">
+	<div data-column="<%=num%>" class="frame-content"></div>
+</script>
+<script type="text/html" id="tmpl_j">
+	<div data-column="<%=num%>" class="btn-group column-bars">
+		<a class="btn" <%=getPressEvent()%>="bindColumnBars.call(this, <%=num%>);">
+			<i data-column="<%=num%>" class="fa fa-bars fa-lg"></i>
+		</a>
+	</div>
+</script>
+<script type="text/html" id="tmpl_l">
+	<i data-column="<%=num%>" class="nopacity loading fa fa-refresh fa-spin fa-2x"></i>
+	<div class="frame-overlay" data-column="<%=num%>">
+		<div data-column="<%=num%>" class="frame">
+			<h6 class="frame-header" <%=getPressEvent()%>="bindGetCommentsForColumn.call(this, <%=num%>);">
+				<%=type%> <%=configObj.settings.name%>
+			</h6>
+			<%=icons%>
+		</div>
+	</div>
+	<%=bigButtons%><%=frameContent%>
+</script>
+<script type="text/html" id="tmpl_p">
+	<div data-column="<%=columnNum%>" class="hide column-options btn-group" style="height:0;">
+		<a data-column="<%=columnNum%>" class="btn column-option teal manage-threads" <%=getPressEvent()%>="bindManageThreads.call(this, <%=columnNum%>)">
+			<i class="fa fa-newspaper-o fa-2x"></i>
+			<p>THREADS</p>
+		</a>
+		<form action="javascript:void(0);" data-column="<%=columnNum%>" class="hide edit-form teal">
+			<input data-column="<%=columnNum%>" type="submit" class="hide" <%=getPressEvent()%>="bindSubmitSave.call(this, <%=columnNum%>)">
+		</form>
+		<a data-column="<%=columnNum%>" class="btn column-option darkgoldenrod settings-switch" <%=getPressEvent()%>="bindSettings.call(this, <%=columnNum%>)">
+			<i class="fa fa-cog fa-2x"></i>
+			<p>SETTINGS</p>
+		</a>
+		<div data-column="<%=columnNum%>" class="hide settings-tab darkgoldenrod"></div>
+		<a data-column="<%=columnNum%>" class="btn column-option write-comment-switch cornflowerblue" <%=getPressEvent()%>="bindWriteComment.call(this, <%=columnNum%>)">
+			<i class="fa fa-pencil fa-2x"></i>
+			<p>WRITE COMMENT</p>
+		</a>
+		<div data-column="<%=columnNum%>" class="hide write-comment cornflowerblue"></div>
+		<a data-column="<%=columnNum%>" class="refreshSwitch btn column-option slateblue" <%=getPressEvent()%>="bindRefreshCommentSwitch.call(this, <%=columnNum%>)">
+			<i class="fa fa-toggle-on fa-2x"></i>
+			<p>AUTO REFRESH</p>
+		</a>
+		<a data-column="<%=columnNum%>" class="trash btn column-option darkred" <%=getPressEvent()%>="bindDeleteColumnButton.call(this, <%=columnNum%>)">
+			<i class="fa fa-trash fa-2x"></i>
+			<p>DELETE COLUMN</p>
+		</a>
+	</div>
+</script>
+<script type="text/html" id="tmpl_ired">
+	<i class="fa fa-reddit fa-lg"></i>
+</script>
+<script type="text/html" id="tmpl_itwt">
+	<i class="fa fa-twitter"></i>
+</script>
+<script type="text/html" id="tmpl_m">
+	<div class="frame-container"><%=frame%></div>
+</script>
+<script type="text/html" id="tmpl_n">
+	<div data-column="<%=num%>" data-type="<%=configObj.type%>" class="frame-position nopacity">
+		<%=frameContainer%>
+	</div>
+</script>
+<script type="text/html" id="tmpl_o">
+	<div data-column="<%=num%>" class="item <%=active%>"><%=framePosition%></div>
+</script>
+<script type="text/html" id="tmpl_s">
+	<div class="form-group">
+		<label class="control-label label-width">
+			Thread <span class="<%=infoClass%> label label-default pull-right" <%=getPressEvent()%>="bindInfoThread.call(this)">Info</span>
+		</label>
+		<select class="form-control <%=threadClass%>"></select>
+	</div>
+</script>
+<script type="text/html" id="tmpl_t">
+	<div class="form-group">
+		<label class="control-label label-width">Subreddit 
+			<span class="<%=deleteClass%> label label-danger pull-right asdf" <%=getPressEvent()%>="bindDeleteThread.call(this, <%=columnNum%>)">Delete</span>
+		</label>
+		<input type="text" class="form-control <%=subClass%>" placeholder="Enter a subreddit" onchange="bindPopulateThreadSelect.call(this, <%=input%>, <%=groupClass%>, <%=threadClass%>)" onkeypress="bindPreventEnterButton.call(this)">
+	</div>
+</script>
+<script type="text/html" id="tmpl_u">
+	<div class="<%=groupClass%> nopacity"><%=subreddit%><%=threads%></div>
+</script>
+<script type="text/html" id="tmpl_v">
+	<option data-subid="<%=post.data.subreddit_id%>" data-threadtitle="<%=post.data.title%>" data-threadid="<%=post.data.id%>" value="<%=post.data.permalink%>">
+		<%=post.data.title%>
+	</option>
+</script>
+<script type="text/html" id="tmpl_w">
+	<option data-subid="<%=threadObj.subid%>" data-threadtitle="<%=threadObj.threadtitle%>" data-threadid="<%=threadObj.threadid%>" value="<%=threadObj.thread%>">
+		<%=threadObj.threadtitle%>
+	</option>
+</script>
+<script type="text/html" id="tmpl_x">
+	<div class="reply-buttons">
+		<button class="cancel-reply btn btn-default" <%=getPressEvent()%>="bindCancelReply.call(this)">Cancel</button>
+		<button type="submit" class="save-reply btn <%=buttonClass%>" <%=getPressEvent()%>="bindSaveReply.call(this)">Save</button>
+	</div>
+</script>
+<script type="text/html" id="tmpl_y">
+	<input type="hidden" name="thing_id" value="<%=thing_id%>">
+</script>
+<script type="text/html" id="tmpl_z">
+	<%=label%>
+	<textarea name="text" class="form-control textarea-reply" placeholder="<%=placeholder%>" onfocus="bindTextAreaReply.call(this)"></textarea>
+</script>
+<script type="text/html" id="tmpl_aa">
+	<div class="<%=className%> reply-form">
+		<div class="submitting nopacity hide"><%=submitting%></div>
+		<form action="javascript:void(0)"><%=parentInput%><%=textarea%><%=buttons%></form>
+	</div>
+</script>
+<script type="text/html" id="tmpl_ab">
+	<button class="new-comment text-primary" <%=getPressEvent()%>="bindNewComment.call(this)"><span class="diff"><%=newRepliesNum%> new</span></button>
+</script>
+<script type="text/html" id="tmpl_ac">
+	<span class="reply-num"><%=replyLength%></span><span>&nbsp;<%=replyText%>&nbsp;</span><span class="expander">&#43;</span>
+</script>
+<script type="text/html" id="tmpl_ad">
+	<button data-name="<%=name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)"></button>
+</script>
+<script type="text/html" id="tmpl_ae">
+	</div></div>
+	<div class="reply-container" data-id="<%=comment.data.name%>"><%=replies%></div>
+	<footer data-id="<%=comment.data.name%>" class="comment-footer hide">
+		<div class="links-container btn-group">
+			<a class="btn reply-switch" <%=getPressEvent()%>="bindReplySwitch.call(this)"><i class="fa fa-reply fa-lg"></i></a>
+			<a class="btn perma" href="<%=permalink%>" target="_blank"><i class="fa fa-link fa-lg"></i></a>
+			<a class="btn refresh-comment" data-linkid="<%=comment.data.link_id%>" data-id="<%=comment.data.name%>" <%=getPressEvent()%>="bindRefreshComment.call(this)"><i class="fa fa-refresh fa-lg"></i></a>
+		</div>
+	</footer>
+</script>
+<script type="text/html" id="tmpl_af">
+	<button data-name="<%=comment.data.name%>" data-replylength="<%=replyLength%>" class="reply text-warning" <%=getPressEvent()%>="bindShowReply.call(this)">
+		<span class="reply-num"><%=replyLength%></span><span>&nbsp;<%=replyText%>&nbsp;</span><span class="expander">&#43;</span>
+	</button>
+</script>
+<script type="text/html" id="tmpl_ag">
+	<header class="comment-header hide">
+		<div class="btn-group">
+			<a data-id="<%=comment.data.name%>" class="btn vote up" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-up fa-lg"></i></a>
+			<a data-id="<%=comment.data.name%>" class="btn vote down" <%=getPressEvent()%>="bindVoteCast.call(this)"><i class="fa fa-arrow-down fa-lg"></i></a>
+		</div>
+	</header>
+	<div class="target" onclick="bindToggleCommentOptions.call(this)">
+		<div class="reddit-metadata">
+			<div class="media-heading btn-group">
+				<%=flair%>
+				<a class="btn author" <%=getPressEvent()%>="stopProp.call(this,event)" href="<%=authorLink%>" target="_blank"><%=comment.data.author%></a>
+			</div>
+			<div class="line2-container">
+				<div class="line2"><span data-id="<%=comment.data.name%>" class="score white"><%=comment.data.score%></span>&nbsp;points&nbsp;<span data-created-utc="<%=comment.data.created_utc%>" class="white time-elapsed"><%=timeElapsed%></span>&nbsp;ago&nbsp;in&nbsp;<a class="from-sub" <%=getPressEvent()%>="stopProp.call(this,event)" target="_blank" href="<%=href%>"><%=comment.data.subreddit%></a>.</div>
+			</div>
+		</div>
+		<div data-author="<%=author%>" data-id="<%=comment.data.name%>" class="reddit-html"><%=text%>
+</script>
+<script type="text/html" id="tmpl_ah">
+	<div class="load-comments" data-parent="<%=comment.data.parent_id%>" class="load-comments" <%=getPressEvent()%>="bindRefreshComment.call(this)">
+		<i class="fa fa-download"></i>&nbsp; load more comments
+	</div><%=text%>
+</script>
+<script type="text/html" id="tmpl_ai">
+	<div class="media-body"><%=heading%></div>
+</script>
+<script type="text/html" id="tmpl_aj">
+	<div class="thumb* pull-left <%=icon%>"></div>
+</script>
+<script type="text/html" id="tmpl_ak">
+	<div data-parentid="<%=comment.data.parent_id%>" data-linkid="<%=comment.data.link_id%>" data-icon="<%=icon%>" id="<%=comment.data.name%>" class="media <%=parent%> <%=opacity%>">
+		<%=thumbnail%><%=body%>
+	</div>
+</script>
+<script type="text/html" id="tmpl_al">
+	<li class="list-group-item">
+		<div class="input-group">
+			<input class="form-control" type="text"><span class="input-group-addon" <%=getPressEvent()%>="bindDeleteWatchButtons.call(this)"><i class="fa fa-close"></i></span>
+		</div>
+	</li>
+</script>
+<script type="text/html" id="tmpl_an">
+	<a target="_blank" href="<%=url%>"><%=title%></a>
+</script>
+<script type="text/html" id="tmpl_ao">
+	<li class="media" data-subreddit="<%=obj.data.subreddit%>" data-thread="<%=permalink%>" data-id="<%=obj.data.id%>" data-subid="<%=obj.data.subreddit_id%>" onclick="bindThreadResults.call(this)">
+		<a class="subreddit-thumb pull-left" href="#">
+	        <%=thumbnail%>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><%=obj.data.title%><span class="badge pull-right"><%=obj.data.score%></span></h4>
+			<p>Submitted <%=timeElapsed%> ago by <%=obj.data.author%> to /r/<%=obj.data.subreddit%> | <span class="text-warning"><%=obj.data.num_comments%> comments</span></p>
+		</div>
+	</li>
+</script>
+<script type="text/html" id="tmpl_ao0">
+	<img class="img-thumbnail media-object" height="70" width="70" src="<%=src%>" alt="error" onerror="(function(ctx){ new Fn().brokenImage(ctx);})(this)">
+</script>
+<script type="text/html" id="tmpl_ap">
+	<div class="subreddit-thumb-alt center-containing"><i class="fa fa-reddit fa-3x"></i></div>
+</script>
+<script type="text/html" id="tmpl_aq">
+	<li class="media" data-id="<%=obj.data.id%>" data-subreddit="<%=obj.data.display_name%>" onclick="bindSubList.call(this)">
+		<a class="subreddit-thumb pull-left" href="#">&nbsp</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-warning">/r/<%=obj.data.display_name%></span> : <%=obj.data.title%></h4>
+			<p><%=obj.data.public_description%></p>
+			<p><%=subscribers%></p>
+		</div>
+	</li>
+</script>
+<script type="text/html" id="tmpl_ar">
+	<div class="media reddit-account" {{pressType}}="bindRedditSignOut.call(this)">
+		<a href="javascript:void(0)" class="pull-left">
+			<span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-red"><%=title%></span></h4>
+			<p>Click here to sign out of Reddit.</p>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tmpl_as">
+	<div class="media reddit-account" {{pressType}}="bindRedditLogIn.call(this)">
+		<a href="javascript:void(0);" class="pull-left">
+			<span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
+			<p>Follow this link to connect your Reddit account to Blenddit.</p>
+		</div>
+	</div>
+</script>
