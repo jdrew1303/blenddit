@@ -4,7 +4,7 @@
 		<div class="row teams" style="display:none; padding:5px 0 5px 0">
 			<div class="col-xs-6 big">
 				<a data-pjax href="/" class='brand'>
-					<img src='/src/assets/img/text.png' height='39' alt='error'></img>
+					<img src='{{assets}}img/text.png?={{version}}' height='39' alt='error'></img>
 				</a>
 			</div>
 			<div class="col-xs-6 big" style="text-align:right;">
@@ -37,9 +37,9 @@
   </div>
 </nav>
 {{#if debug}}
-	<script type="text/javascript" src="/src/assets/js/ga.js?v={{version}}"></script>
-	<script type="text/javascript" src="/src/assets/js/legacy.blenddit.js?v={{version}}"></script>
+	<script type="text/javascript" src="{{assets}}js/ga.js?v={{version}}"></script>
+	<script type="text/javascript" src="{{assets}}js/legacy.blenddit.js?v={{version}}"></script>
 {{else}}
-	<script type="text/javascript" src="/dist/assets/js/legacy.blenddit.min.js?v={{version}}" async></script>
+	<script type="text/javascript" src="{{assets}}js/legacy.blenddit.min.js?v={{version}}" async></script>
 {{/if}}
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>

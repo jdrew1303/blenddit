@@ -4,10 +4,10 @@
 <meta name="viewport" content="width=device-width, user-scalable=no"/> <!--320-->
 <meta name="version" content="{{version}}">
 <meta name="debug" content="{{debug}}">
-<link rel="icon" type="image/png" href="/src/assets/img/tab.png" sizes="16x16">
-<link rel="icon" type="image/png" href="/src/assets/img/tab.png" sizes="32x32">
+<link rel="icon" type="image/png" href="{{assets}}img/tab.png?v={{version}}" sizes="16x16">
+<link rel="icon" type="image/png" href="{{assets}}img/tab.png?v={{version}}" sizes="32x32">
 {{#if debug}}
-	<link rel="stylesheet" type="text/css" href="/src/assets/css/legacy.bootstrap.min.css?v={{version}}">
+	<link rel="stylesheet" type="text/css" href="{{assets}}css/legacy.bootstrap.min.css?v={{version}}">
 {{/if}}
 <script>window.pressType = "{{pressType}}"</script>
 <style>
