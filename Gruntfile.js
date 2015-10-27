@@ -8,6 +8,7 @@ module.exports = function (grunt) {
         pathDev: 'src',
         pathBuild: 'dist',
         pathAssets: 'assets',
+        pathViews: 'views',
         watch: {
             styles: {
                 files: ['<%= pathDev %>/<%= pathAssets %>/less/**/*.less'],
@@ -135,15 +136,15 @@ module.exports = function (grunt) {
                     },
                     {
                         expand: true,
-                        cwd: '<%= pathDev %>/<%= pathAssets %>/img/favicons/',
+                        cwd: '<%= pathDev %>/<%= pathAssets %>/img/',
                         src: '**',
-                        dest: '<%= pathBuild %>/<%= pathAssets %>/img/favicons/'
+                        dest: '<%= pathBuild %>/<%= pathAssets %>/img/'
                     },
                     {
                         expand: true,
-                        cwd: '<%= pathDev %>/<%= pathAssets %>/js/plugins/',
+                        cwd: '<%= pathDev %>/<%= pathViews %>/',
                         src: '**',
-                        dest: '<%= pathBuild %>/<%= pathAssets %>/js/plugins/'
+                        dest: '<%= pathBuild %>/<%= pathViews %>/'
                     }
                 ]
             }
@@ -161,6 +162,6 @@ module.exports = function (grunt) {
 
     // Register Tasks
     grunt.registerTask('default', ['watch']);
-    grunt.registerTask('build', ['clean:build', 'less:build', 'concat:build', 'uglify:build', 'copy:build']);
+    grunt.registerTask('build', ['clean:build','less:build','concat:build','concat:legacy','uglify:build','uglify:legacy','cssmin:legacy','copy:build']);
     grunt.registerTask('legacy', ['concat:legacy', 'uglify:legacy', 'cssmin:legacy']);
 };

@@ -402,25 +402,23 @@ function redditNamesFn() {
             rateLimitWait : 0,
             url : 'https://oauth.reddit.com/api/search_reddit_names',
             transport : function(url, success, error) {
-                $.when(
-                    checkAccessToken('ruser')
-                ).then(
-                function() { // pass: get stuff
-                    var auth = new Fn().getRedditAuthHeader();
-                    if (!auth) return;
-                    url.headers = auth;
-                    $.ajax(url).done(success).fail(error).always(
-                        function(data, textStatus, jqXHR){
-                            if (jqXHR.status==200 && typeof jqXHR.getResponseHeader === 'function') {
-                                new Fn().setUserSessionAttributes('ruser',{
-                                    x_ratelimit_remaining : jqXHR.getResponseHeader('x-ratelimit-remaining'),
-                                    x_ratelimit_reset : jqXHR.getResponseHeader('x-ratelimit-reset')
-                                });
+                $.when(checkAccessToken('ruser')).then(
+                    function() { // pass: get stuff
+                        var auth = new Fn().getRedditAuthHeader();
+                        if (!auth) return;
+                        url.headers = auth;
+                        $.ajax(url).done(success).fail(error).always(
+                            function(data, textStatus, jqXHR){
+                                if (jqXHR.status==200 && typeof jqXHR.getResponseHeader === 'function') {
+                                    new Fn().setUserSessionAttributes('ruser',{
+                                        x_ratelimit_remaining : jqXHR.getResponseHeader('x-ratelimit-remaining'),
+                                        x_ratelimit_reset : jqXHR.getResponseHeader('x-ratelimit-reset')
+                                    });
+                                }
                             }
-                        }
-                    );
-                },
-                function(jqXHR, data, msg) {} // fail: do nothing
+                        );
+                    },
+                    function(jqXHR, data, msg) {} // fail: do nothing
                 );
             },
             prepare : function(query, settings) {
@@ -951,9 +949,6 @@ function updateVoteState(data, obj) {
     } else if (obj.dir==-1) {
         $voteDown.addClass('active'); $voteUp.removeClass('active');
     } else { $voteUp.removeClass('active'); $voteDown.removeClass('active'); }
-}
-function isRedditUserLoggedIn() {
-    return $('[data-reddituser]').data('reddituser') ? true : false;
 }
 function replyLevelCommentFail(additionalData) {
     $('#reply-textarea, #reply-save').removeAttr('disabled');
@@ -1559,15 +1554,15 @@ function bindDeleteThread(columnNum) {
 }
 function bindVoteCast() {
     event.preventDefault();
-    if (isRedditUserLoggedIn()) {
-        var id = $(this).data('id').split('-')[0],
+    $.when(checkAccessToken('ruser')).then(
+        function() {
+            var id = $(this).data('id').split('-')[0],
             vote_state = $('.score[data-id='+$(this).data('id')+']').data('vote-state'),
             vote_action = $(this).hasClass('up') ? 1 : -1,
             dir = vote_action == vote_state ? 0 : vote_action == 1 ? 1 : -1,
             formData = {id: id, dir: dir},
             done = function(data, textStatus, jqXHR, obj) {
-                data && data.needsLogin ? $('#login-reddit-modal').modal()
-                : data.statusCode ? console.log(data.statusCode)
+                data.statusCode ? console.log(data.statusCode)
                     : data.json && data.json.errors.length > 0 
                         ? alert(data.json.errors[0][1])
                         : updateVoteState(data,obj);
@@ -1575,8 +1570,10 @@ function bindVoteCast() {
             fail = function(jqXHR, textStatus, errorThrown, obj) {
                 alert(textStatus+': Couldn\'t cast vote to '+obj.id);
             };
-        genericPost('/vote', formData, done, fail, undefined, {id:id,dir:dir});
-    } else { $('#login-reddit-modal').modal() }
+            genericPost('/vote', formData, done, fail, undefined, {id:id,dir:dir});    
+        },
+        function() {$('#login-reddit-modal').modal()}
+    )
     new Fn().getBlurred();
 }
 function bindSaveReply() {
@@ -1604,16 +1601,18 @@ function bindSaveReply() {
     $postPane.length > 0 ? frame_content_height(additionalData.columnNum) : void 0;
     var done = $postPane.length > 0
         ? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
-            data && data.needsLogin ? $('#login-reddit-modal').modal()
-                : data.statusCode ? topLevelCommentFail(additionalData)
-                    : data.json && data.json.errors.length > 0 ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
-                        : postTopLevelComment(data.json.data.things, additionalData);
+            data.statusCode 
+                ? topLevelCommentFail(additionalData)
+                : data.json && data.json.errors.length > 0 
+                    ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
+                    : postTopLevelComment(data.json.data.things, additionalData);
         }
         : function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply
-            data && data.needsLogin ? function(){ $('.reply-modal').modal();$('#login-reddit-modal').modal() }()
-                : data.statusCode ? replyLevelCommentFail(additionalData)
-                    : data.json && data.json.errors.length > 0 ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
-                        : insertReplyIntoDOM(data.json.data.things, additionalData);
+            data.statusCode 
+                ? replyLevelCommentFail(additionalData)
+                : data.json && data.json.errors.length > 0 
+                    ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
+                    : insertReplyIntoDOM(data.json.data.things, additionalData);
         };
     var fail = $postPane.length > 0
         ? function(jqXHR, textStatus, errorThrown, additionalData){
@@ -1627,11 +1626,13 @@ function bindSaveReply() {
 }
 function bindTextAreaReply() {
     event.preventDefault();
-    !isRedditUserLoggedIn() 
-        ? function(){ 
+    $.when(checkAccessToken('ruser')).then(
+        function() { return void 0; }, // pass
+        function() { // fail
             if (!$(this).parent().parent().hasClass('isTopLevel')) $('#reply-modal').modal('toggle'); 
             $('#login-reddit-modal').modal(); 
-        }.call(this) : void 0;
+        }
+    )
 }
 function bindCancelReply(){
     event.preventDefault();

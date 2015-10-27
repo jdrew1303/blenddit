@@ -71,7 +71,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}
 	);
 
-	app.post('/check-login', gware.ensureAuthenticated, function(req, res, next) {
+	app.post('/check-login', function(req, res, next) {
 		res.setHeader('Content-Type', 'application/json');
 		res.send({needsLogin:false});
 	});
@@ -109,7 +109,7 @@ module.exports = function(app, globalware, elseware, kutil) {
                 "</div>"].join(''));
 	});
 
-	app.post('/save-reddit-reply', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
+	app.post('/save-reddit-reply', function(req, res){
 		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/comment', req);
 		require('request').post(options, function callback(error, response, body) {
 			res.setHeader('Content-Type', 'application/json');
@@ -119,7 +119,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
 	});
 
-	app.post('/vote', gware.ensureAuthenticated, gware.refreshAccessToken, function(req, res){
+	app.post('/vote', function(req, res){
 		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/vote', req);
 
 		require('request').post(options, function callback(error, response, body) {
