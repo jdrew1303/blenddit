@@ -250,10 +250,17 @@ Fn.prototype = {
                 ? parseInt(ruser.x_ratelimit_remaining) > 0 || parseInt(ruser.x_ratelimit_reset) <= 0
                     ? true : false
                 : true
-        if (ruser && ratelimit) {
-            headerObj = {'Authorization':'bearer '+ruser.at}
-        }
+        if (ruser && ratelimit) { headerObj = {'Authorization':'bearer '+ruser.at} }
+        if (ruser && !ratelimit) { alert('Please wait '+ruser.x_ratelimit_reset+' seconds.'); }
         return headerObj;
+    },
+    setRedditResponseHeader : function(data, textStatus, jqXHR) {
+        if (jqXHR.status==200 && typeof jqXHR.getResponseHeader === 'function') {
+            new Fn().setUserSessionAttributes('ruser',{
+                x_ratelimit_remaining : jqXHR.getResponseHeader('x-ratelimit-remaining'),
+                x_ratelimit_reset : jqXHR.getResponseHeader('x-ratelimit-reset')
+            });
+        }
     },
     setUserSessionAttributes : function(type, attrObj) {
         var session = this.getUserSession(type);
@@ -394,6 +401,7 @@ function checkAccessToken(type){ // returns a deferred ajax call to be used with
         return deferred.reject({}, {}, 'fail').promise();
     }
 }
+
 function redditNamesFn() {
     return new Bloodhound({
         datumTokenizer: Bloodhound.tokenizers.obj.whitespace('value'),
@@ -404,19 +412,11 @@ function redditNamesFn() {
             transport : function(url, success, error) {
                 $.when(checkAccessToken('ruser')).then(
                     function() { // pass: get stuff
-                        var auth = new Fn().getRedditAuthHeader();
+                        var fn = new Fn(),
+                            auth = fn.getRedditAuthHeader();
                         if (!auth) return;
                         url.headers = auth;
-                        $.ajax(url).done(success).fail(error).always(
-                            function(data, textStatus, jqXHR){
-                                if (jqXHR.status==200 && typeof jqXHR.getResponseHeader === 'function') {
-                                    new Fn().setUserSessionAttributes('ruser',{
-                                        x_ratelimit_remaining : jqXHR.getResponseHeader('x-ratelimit-remaining'),
-                                        x_ratelimit_reset : jqXHR.getResponseHeader('x-ratelimit-reset')
-                                    });
-                                }
-                            }
-                        );
+                        $.ajax(url).done(success).fail(error).always(fn.setRedditResponseHeader)
                     },
                     function(jqXHR, data, msg) {} // fail: do nothing
                 );
@@ -1553,7 +1553,7 @@ function bindDeleteThread(columnNum) {
     if (typeof columnNum !== 'undefined') frame_content_height(columnNum);
 }
 function bindVoteCast() {
-    event.preventDefault();
+    event.preventDefault(); var me = this;
     $.when(checkAccessToken('ruser')).then(
         function() {
             var id = $(this).data('id').split('-')[0],
@@ -1571,7 +1571,7 @@ function bindVoteCast() {
                 alert(textStatus+': Couldn\'t cast vote to '+obj.id);
             };
             genericPost('/vote', formData, done, fail, undefined, {id:id,dir:dir});    
-        },
+        }.bind(me),
         function() {$('#login-reddit-modal').modal()}
     )
     new Fn().getBlurred();
@@ -1625,13 +1625,13 @@ function bindSaveReply() {
     genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
 }
 function bindTextAreaReply() {
-    event.preventDefault();
+    event.preventDefault(); var me = this;
     $.when(checkAccessToken('ruser')).then(
         function() { return void 0; }, // pass
         function() { // fail
             if (!$(this).parent().parent().hasClass('isTopLevel')) $('#reply-modal').modal('toggle'); 
             $('#login-reddit-modal').modal(); 
-        }
+        }.bind(me)
     )
 }
 function bindCancelReply(){
