@@ -39,7 +39,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 	});
 	
 	app.get('/auth/reddit', function(req, res, next){
-		req.session.state = crypto.randomBytes(32).toString('hex');
+			req.session.state = crypto.randomBytes(32).toString('hex');
 			passport.authenticate('reddit', {
 			state: req.session.state,
 			duration: 'permanent'
@@ -70,55 +70,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 			res.redirect('/');
 		}
 	);
-
-	app.post('/check-login', function(req, res, next) {
-		res.setHeader('Content-Type', 'application/json');
-		res.send({needsLogin:false});
-	});
-
-	app.get('/reddit-login', function(req, res, next) {
-		res.setHeader('Content-Type', 'application/json');
-		res.send({needsLogin:true});
-	});
 	
-	app.get('/reddit-logout', function(req, res, next) {
-		req.logout();
-		delete req.session.reddit;
-		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindRedditLogIn.call(this);'>",
-					"<a href='javascript:void(0);' class='pull-left'>",
-						"<span class='text-red'><i class='fa fa-reddit-square fa-4x'></i></span>",
-					"</a>",
-					"<div class='media-body'>",
-						"<h4 class='media-heading'><span class='text-red'>Sign in to Reddit</span></h4>",
-						"<p>Follow this link to connect your Reddit account to Blenddit.</p>",
-					"</div>",
-				"</div>"].join(''));
-	});
-
-	app.get('/twitter-logout', function(req, res, next) {
-		req.logout();
-		delete req.session.twitter;
-		res.send(["<div class='media' "+kutil.getPressType(req.headers['user-agent'])+"='bindTwitterLogIn.call(this)'>",
-					"<a href='javascript:void(0);' class='pull-left'>",
-						"<span class='text-primary'><i class='fa fa-twitter-square fa-4x'></i></span>",
-					"</a>",
-					"<div class='media-body'>",
-						"<h4 class='media-heading'><span class='text-primary'>Sign in to Twitter</span></h4>",
-						"<p>Follow this link to connect your Twitter account to Blenddit.</p>",
-					"</div>",
-                "</div>"].join(''));
-	});
-
-	app.post('/save-reddit-reply', function(req, res){
-		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/comment', req);
-		require('request').post(options, function callback(error, response, body) {
-			res.setHeader('Content-Type', 'application/json');
-			!error && response.statusCode == 200 ? res.send(body)
-				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
-		}).form({'api_type':'json', 'thing_id':req.body.thing_id, 'text':req.body.text});
-	});
-
 	app.post('/vote', function(req, res){
 		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/vote', req);
 
@@ -128,22 +80,6 @@ module.exports = function(app, globalware, elseware, kutil) {
 				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
 			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
 		}).form({'id':req.body.id, 'dir':req.body.dir});
-	});
-
-	app.get('/search-reddit-names', function(req, res, next) {
-		var options = {
-			url: 'https://'+reddit_key+':'+reddit_sec+'@www.reddit.com/api/search_reddit_names.json',
-			headers: {
-				'User-Agent': 'nodejs:www.blenddit.com:v0.0.1 (by /u/kurtlocker)',
-				'Content-Type':'application/x-www-form-urlencoded'
-			}
-		};
-		require('request').post(options, function callback(error, response, body) {
-			res.setHeader('Content-Type', 'application/json');
-			!error && response.statusCode == 200 ? res.send(body)
-				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
-		}).form({'query':req.query.query, 'include_over_18':'true'});
 	});
 
 	app.get('/refresh-access-token', function(req, res, next) {
@@ -164,7 +100,7 @@ module.exports = function(app, globalware, elseware, kutil) {
 						: res.send({statusCode: response.statusCode, body: JSON.parse(body)});
 			}).form({'grant_type':'refresh_token', 'refresh_token':req.session.redditRefreshToken});
 		} else {
-			res.send({statusCode: 'error', error: 'No refresh token'})
+			res.send({status: 'No refresh token in session', hasRefresh: false})
 		}
 	});
 

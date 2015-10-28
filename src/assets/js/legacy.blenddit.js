@@ -376,8 +376,9 @@ function checkAccessToken(type){ // returns a deferred ajax call to be used with
     var fn = new Fn(),
         session = fn.getUserSession(type),
         expired = session ? new Date() > new Date(session.ex) : undefined,
+        hasRefresh = session && session.hasRefresh===false ? session.hasRefresh : true,
         deferred = $.Deferred();
-    if (type=='ruser' && session && expired) {
+    if (type=='ruser' && session && expired && hasRefresh) {
         return $.ajax('/refresh-access-token').then(function(data, textStatus, jqXHR) {
             if (jqXHR.status==200 && data.access_token) {
                 fn.setUserSessionAttributes('ruser', 
@@ -392,6 +393,7 @@ function checkAccessToken(type){ // returns a deferred ajax call to be used with
                 deferred.resolve(jqXHR, data, '').promise();
             } else {
                 deferred.reject(jqXHR, data, data.statusCode).promise();
+                fn.setUserSessionAttributes('ruser', {hasRefresh: data.hasRefresh})
             }
             return deferred;
         })
@@ -413,9 +415,9 @@ function redditNamesFn() {
                 $.when(checkAccessToken('ruser')).then(
                     function() { // pass: get stuff
                         var fn = new Fn(),
-                            auth = fn.getRedditAuthHeader();
-                        if (!auth) return;
-                        url.headers = auth;
+                            headers = fn.getRedditAuthHeader();
+                        if (!headers) return;
+                        url.headers = headers;
                         $.ajax(url).done(success).fail(error).always(fn.setRedditResponseHeader)
                     },
                     function(jqXHR, data, msg) {} // fail: do nothing
@@ -957,6 +959,8 @@ function replyLevelCommentFail(additionalData) {
 }
 function topLevelCommentFail(additionalData) {
     var $form = $(additionalData.postPane).find('form');
+    $form.find('.save-reply').removeAttr('disabled');
+    $form.find('.textarea-reply').removeAttr('disabled');
     frame_content_height(additionalData.columnNum);
     $form.find('.textarea-reply').launchPopOver(3000, popOverOptions('top','','There was a problem posting your comment. Try again!'));
 }
@@ -1123,12 +1127,6 @@ function errorPop(errorMsgLoc, errorThrown) {
         }
     }
 }
-function oauthPost(url, headers, data, done, fail, always) {
-    $.ajax({ type:'POST', url : url, headers : headers, data : data })
-    .done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR);})
-    .fail(function(jqXHR, textStatus, errorThrown) { if (fail) fail(jqXHR, textStatus, errorThrown);})
-    .always(function() { if (always) always(data, textStatus, jqXHR); });
-}
 function genericGet(url, done, fail, always, cacheBool, errorMsgLoc, additionalData) {
     $.ajax({ url: url, type: "GET", timeout:7000, cache: cacheBool || false })
     .done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData); })
@@ -1138,14 +1136,21 @@ function genericGet(url, done, fail, always, cacheBool, errorMsgLoc, additionalD
     })
     .always(function() { if (always) always(); });
 }
-function genericPost(url, data, done, fail, always, additionalData, errorMsgLoc) {
-    $.ajax({ url: url, type: 'POST', timeout:additionalData.timeout || 7000, data: data, cache: false })
+function genericPost(url, data, done, fail, always, additionalData, errorMsgLoc, headers) {
+    $.ajax({ 
+        url: url, 
+        type: 'POST', 
+        timeout:additionalData.timeout || 7000, 
+        data: data, 
+        cache: false, 
+        headers : headers || {}
+    })
     .done(function(data, textStatus, jqXHR) { if (done) done(data, textStatus, jqXHR, additionalData);})
     .fail(function(jqXHR, textStatus, errorThrown) {
         if (fail) fail(jqXHR, textStatus, errorThrown, additionalData);
         errorPop(errorMsgLoc, errorThrown);
     })
-    .always(function() { if (always) always(); });
+    .always(function(data, textStatus, jqXHR) { if (always) always(data, textStatus, jqXHR); });
 }
 function getPosts(path, sort, limit, obj){
     $.ajax({
@@ -1578,7 +1583,8 @@ function bindVoteCast() {
 }
 function bindSaveReply() {
     event.preventDefault();
-    var $postPane = $(this).parents('.write-comment'),
+    var fn = new Fn(),
+        $postPane = $(this).parents('.write-comment'),
         thing_id_raw = this.form 
             ? this.form.thing_id.value
             : $(this).parents('.modal-content').find('form')[0].thing_id.value,
@@ -1594,35 +1600,38 @@ function bindSaveReply() {
             : $(this).parents('.modal-content').find('form')[0].text.value
     if (text.length===0) return;
     
-    this.form 
+    this.form
         ? function(){ $(this.form.text).attr('disabled','disabled'); $(this).attr('disabled','disabled')}.call(this)
         : $('#reply-textarea, #reply-save').attr('disabled','disabled');
 
     $postPane.length > 0 ? frame_content_height(additionalData.columnNum) : void 0;
     var done = $postPane.length > 0
-        ? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
-            data.statusCode 
-                ? topLevelCommentFail(additionalData)
-                : data.json && data.json.errors.length > 0 
-                    ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
-                    : postTopLevelComment(data.json.data.things, additionalData);
-        }
-        : function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply
-            data.statusCode 
-                ? replyLevelCommentFail(additionalData)
-                : data.json && data.json.errors.length > 0 
-                    ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
-                    : insertReplyIntoDOM(data.json.data.things, additionalData);
-        };
-    var fail = $postPane.length > 0
-        ? function(jqXHR, textStatus, errorThrown, additionalData){
-            topLevelCommentFail(additionalData);
-        }
-        : function(jqXHR, textStatus, errorThrown, additionalData){
-            replyLevelCommentFail(additionalData);
-        };
-    var formData = {thing_id: thing_id, text: text };
-    genericPost('/save-reddit-reply', formData, done, fail, undefined, additionalData);
+            ? function(data, textStatus, jqXHR, additionalData) { // submitting comment from nav-tab post
+                data.statusCode 
+                    ? topLevelCommentFail(additionalData)
+                    : data.json && data.json.errors.length > 0 
+                        ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
+                        : postTopLevelComment(data.json.data.things, additionalData);
+            }
+            : function(data, textStatus, jqXHR, additionalData) { // submitting comment from reply
+                data.statusCode 
+                    ? replyLevelCommentFail(additionalData)
+                    : data.json && data.json.errors.length > 0 
+                        ? function(){ replyLevelCommentFail(additionalData); alert(data.json.errors[0][1]); }()
+                        : insertReplyIntoDOM(data.json.data.things, additionalData);
+            },
+        fail = $postPane.length > 0
+            ? function(jqXHR, textStatus, errorThrown, additionalData){
+                topLevelCommentFail(additionalData);
+            }
+            : function(jqXHR, textStatus, errorThrown, additionalData){
+                replyLevelCommentFail(additionalData);
+            },
+        formData = {thing_id: thing_id, text: text, api_type:'json'},
+        headers  = fn.getRedditAuthHeader();
+    
+    if (!headers) return;
+    genericPost('https://oauth.reddit.com/api/comment', formData, done, fail, fn.setRedditResponseHeader, additionalData, undefined, headers);
 }
 function bindTextAreaReply() {
     event.preventDefault(); var me = this;
