@@ -62,11 +62,11 @@ KUtil.prototype = {
 				ex : req.session.reddit.redditAccessTokenExpireTime
 			};
 			req.session.redditRefreshToken = req.session.reddit.redditRefreshToken;
-		} else {
+		} else if (req.session.twitter && type == 'twitter' && req.protocol == 'https') {
 			if (req.session.twitter && req.protocol == 'https') {
 				json = {
-					twitterUser : req.session.twitter ? req.session.twitter.username : null,
-					userAvatar : req.session.twitter ? req.session.twitter.photos[0].value : null
+					tu : req.session.twitter ? req.session.twitter.username : null,
+					ua : req.session.twitter ? req.session.twitter.photos[0].value : null
 				};
 			}
 		}

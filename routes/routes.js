@@ -71,17 +71,6 @@ module.exports = function(app, globalware, elseware, kutil) {
 		}
 	);
 	
-	app.post('/vote', function(req, res){
-		var options = kutil.buildAuthReqObj('https://oauth.reddit.com/api/vote', req);
-
-		require('request').post(options, function callback(error, response, body) {
-			res.setHeader('Content-Type', 'application/json');
-			!error && response.statusCode == 200 ? res.send(body)
-				: error ? res.send({statusCode: 'error', error: JSON.stringify(error)})
-			: res.send({statusCode: response.statusCode, body: JSON.stringify(body)});
-		}).form({'id':req.body.id, 'dir':req.body.dir});
-	});
-
 	app.get('/refresh-access-token', function(req, res, next) {
 		res.setHeader('Content-Type', 'application/json');
 		if (req.session.redditRefreshToken) {

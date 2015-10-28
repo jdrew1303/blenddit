@@ -21,73 +21,6 @@
         <div class='text-center'> 
           <div style="padding:10px;" class="v-align"><p class="lead">Build columns of live reddit threads or twitter feeds. <a href="javascript:void(0);" {{pressType}}="bindHelpModal.call(this)">See how</a>.</p></div>
         </div>
-        {{!-- <div class='row'>
-          <div class='col-sm-6'>
-            <div class="panel-group" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                    <div data-toggle="collapse" href="#reddit-greeting-collapse" class="panel-heading text-center" role="tab" id="headingOne">
-                        <h4 class="panel-title"><i class='fa fa-search'></i>&nbsp;Search Reddit</h4>
-                    </div>
-                    <div id="reddit-greeting-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" aria-expanded="true">
-                        <div class="panel-body">
-                            <form class='reddit-search' role='form' action='javascript:void(0)'>
-                                <div class="form-group">
-                                    <label class="label-width">Search</label>
-                                    <input class="form-control reddit-search-input" type="text" placeholder='Enter query..'>
-                                </div>
-                                <div class="form-group">
-                                    <label class="radio-inline">
-                                        <input class='radio-subreddits' name='search-type' checked type="radio" value="subreddits" onclick="bindRedditSearchRadio.call(this)">Subreddits
-                                    </label>
-                                    <label class="radio-inline">
-                                        <input class='radio-submissions' name='search-type' type="radio" value="submissions" onclick="bindRedditSearchRadio.call(this)">Submissions
-                                    </label>  
-                                </div>
-                                <div class="form-group">
-                                    <label>Sorted By</label>
-                                    <select disabled class="form-control sorted-by">
-                                        <option value='relevance'>Relevance</option>
-                                        <option value='new'>New</option>
-                                        <option value='hot'>Hot</option>
-                                        <option value='top'>Top</option>
-                                        <option value='comments'>Comments</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>Links From</label>
-                                    <select disabled class="form-control links-from">
-                                        <option value='all'>All Time</option>
-                                        <option value='hour'>Past Hour</option>
-                                        <option value='day'>Past 24 Hours</option>
-                                        <option value='week'>Past Week</option>
-                                        <option value='year'>Past Year</option>    
-                                    </select>
-                                </div>
-                                <button type="submit" class="reddit-search-submit btn btn-default" {{pressType}}="bindRedditSearch.call(this)">Submit</button>
-                                <input class='reddit-search-submit hide' type='submit' {{pressType}}="bindRedditSearch.call(this)">                          
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-          </div>
-          <div class='col-sm-6'>
-            <div class="panel-group" id="twitter-accordion" role="tablist" aria-multiselectable="true">
-                <div class="panel panel-default">
-                    <div data-toggle="collapse" data-parent="#twitter-accordion" href="#twitter-collapseOne" class="panel-heading text-center" role="tab" id="headingTwo">
-                        <h4 class="panel-title"><i class='fa fa-search'></i>&nbsp;Search Twitter</h4>
-                    </div>
-                    <div id="twitter-collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo" aria-expanded="true">
-                      <div class='panel-body'>
-                        <div class="alert alert-info">
-                          Twitter integration is still under development. You can encourage development of this feature by donating. <a href="javascript:void(0);" onclick="document.getElementById('donate').submit();">Support Blenddit by donating!</a>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-          </div>
-        </div> --}}
       </div>
       <div class="row">
         <div class="col-lg-12">
@@ -431,29 +364,9 @@
                     </div>
                 </div>
                 <div id="linked-accounts" class="panel-body collapse">
-                  <div class='list-group' data-reddituser='{{reddit.redditUser}}' data-twitteruser='{{twitter.twitterUser}}'>
+                  <div class='list-group'>
                     <div class='reddit-account'></div>
-                    {{#if twitter.twitterUserExists}}
-                      <div class="media" id="twitter-logout" {{pressType}}="bindTwitterSignOut.call(this)">
-                          <a href="javascript:void(0)" class="pull-left">
-                              <img src="{{twitter.userAvatar}}" class="media-object img-rounded" alt="Sample Image">
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-primary">@{{twitter.twitterUser}}</span></h4>
-                              <p>Click here to sign out of Twitter.</p>
-                          </div>
-                      </div>
-                    {{else}}
-                      <div class="media" {{pressType}}="bindTwitterLogIn.call(this)">
-                          <a href="javascript:void(0);" class="pull-left">
-                              <span class="text-primary"><i class="fa fa-twitter-square fa-4x"></i></span>
-                          </a>
-                          <div class="media-body">
-                              <h4 class="media-heading"><span class="text-primary">Sign in to Twitter</span></h4>
-                              <p>Follow this link to connect your Twitter account to Blenddit.</p>
-                          </div>
-                      </div>
-                    {{/if}}
+                    <div class='twitter-account'></div>
                   </div>
                 </div>
                 <a href="javascript:void(0)" data-toggle="collapse" data-target="#linked-accounts">

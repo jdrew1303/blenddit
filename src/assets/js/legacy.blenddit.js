@@ -714,11 +714,15 @@ function updateControlsView() {
     var fn = new Fn(),
         configArr = fn.getFromStorage('config'),
         ruser = fn.getUserSession('ruser'),
+        tuser = fn.getUserSession('tuser'),
         redditAcc = ruser && ruser.ru ? 1 : 0,
-        twitterAcc = $('[data-twitteruser]').data('twitteruser') ? 1 : 0;
+        twitterAcc = tuser && tuser.tu ? 1 : 0;
     redditAcc
-        ? $('.reddit-account').replaceWith(tmpl('tmpl_ar', {title: ruser.ru}))
-        : $('.reddit-account').replaceWith(tmpl('tmpl_as', {}))
+        ? $('.reddit-account').replaceWith(tmpl('tmpl_ar', {title: ruser.ru, type: "\'ruser\'"}))
+        : $('.reddit-account').replaceWith(tmpl('tmpl_as', {type:"\'reddit\'"}))
+    twitterAcc
+        ? $('.twitter-account').replaceWith(tmpl('tmpl_at', {avatar: tuser.ua, user: tuser.tu, type: "\'tuser\'"}))
+        : $('.twitter-account').replaceWith(tmpl('tmpl_au', {type: "\'twitter\'"}))
     $('.panel-red .huge').text(getColumnCount(configArr, 'reddit'));
     $('.panel-primary .huge').text(getColumnCount(configArr, 'twitter'));
     $('.panel-yellow .huge').text(redditAcc+twitterAcc);
@@ -1446,26 +1450,15 @@ function bindWatchThreads() {
     event.preventDefault();
     $(this).hasClass('white') ? $(this).removeClass('white') : $(this).addClass('white');
 }
-function bindRedditSignOut() {
+function bindSignOut(type) {
     event.preventDefault();
     if (localStorage) {
-        localStorage.removeItem('ruser');
+        localStorage.removeItem(type);
     }
     updateControlsView();
 }
-function bindTwitterSignOut() {
-    event.preventDefault();
-    genericGet('/twitter-logout', function(html) {
-        $('[data-twitteruser]').data('twitteruser',null);
-        $('#twitter-logout').replaceWith(html);
-        updateControlsView();
-    });
-}
-function bindRedditLogIn() {
-    window.location = '/auth/reddit';
-}
-function bindTwitterLogIn() {
-    window.location = '/auth/twitter';
+function bindLogIn(type) {
+    window.location = '/auth/'+type;   
 }
 function bindSubmitSave(columnNum) {
     event.preventDefault();
@@ -1561,11 +1554,13 @@ function bindVoteCast() {
     event.preventDefault(); var me = this;
     $.when(checkAccessToken('ruser')).then(
         function() {
-            var id = $(this).data('id').split('-')[0],
-            vote_state = $('.score[data-id='+$(this).data('id')+']').data('vote-state'),
-            vote_action = $(this).hasClass('up') ? 1 : -1,
-            dir = vote_action == vote_state ? 0 : vote_action == 1 ? 1 : -1,
-            formData = {id: id, dir: dir},
+            var fn = new Fn(),
+                id = $(this).data('id').split('-')[0],
+                vote_state = $('.score[data-id='+$(this).data('id')+']').data('vote-state'),
+                vote_action = $(this).hasClass('up') ? 1 : -1,
+                dir = vote_action == vote_state ? 0 : vote_action == 1 ? 1 : -1,
+                formData = {id: id, dir: dir},
+                headers  = fn.getRedditAuthHeader();
             done = function(data, textStatus, jqXHR, obj) {
                 data.statusCode ? console.log(data.statusCode)
                     : data.json && data.json.errors.length > 0 
@@ -1575,7 +1570,8 @@ function bindVoteCast() {
             fail = function(jqXHR, textStatus, errorThrown, obj) {
                 alert(textStatus+': Couldn\'t cast vote to '+obj.id);
             };
-            genericPost('/vote', formData, done, fail, undefined, {id:id,dir:dir});    
+            if (!headers) return;
+            genericPost('https://oauth.reddit.com/api/vote', formData, done, fail, fn.setRedditResponseHeader, formData, undefined, headers);    
         }.bind(me),
         function() {$('#login-reddit-modal').modal()}
     )

@@ -277,7 +277,7 @@
 	</li>
 </script>
 <script type="text/html" id="tmpl_ar">
-	<div class="media reddit-account" {{pressType}}="bindRedditSignOut.call(this)">
+	<div class="media reddit-account" {{pressType}}="bindSignOut.call(this, <%=type%>)">
 		<a href="javascript:void(0)" class="pull-left">
 			<span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
 		</a>
@@ -288,13 +288,35 @@
 	</div>
 </script>
 <script type="text/html" id="tmpl_as">
-	<div class="media reddit-account" {{pressType}}="bindRedditLogIn.call(this)">
+	<div class="media reddit-account" {{pressType}}="bindLogIn.call(this, <%=type%>)">
 		<a href="javascript:void(0);" class="pull-left">
 			<span class="text-red"><i class="fa fa-reddit-square fa-4x"></i></span>
 		</a>
 		<div class="media-body">
 			<h4 class="media-heading"><span class="text-red">Sign in to Reddit</span></h4>
 			<p>Follow this link to connect your Reddit account to Blenddit.</p>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tmpl_at">
+	<div class="media twitter-account" {{pressType}}="bindSignOut.call(this, <%=type%>)">
+		<a href="javascript:void(0)" class="pull-left">
+			<img src="<%=avatar%>" class="media-object img-rounded" alt="Sample Image">
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-primary">@<%=user%></span></h4>
+			<p>Click here to sign out of Twitter.</p>
+		</div>
+	</div>
+</script>
+<script type="text/html" id="tmpl_au">
+	<div class="media twitter-account" {{pressType}}="bindLogIn.call(this, <%=type%>)">
+		<a href="javascript:void(0);" class="pull-left">
+			<span class="text-primary"><i class="fa fa-twitter-square fa-4x"></i></span>
+		</a>
+		<div class="media-body">
+			<h4 class="media-heading"><span class="text-primary">Sign in to Twitter</span></h4>
+			<p>Follow this link to connect your Twitter account to Blenddit.</p>
 		</div>
 	</div>
 </script>
