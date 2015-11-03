@@ -1,7 +1,7 @@
 /*blenddit.com server*/
 // Vendor
 var express = require('express'),
-    passport = require('passport')
+    passport = require('passport'),
     exphbs  = require('express-handlebars'),
     util = require('util'),
     colors = require('colors'),
@@ -23,7 +23,7 @@ var express = require('express'),
 // Server Configuration
     isDebug = nconf.get('debug'),
     views = isDebug ? 'src/views/' : 'dist/views/',
-    assets = isDebug ? 'src/assets/' : 'dist/assets/'
+    assets = isDebug ? 'src/assets/' : 'dist/assets/';
 nconf.add('config',{type: 'file', file:'config.json'});
 nconf.add('package',{type: 'file', file:'package.json'});
 kutil.configure(nconf);
@@ -64,12 +64,12 @@ http.createServer(app).listen(nconf.get('port_http'));
 // Create an application server instance on HTTPS port 8443 (443)
 isDebug
     ? https.createServer({
-        key:fs.readFileSync('certs/src/key.pem'), 
+        key:fs.readFileSync('certs/src/key.pem'),
         cert:fs.readFileSync('certs/src/cert.pem')
     }, app).listen(nconf.get('port_https'))
     : https.createServer({
-        ca: [fs.readFileSync('certs/dist/comodo/bundle0.crt'), 
-             fs.readFileSync('certs/dist/comodo/bundle1.crt'), 
+        ca: [fs.readFileSync('certs/dist/comodo/bundle0.crt'),
+             fs.readFileSync('certs/dist/comodo/bundle1.crt'),
              fs.readFileSync('certs/dist/comodo/bundle2.crt')],
         key: fs.readFileSync('certs/dist/comodo/key.pem'),
         cert: fs.readFileSync('certs/dist/comodo/www.blenddit.com.crt')

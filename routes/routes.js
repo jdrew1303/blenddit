@@ -21,6 +21,22 @@ module.exports = function(app, globalware, elseware, kutil) {
 		});
 		kutil.deleteSessionProperties(req);
 	});
+
+	/* New framework development 11-2-2015 */
+	app.get('/oneui', gware.nowww, function(req, res){
+		var redditSession = new Buffer(encodeURIComponent(JSON.stringify(kutil.buildSessionObject(req, 'reddit')))).toString('base64'),
+			twitterSession = new Buffer(encodeURIComponent(JSON.stringify(kutil.buildSessionObject(req, 'twitter')))).toString('base64');
+		res.renderPjax('blenddit_new', {
+			layout: 'main_new',
+			pressType : kutil.getPressType(req.headers['user-agent']),
+			redditSession : redditSession,
+			twitterSession : twitterSession,
+			subredditURI : req.session.subreddit ? req.session.subreddit : '',
+			threadidURI : req.session.threadid ? req.session.threadid : '',
+			threadidsURI : req.session.threadids ? req.session.threadids : ''
+		});
+		kutil.deleteSessionProperties(req);
+	});
 	
     app.get('/comments/:threadids*', gware.nowww, function(req, res) {
         req.session.threadids = req.params.threadids;
