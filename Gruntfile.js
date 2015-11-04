@@ -92,9 +92,12 @@ module.exports = function (grunt) {
                     '<%= pathDev %>/<%= pathAssets %>/js/core/jquery.countTo.min.js',
                     '<%= pathDev %>/<%= pathAssets %>/js/core/jquery.placeholder.min.js',
                     '<%= pathDev %>/<%= pathAssets %>/js/core/js.cookie.min.js',
-                    '<%= pathDev %>/<%= pathAssets %>/js/app.js'
+                    '<%= pathDev %>/<%= pathAssets %>/js/app.js',
+                    // Add plugins and blenddit application scripts
+                    '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick.min.js',
+                    '<%= pathDev %>/<%= pathAssets %>/js/ga.js'
                 ],
-                dest: '<%= pathBuild %>/<%= pathAssets %>/js/oneui.min.js'
+                dest: '<%= pathBuild %>/<%= pathAssets %>/js/blenddit.min.js'
             },
             legacy: {
                 src: [
@@ -110,7 +113,7 @@ module.exports = function (grunt) {
             },
             build: {
                 files: {
-                    '<%= pathBuild %>/<%= pathAssets %>/js/oneui.min.js': ['<%= pathBuild %>/<%= pathAssets %>/js/oneui.min.js']
+                    '<%= pathBuild %>/<%= pathAssets %>/js/blenddit.min.js': ['<%= pathBuild %>/<%= pathAssets %>/js/blenddit.min.js']
                 }
             },
             legacy: {
