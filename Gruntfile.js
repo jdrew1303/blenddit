@@ -29,7 +29,7 @@ module.exports = function (grunt) {
                     banner: '<%= banner %>'
                 },
                 files: {
-                    '<%= pathDev %>/<%= pathAssets %>/css/oneui.css': '<%= pathDev %>/<%= pathAssets %>/less/main.less'
+                    '<%= pathDev %>/<%= pathAssets %>/css/blenddit.css': '<%= pathDev %>/<%= pathAssets %>/less/main.less'
                 }
             },
             dev_themes: {
@@ -55,7 +55,7 @@ module.exports = function (grunt) {
                     banner: '<%= banner %>'
                 },
                 files: {
-                    '<%= pathBuild %>/<%= pathAssets %>/css/oneui.min.css': '<%= pathDev %>/<%= pathAssets %>/less/main.less',
+                    '<%= pathBuild %>/<%= pathAssets %>/css/blenddit.min.css': '<%= pathDev %>/<%= pathAssets %>/less/main.less',
                     '<%= pathBuild %>/<%= pathAssets %>/css/themes/amethyst.min.css': '<%= pathDev %>/<%= pathAssets %>/less/themes/amethyst.less',
                     '<%= pathBuild %>/<%= pathAssets %>/css/themes/city.min.css': '<%= pathDev %>/<%= pathAssets %>/less/themes/city.less',
                     '<%= pathBuild %>/<%= pathAssets %>/css/themes/flat.min.css': '<%= pathDev %>/<%= pathAssets %>/less/themes/flat.less',
