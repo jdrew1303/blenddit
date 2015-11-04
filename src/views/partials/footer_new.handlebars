@@ -10,11 +10,11 @@
     <script src="{{assets}}js/app.js?v={{version}}"></script>
     <script src="{{assets}}js/plugins/slick/slick.min.js?v={{version}}"></script>
     <script src="{{assets}}js/ga.js?v={{version}}"></script>
+    <script>
+        $(function () {
+            App.initHelpers(['appear', 'slimscroll']);
+        });
+    </script>
 {{else}}
 	<script src="{{assets}}js/blenddit.min.js?v={{version}}" async defer></script>
 {{/if}}
-<script>
-    $(function () {
-        App.initHelpers(['appear', 'slimscroll']);
-    });
-</script>

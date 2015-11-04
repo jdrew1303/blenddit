@@ -36,8 +36,7 @@ module.exports = function (grunt) {
                 options: {
                     compress: true,
                     yuicompress: true,
-                    optimization: 2,
-                    banner: '<%= banner %>'
+                    optimization: 2
                 },
                 files: {
                     '<%= pathDev %>/<%= pathAssets %>/css/themes/amethyst.min.css': '<%= pathDev %>/<%= pathAssets %>/less/themes/amethyst.less',
@@ -67,11 +66,22 @@ module.exports = function (grunt) {
         cssmin: {
             options: {
                 shorthandCompacting: false,
-                roundingPrecision: -1
+                roundingPrecision: -1,
+                keepSpecialComments: 0
+            },
+            build: {
+                files: {
+                    '<%= pathBuild %>/<%= pathAssets %>/css/blenddit.min.css' : [
+                        '<%= pathBuild %>/<%= pathAssets %>/css/blenddit.min.css',
+                        '<%= pathDev %>/<%= pathAssets %>/css/themes/city.min.css',
+                        '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick.min.css',
+                        '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick-theme.min.css'
+                    ]
+                }
             },
             legacy: {
                 files: {
-                   '<%= pathBuild %>/<%= pathAssets %>/css/legacy.blenddit.min.css' : [
+                    '<%= pathBuild %>/<%= pathAssets %>/css/legacy.blenddit.min.css' : [
                        '<%= pathDev %>/<%= pathAssets %>/css/legacy.bootstrap.min.css', 
                        '<%= pathDev %>/<%= pathAssets %>/css/legacy.blenddit.css'
                     ]
@@ -95,7 +105,8 @@ module.exports = function (grunt) {
                     '<%= pathDev %>/<%= pathAssets %>/js/app.js',
                     // Add plugins and blenddit application scripts
                     '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick.min.js',
-                    '<%= pathDev %>/<%= pathAssets %>/js/ga.js'
+                    '<%= pathDev %>/<%= pathAssets %>/js/ga.js',
+                    '<%= pathDev %>/<%= pathAssets %>/js/blenddit.js'
                 ],
                 dest: '<%= pathBuild %>/<%= pathAssets %>/js/blenddit.min.js'
             },
@@ -165,6 +176,6 @@ module.exports = function (grunt) {
 
     // Register Tasks
     grunt.registerTask('default', ['watch']);
-    grunt.registerTask('build', ['clean:build','less:build','concat:build','concat:legacy','uglify:build','uglify:legacy','cssmin:legacy','copy:build']);
+    grunt.registerTask('build', ['clean:build','less:build','cssmin:build','concat:build','concat:legacy','uglify:build','uglify:legacy','cssmin:legacy','copy:build']);
     grunt.registerTask('legacy', ['concat:legacy', 'uglify:legacy', 'cssmin:legacy']);
 };
