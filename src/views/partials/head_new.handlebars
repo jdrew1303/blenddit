@@ -5,6 +5,8 @@
 <meta name="author" content="kurtlocker">
 <meta name="robots" content="noindex, nofollow">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1.0">
+<meta id="debug" name="debug" value="{{debug}}">
+<meta id="version" name="version" value="{{version}}">
 
 <link rel="icon" type="image/png" sizes="192x192" href="{{assets}}img/favicons/android-icon-192x192.png?v={{version}}">
 <link rel="icon" type="image/png" sizes="32x32" href="{{assets}}img/favicons/favicon-32x32.png?v={{version}}">
@@ -25,15 +27,11 @@
 <meta name="msapplication-TileColor" content="#ffffff">
 <meta name="msapplication-TileImage" content="{{assets}}img/favicons/ms-icon-144x144.png?v={{version}}">
 <meta name="theme-color" content="#ffffff">
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
+<style>body{background: #f5f5f5;} body *{opacity: 0;}</style>
 {{#if debug}}
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
 	<link rel="stylesheet" href="{{assets}}css/bootstrap.min.css?v={{version}}">
     <link rel="stylesheet" id="css-main" href="{{assets}}css/blenddit.css?v={{version}}">
-    <link rel="stylesheet" id="css-theme" href="{{assets}}css/themes/city.min.css">
     <link rel="stylesheet" href="{{assets}}js/plugins/slick/slick.min.css">
     <link rel="stylesheet" href="{{assets}}js/plugins/slick/slick-theme.min.css">
-{{else}}
-	<link rel="stylesheet" href="{{assets}}css/bootstrap.min.css?v={{version}}">
-	<link rel="stylesheet" id="css-main" href="{{assets}}css/blenddit.min.css?v={{version}}">
 {{/if}}

@@ -1,5 +1,5 @@
 /*!
-* blenddit.com - v0.0.1 - Auto-compiled on 2015-11-03 - Copyright 2015 
+* blenddit.com - v0.0.1 - Auto-compiled on 2015-11-04 - Copyright 2015 
 * @author kurtlocker
 */
 html,
@@ -10888,6 +10888,9 @@ div.tagsinput span.tag a:hover {
 }
 .placeholder {
   color: #aaa;
+}
+body * {
+  opacity: 1;
 }
 .orange {
   color: #ff8800;
