@@ -73,15 +73,14 @@ module.exports = function (grunt) {
                 files: {
                     '<%= pathBuild %>/<%= pathAssets %>/css/blenddit.min.css' : [
                         '<%= pathBuild %>/<%= pathAssets %>/css/blenddit.min.css',
-                        '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick.min.css',
-                        '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick-theme.min.css'
+                        '<%= pathDev %>/<%= pathAssets %>/js/plugins/slick/slick.min.css'
                     ]
                 }
             },
             legacy: {
                 files: {
                     '<%= pathBuild %>/<%= pathAssets %>/css/legacy.blenddit.min.css' : [
-                       '<%= pathDev %>/<%= pathAssets %>/css/legacy.bootstrap.min.css', 
+                       '<%= pathDev %>/<%= pathAssets %>/css/legacy.bootstrap.min.css',
                        '<%= pathDev %>/<%= pathAssets %>/css/legacy.blenddit.css'
                     ]
                 }

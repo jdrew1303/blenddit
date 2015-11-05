@@ -18,11 +18,51 @@ function byId(id){return document.getElementById(id)};
 function attr(id,attr){return byId(id).getAttribute(attr)};
 
 /**
+ * Boiler plate function to start configuring custom carousel
+ * @return {void}
+ */
+function main_start_slick() {
+	jQuery('.js-slider').slick({
+		dots: true,
+		infinite: false,
+		speed: 300,
+		slidesToShow: 4,
+		slidesToScroll: 4,
+		responsive: [
+			{
+				breakpoint: 1024,
+				settings: {
+					slidesToShow: 3,
+					slidesToScroll: 3,
+					infinite: false,
+					dots: true
+				}
+			},
+			{
+				breakpoint: 600,
+				settings: {
+					slidesToShow: 2,
+					slidesToScroll: 2
+				}
+			},
+			{
+				breakpoint: 480,
+				settings: {
+					slidesToShow: 1,
+					slidesToScroll: 1
+				}
+			}
+		]
+	});
+}
+
+/**
  * Load the stylesheets and fonts needed for production
  * @param  {boolean}
  * @return {void}
  */
 function main_load_links(debug) {
+	if (debug) { return void 0; }
 	var head = d.getElementsByTagName('head')[0],
 		version = attr('version','value'),
 		links = [
@@ -51,9 +91,10 @@ function main_load_links(debug) {
  * @return {void}
  */
 function main_init(){
-	var debug = Boolean(attr('debug','value'));
+	var debug = attr('debug','value') == "true"
 	main_load_links(debug);
 	OneUI.init();
 	OneUI.initHelpers(['appear', 'slimscroll']);
+	main_start_slick();
 }
 window.onload = main_init;
