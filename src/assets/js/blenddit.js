@@ -23,7 +23,7 @@ function attr(id,attr){return byId(id).getAttribute(attr)};
  */
 function main_start_slick() {
 	jQuery('.js-slider').slick({
-		dots: false,
+		dots: true,
 		infinite: false,
 		slidesToShow: 3,
 		slidesToScroll: 1,
