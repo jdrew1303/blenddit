@@ -10898,3 +10898,6 @@ body * {
 #main-container .content {
   padding: 0;
 }
+#main-container .column {
+  padding: 0 2px 0 2px;
+}
